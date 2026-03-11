@@ -1,0 +1,848 @@
+{
+  "artifact_id": "JSON_01_WEBDECK_SETOR_PUBLICO",
+  "artifact_type": "segment_presentation_deck",
+  "segment": "setor_publico",
+  "segment_label": "Setor Público",
+  "version": "1.0.0",
+  "brand": {
+    "institution": "Instituto Felicidade para Todos",
+    "program_name": "Programa Felicidade e Crescimento para Todos",
+    "logos": {
+      "light_bg": "https://static.wixstatic.com/media/575677_ce0c369dcc2848eab2911000d392c7db~mv2.png/v1/fill/w_1198,h_481,al_c,q_90,enc_avif,quality_auto/Logos%20-%20Instituto%20e%20Confer%C3%AAncia%20(60)_edited.png",
+      "dark_bg": "https://static.wixstatic.com/media/575677_386e5f9273d14adf9b36d5a87a5207b8~mv2.png/v1/crop/x_0,y_758,w_2400,h_884/fill/w_248,h_91,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/2.png",
+      "icon": "https://static.wixstatic.com/media/575677_11e5bfdb643b47d28d70ff33bf0c1646~mv2.png/v1/fill/w_363,h_374,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/6.png"
+    },
+    "contact": {
+      "address": "Impact HUB Brasília - SGAN 601, Lote H Edifício Íon, Ala Amarela, Asa Norte, Brasília/DF - Brasil",
+      "phone": "(61) 3550-8779",
+      "website": "https://www.felicidadeparatodos.com.br",
+      "instagram": "https://www.instagram.com/felicidadeparatodosbr",
+      "whatsapp_qr": "https://static.wixstatic.com/media/575677_a847e9799fef4ac19fadf79d6cb85b88~mv2.png/v1/fill/w_838,h_838,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/qrcode%20whatsapp%20instituto.png",
+      "copyright": "© 2025 - Instituto Felicidade para Todos. Todos os direitos reservados."
+    },
+    "impact_numbers": [
+      {
+        "label": "Aplicação Pesquisa FIB com lideranças e colaboradores",
+        "value": "+110.000",
+        "badge": "Recorde Mundial"
+      },
+      {
+        "label": "Municípios impactados",
+        "value": "+219"
+      },
+      {
+        "label": "Instituições e organizações",
+        "value": "+700"
+      },
+      {
+        "label": "Projetos classificados por ODS",
+        "value": "+1300"
+      }
+    ],
+    "palette": {
+      "brand_gold": "#FFBD0C",
+      "brand_magenta": "#D71765",
+      "brand_cyan": "#00C2CB",
+      "brand_green": "#4EAD2B",
+      "brand_orange": "#F59E0B",
+      "brand_charcoal": "#1F2430",
+      "surface_dark": "#0B1220",
+      "surface_light": "#FFF8E8",
+      "text_dark": "#111827",
+      "text_light": "#F9FAFB",
+      "line_soft": "rgba(255,255,255,0.12)"
+    },
+    "typography": {
+      "display": "Fraunces, Merriweather, Georgia, serif",
+      "heading": "Manrope, Inter, Arial, sans-serif",
+      "body": "Inter, Manrope, Arial, sans-serif"
+    },
+    "visual_principles": [
+      "misturar credibilidade institucional com estética de startup premium",
+      "usar composição modular com cards, painéis e progressão horizontal",
+      "maximizar contraste, legibilidade e foco em conversão",
+      "privilegiar animações curtas, suaves e semanticamente úteis"
+    ]
+  },
+  "shared_ui": {
+    "presentation_modes": [
+      "webdeck",
+      "slides",
+      "speaker_view",
+      "pdf_export"
+    ],
+    "navigation": {
+      "desktop": [
+        "top_progress_nav",
+        "segment_switcher",
+        "sticky_cta_rail",
+        "slide_index_overlay"
+      ],
+      "mobile": [
+        "bottom_sheet_nav",
+        "swipe_horizontal",
+        "tap_to_expand_cards"
+      ],
+      "keyboard": [
+        "ArrowLeft",
+        "ArrowRight",
+        "PageUp",
+        "PageDown",
+        "Home",
+        "End",
+        "Enter",
+        "Escape"
+      ]
+    },
+    "motion_system": {
+      "principles": [
+        "motion for orientation",
+        "micro-feedback for CTA confidence",
+        "avoid motion overload",
+        "respect reduced motion"
+      ],
+      "default_transition": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720,
+        "easing": "cubic-bezier(0.22,1,0.36,1)"
+      },
+      "special_effects": [
+        "glassmorphism cards",
+        "halo gradients",
+        "count-up metrics",
+        "parallax icon drift",
+        "spotlight hover",
+        "timeline reveal",
+        "modal spring-open"
+      ],
+      "reduced_motion_fallback": {
+        "duration_ms": 120,
+        "effects": [
+          "opacity-only",
+          "no parallax",
+          "no scale"
+        ]
+      }
+    },
+    "accessibility": {
+      "standards": [
+        "WCAG 2.2 AA",
+        "focus-visible on all interactive elements",
+        "aria labels for CTAs and charts",
+        "screen-reader friendly slide announcements"
+      ],
+      "contrast_policy": "minimum 4.5:1 for body text and 3:1 for large text",
+      "type_scale": {
+        "mobile_min_body_px": 16,
+        "desktop_min_body_px": 18,
+        "display_max_px": 72
+      },
+      "interaction_aids": [
+        "skip-to-content",
+        "high-contrast toggle",
+        "font-size toggle",
+        "captions in all videos",
+        "reduced-motion toggle"
+      ]
+    },
+    "lead_capture_patterns": {
+      "entry_points": [
+        "hero_cta",
+        "sticky_footer_cta",
+        "inline card cta",
+        "end-of-deck cta",
+        "sidebar quick action"
+      ],
+      "modal_style": "right-side glass panel with progressive disclosure and 2-step form",
+      "trust_elements": [
+        "privacy note",
+        "LGPD consent",
+        "time-to-response badge",
+        "logo lockup",
+        "impact metrics strip"
+      ],
+      "success_state": "show thank-you card + option to agendar reunião + option to abrir demo roadmap"
+    },
+    "forms": {
+      "lead_form_fields": [
+        "nome",
+        "email_corporativo_ou_institucional",
+        "telefone",
+        "organizacao",
+        "cargo",
+        "segmento",
+        "porte",
+        "principal_prioridade",
+        "janela_de_implantacao",
+        "mensagem"
+      ],
+      "roadmap_form_fields": [
+        "objetivo_estrategico",
+        "publico_prioritario",
+        "unidades_ou_territorio",
+        "maturidade_atual",
+        "urgencia_regulatoria",
+        "interesse_em_demo_apps",
+        "prazo_de_decisao"
+      ],
+      "consent_copy": "Ao enviar, autorizo contato do Instituto Felicidade para Todos para apresentação de proposta, demo e roadmap."
+    }
+  },
+  "audience": [
+    "gabinetes executivos",
+    "secretarias",
+    "autarquias",
+    "fundações públicas",
+    "escolas de governo",
+    "órgãos com servidores, terceirizados e equipes híbridas"
+  ],
+  "north_star": "elevar capacidade institucional, qualidade do serviço público, proteção psicossocial e confiança cidadã",
+  "conversion_objectives": [
+    "agendar reunião executiva",
+    "captar lead institucional",
+    "abrir demo do programa",
+    "solicitar roadmap público de implementação"
+  ],
+  "regulatory_basis": [
+    {
+      "id": "NR-1_2026",
+      "label": "nova redação da NR-1 com vigência em 26/05/2026",
+      "use_in_deck": "sinalizar relevância para órgãos com vínculos celetistas, terceirizados e contratos correlatos"
+    },
+    {
+      "id": "NR-7",
+      "label": "PCMSO articulado aos riscos ocupacionais do PGR",
+      "use_in_deck": "conectar saúde ocupacional e prevenção"
+    },
+    {
+      "id": "LEI_14540_2023",
+      "label": "programa de prevenção e enfrentamento ao assédio sexual e violência sexual na administração pública",
+      "use_in_deck": "reforçar integridade, proteção e dever institucional"
+    }
+  ],
+  "slides": [
+    {
+      "id": "S01_CAPA",
+      "title": "Programa Felicidade e Crescimento para Todos",
+      "subtitle": "Uma arquitetura premium de bem-estar, aprendizagem, governança e evolução institucional para o Setor Público.",
+      "layout": "hero-cover",
+      "goal": "gerar autoridade e atenção em 8 segundos",
+      "visuals": [
+        "fundo claro com halo dourado + logo light",
+        "ícone da marca em slow drift",
+        "faixa inferior com métricas de impacto"
+      ],
+      "bullets": [
+        "mensuração + educação + transformação + evolução",
+        "narrativa de missão pública + eficiência + cuidado"
+      ],
+      "data_points": [
+        {
+          "label": "Aplicação Pesquisa FIB com lideranças e colaboradores",
+          "value": "+110.000",
+          "badge": "Recorde Mundial"
+        },
+        {
+          "label": "Municípios impactados",
+          "value": "+219"
+        },
+        {
+          "label": "Instituições e organizações",
+          "value": "+700"
+        },
+        {
+          "label": "Projetos classificados por ODS",
+          "value": "+1300"
+        }
+      ],
+      "cta_primary": {
+        "label": "Iniciar apresentação",
+        "action": "nextSlide"
+      },
+      "cta_secondary": {
+        "label": "Abrir formulário institucional",
+        "action": "openLeadForm",
+        "target": "lead_form"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": "Abrir pela missão pública: ambientes mais saudáveis produzem melhor política pública, melhor clima institucional e melhor serviço ao cidadão."
+    },
+    {
+      "id": "S02_POR_QUE_AGORA",
+      "title": "Por que isso importa agora para o Setor Público",
+      "subtitle": "Saúde institucional, prevenção ao assédio, qualidade do serviço e confiança pública passaram a ser temas de gestão, não apenas de discurso.",
+      "layout": "problem-solution-split",
+      "goal": "criar urgência institucional",
+      "visuals": [
+        "coluna esquerda com dores; coluna direita com ganhos",
+        "gráfico radial de confiança, clima e capacidade"
+      ],
+      "bullets": [
+        "redução de desgaste, conflito e desorganização invisível",
+        "fortalecimento de lideranças, equipes e serviço prestado",
+        "integração entre cuidado, desempenho e governança"
+      ],
+      "data_points": [],
+      "cta_primary": {
+        "label": "Ver fundamentos institucionais",
+        "action": "openModal",
+        "target": "modal_fundamentos_publicos"
+      },
+      "cta_secondary": {
+        "label": "Pular para a solução",
+        "action": "goToSlide",
+        "target": "S04_4LENTES"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": ""
+    },
+    {
+      "id": "S03_BASE_INSTITUCIONAL",
+      "title": "Base Institucional e de Integridade",
+      "subtitle": "O deck traduz bem-estar e prevenção em linguagem de governança, integridade, gestão de pessoas e capacidade estatal.",
+      "layout": "legal-assurance-panel",
+      "goal": "dar segurança para decisão",
+      "visuals": [
+        "3 cards legais com ícones de escudo, balanço e serviço público",
+        "microtooltips para cada referência"
+      ],
+      "bullets": [
+        "Lei 14.540/2023 como âncora explícita para prevenção e enfrentamento ao assédio sexual e violência sexual na administração pública",
+        "NR-7 como ponte entre riscos ocupacionais e saúde ocupacional quando aplicável",
+        "NR-1 como referência relevante para estruturas públicas com empregados celetistas, terceirização e contratos sujeitos ao regime de SST"
+      ],
+      "data_points": [],
+      "cta_primary": {
+        "label": "Abrir mapa regulatório",
+        "action": "openModal",
+        "target": "modal_regulatorio_publico"
+      },
+      "cta_secondary": {
+        "label": "Solicitar leitura aplicada ao meu órgão",
+        "action": "openLeadForm",
+        "target": "roadmap_form"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": "Evitar promessas jurídicas absolutas. Enquadrar como arquitetura de prevenção, capacidade institucional e alinhamento regulatório."
+    },
+    {
+      "id": "S04_4LENTES",
+      "title": "Diagnóstico com 4 Lentes Científicas",
+      "subtitle": "Uma leitura combinada do ambiente institucional, das forças humanas, dos riscos psicossociais e do florescimento no trabalho público.",
+      "layout": "quad-lens-grid",
+      "goal": "apresentar método de diferenciação",
+      "visuals": [
+        "4 cards com flip em hover",
+        "linhas conectoras formando círculo sistêmico"
+      ],
+      "bullets": [
+        "COPSOQ: riscos psicossociais e fatores organizacionais",
+        "FIB: ecossistema institucional, pertencimento e sentido",
+        "PERMA+V: energia, engajamento e vitalidade",
+        "VIA: forças de caráter, liderança e colaboração"
+      ],
+      "data_points": [],
+      "cta_primary": {
+        "label": "Ver como cada lente funciona no setor público",
+        "action": "openModal",
+        "target": "modal_4lentes_publico"
+      },
+      "cta_secondary": {
+        "label": "Testar fluxo demo",
+        "action": "goToRoute",
+        "target": "/demos/setor-publico/diagnostico"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": ""
+    },
+    {
+      "id": "S05_TRILHA",
+      "title": "Trilha de Implementação: 90 a 365 dias",
+      "subtitle": "Do primeiro pulso institucional à consolidação de governança contínua.",
+      "layout": "timeline-horizontal",
+      "goal": "mostrar exequibilidade",
+      "visuals": [
+        "timeline animada em 4 fases",
+        "cards com entregáveis por fase"
+      ],
+      "bullets": [
+        "Mensurar: baseline, hotspots e mapa de risco",
+        "Educar: trilhas para lideranças, equipes e áreas meio",
+        "Transformar: programas, protocolos, rituais e intervenções",
+        "Evoluir: dashboards, relatórios e selo"
+      ],
+      "data_points": [],
+      "cta_primary": {
+        "label": "Abrir roadmap detalhado",
+        "action": "openModal",
+        "target": "modal_roadmap_publico"
+      },
+      "cta_secondary": {
+        "label": "Quero um piloto de 90 dias",
+        "action": "openLeadForm",
+        "target": "roadmap_form"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": ""
+    },
+    {
+      "id": "S06_DEMO_APPS",
+      "title": "Apps-Demo que tornam a mudança visível",
+      "subtitle": "Apresentações interativas do programa para acelerar entendimento, adesão e tomada de decisão.",
+      "layout": "demo-app-gallery",
+      "goal": "conectar narrativa a produto",
+      "visuals": [
+        "3 mockups device frame",
+        "hotspots clicáveis em cada demo"
+      ],
+      "bullets": [
+        "Radar de Clima e Risco Psicossocial",
+        "Dashboard de Liderança que Faz Bem",
+        "Mapa de Evolução de Bem-Estar e Impacto ODS"
+      ],
+      "data_points": [],
+      "cta_primary": {
+        "label": "Abrir demo setorial",
+        "action": "goToRoute",
+        "target": "/demos/setor-publico"
+      },
+      "cta_secondary": {
+        "label": "Solicitar demo personalizada",
+        "action": "openLeadForm",
+        "target": "lead_form"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": ""
+    },
+    {
+      "id": "S07_IMPACTO",
+      "title": "Impactos esperados para a máquina pública",
+      "subtitle": "Mais capacidade institucional, melhor experiência do trabalhador e melhor serviço entregue à sociedade.",
+      "layout": "impact-matrix",
+      "goal": "traduzir benefício abstrato em resultados",
+      "visuals": [
+        "matriz 2x2 com eixos humano e institucional",
+        "badges com resultados esperados"
+      ],
+      "bullets": [
+        "fortalecer cultura de respeito e prevenção",
+        "reduzir ruído, fricção e desgaste organizacional",
+        "ampliar aprendizagem institucional e colaboração entre áreas",
+        "qualificar prestação de serviço e confiança interna"
+      ],
+      "data_points": [],
+      "cta_primary": {
+        "label": "Ver indicadores sugeridos",
+        "action": "openModal",
+        "target": "modal_kpis_publico"
+      },
+      "cta_secondary": {
+        "label": "Montar painel para meu órgão",
+        "action": "openLeadForm",
+        "target": "roadmap_form"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": ""
+    },
+    {
+      "id": "S08_JORNADAS",
+      "title": "Jornadas formativas e design instrucional",
+      "subtitle": "Não basta medir: é preciso transformar dados em aprendizagem aplicável.",
+      "layout": "learning-journey-cards",
+      "goal": "mostrar robustez pedagógica",
+      "visuals": [
+        "cards de trilhas por persona",
+        "microinterações de progresso",
+        "timeline de missões gamificadas"
+      ],
+      "bullets": [
+        "lideranças: escuta, prevenção, confiança e coordenação",
+        "equipes: colaboração, respeito, equilíbrio e sentido",
+        "áreas meio: RH, integridade, ouvidoria, gestão e formação"
+      ],
+      "data_points": [],
+      "cta_primary": {
+        "label": "Ver trilhas do setor público",
+        "action": "openModal",
+        "target": "modal_trilhas_publico"
+      },
+      "cta_secondary": {
+        "label": "Solicitar academia aplicada",
+        "action": "openLeadForm",
+        "target": "lead_form"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": ""
+    },
+    {
+      "id": "S09_GOVERNANCA",
+      "title": "Governança, evidências e prestação de contas",
+      "subtitle": "Toda a narrativa do programa pode ser traduzida em painéis, relatórios e ciclos de decisão.",
+      "layout": "dashboard-governance",
+      "goal": "reforçar accountability",
+      "visuals": [
+        "mockup de dashboard com cards KPI",
+        "faixa de evidências e histórico de decisão"
+      ],
+      "bullets": [
+        "dashboards por unidade, secretaria ou território",
+        "evidências de formação, intervenção e evolução",
+        "relatórios executivos e relatórios sintéticos para comitês"
+      ],
+      "data_points": [],
+      "cta_primary": {
+        "label": "Abrir visão de dashboard",
+        "action": "goToRoute",
+        "target": "/demos/setor-publico/dashboard"
+      },
+      "cta_secondary": {
+        "label": "Solicitar arquitetura de governança",
+        "action": "openLeadForm",
+        "target": "roadmap_form"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": ""
+    },
+    {
+      "id": "S10_CASOS_E_ESCALA",
+      "title": "Escala, legitimidade e capilaridade",
+      "subtitle": "O Instituto já opera com volume e diversidade suficientes para sustentar programas amplos.",
+      "layout": "proof-strip-plus-map",
+      "goal": "dar prova social e tração",
+      "visuals": [
+        "mapa do Brasil com glow em municípios",
+        "contador animado com números de impacto"
+      ],
+      "bullets": [
+        "recorde mundial em aplicação de pesquisa FIB",
+        "presença territorial e institucional ampla",
+        "metodologia apta para pilotos, redes e programas multiunidade"
+      ],
+      "data_points": [
+        {
+          "label": "Aplicação Pesquisa FIB com lideranças e colaboradores",
+          "value": "+110.000",
+          "badge": "Recorde Mundial"
+        },
+        {
+          "label": "Municípios impactados",
+          "value": "+219"
+        },
+        {
+          "label": "Instituições e organizações",
+          "value": "+700"
+        },
+        {
+          "label": "Projetos classificados por ODS",
+          "value": "+1300"
+        }
+      ],
+      "cta_primary": {
+        "label": "Ver números em detalhe",
+        "action": "openModal",
+        "target": "modal_impacto_institucional"
+      },
+      "cta_secondary": {
+        "label": "Falar com especialista",
+        "action": "openLeadForm",
+        "target": "lead_form"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": ""
+    },
+    {
+      "id": "S11_PROPOSTA",
+      "title": "Formato de contratação sugerido",
+      "subtitle": "Escolha entre piloto executivo, implantação por ciclo ou programa anual.",
+      "layout": "offer-cards-3",
+      "goal": "facilitar decisão",
+      "visuals": [
+        "3 cards de oferta com destaque no plano intermediário"
+      ],
+      "bullets": [
+        "Piloto 90 dias",
+        "Ciclo semestral com 2 lentes",
+        "Programa anual com 4 lentes e governança contínua"
+      ],
+      "data_points": [],
+      "cta_primary": {
+        "label": "Receber proposta preliminar",
+        "action": "openLeadForm",
+        "target": "lead_form"
+      },
+      "cta_secondary": {
+        "label": "Comparar formatos",
+        "action": "openModal",
+        "target": "modal_ofertas_publico"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": ""
+    },
+    {
+      "id": "S12_ECOSSISTEMA",
+      "title": "Ecossistema Integrado de Serviços e Produtos",
+      "subtitle": "A mesma arquitetura pode começar com um piloto e evoluir para um sistema completo de bem-estar, aprendizagem, governança e impacto.",
+      "layout": "catalog-grid-10",
+      "goal": "ampliar ticket, cross-sell e percepção de plataforma",
+      "visuals": [
+        "10 cards com tags coloridas por solução",
+        "hover com micro-resumo",
+        "CTA contextual por card"
+      ],
+      "bullets": [
+        "Mensurar, Educar, Transformar e Evoluir como jornada contínua",
+        "SaaS, consultoria, mentoria, gamificação, P&D e compliance conectados",
+        "navegação com filtros por dor, maturidade e segmento"
+      ],
+      "data_points": [],
+      "cta_primary": {
+        "label": "Explorar ecossistema completo",
+        "action": "openModal",
+        "target": "modal_ecossistema_ift"
+      },
+      "cta_secondary": {
+        "label": "Solicitar arquitetura integrada",
+        "action": "openLeadForm",
+        "target": "roadmap_form"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": "",
+      "service_cards": [
+        {
+          "pillar": "Mensurar",
+          "title": "Diagnóstico com 4 Lentes Científicas",
+          "items": [
+            "Raio-X do Bem-Estar",
+            "Pulso do Bem-Estar",
+            "Mapa da Felicidade"
+          ],
+          "cta": "Conhecer soluções"
+        },
+        {
+          "pillar": "Educar",
+          "title": "Academy & Formações de Impacto",
+          "items": [
+            "Academia Felicidade para Todos",
+            "Escola de Liderança que Faz Bem",
+            "Trilhas para uma Vida com Mais Sentido"
+          ],
+          "cta": "Conhecer soluções"
+        },
+        {
+          "pillar": "Transformar",
+          "title": "Programas de Impacto Baseados em Evidências",
+          "items": [
+            "Virada de Bem-Estar em 90 Dias",
+            "Cultura que Faz Bem",
+            "Comunidade Viva"
+          ],
+          "cta": "Conhecer soluções"
+        },
+        {
+          "pillar": "Evoluir",
+          "title": "Relatórios, Governança & Selo",
+          "items": [
+            "Painel de Evolução do Bem-Estar",
+            "Relatório de Impacto e Bem-Estar",
+            "Selo Felicidade para Todos"
+          ],
+          "cta": "Conhecer soluções"
+        },
+        {
+          "pillar": "SaaS",
+          "title": "Plataforma Digital",
+          "items": [
+            "IA",
+            "Dashboards",
+            "Automação"
+          ],
+          "cta": "Saiba mais"
+        },
+        {
+          "pillar": "Consultoria",
+          "title": "Estratégia & Implementação",
+          "items": [
+            "NR-1",
+            "ESG",
+            "Estratégia"
+          ],
+          "cta": "Saiba mais"
+        },
+        {
+          "pillar": "Mentoria",
+          "title": "Desenvolvimento de Lideranças",
+          "items": [
+            "Lideranças",
+            "Gestores",
+            "Educadores"
+          ],
+          "cta": "Saiba mais"
+        },
+        {
+          "pillar": "Gamificação",
+          "title": "Engajamento Inteligente",
+          "items": [
+            "Missões",
+            "Desafios",
+            "Jornadas"
+          ],
+          "cta": "Saiba mais"
+        },
+        {
+          "pillar": "P&D",
+          "title": "Pesquisa & Desenvolvimento",
+          "items": [
+            "Pesquisa",
+            "Benchmarking",
+            "Inovação"
+          ],
+          "cta": "Saiba mais"
+        },
+        {
+          "pillar": "Compliance",
+          "title": "Bem-Estar & Regulatório",
+          "items": [
+            "NR-1",
+            "Lei 14.831",
+            "Auditoria"
+          ],
+          "cta": "Saiba mais"
+        }
+      ]
+    },
+    {
+      "id": "S13_QR_CONTATOS",
+      "title": "Canais institucionais e próxima ação",
+      "subtitle": "Facilite o contato imediato com QR code, WhatsApp e formulário executivo.",
+      "layout": "qr-contact-layout",
+      "goal": "reduzir fricção de conversão",
+      "visuals": [
+        "QR code em destaque",
+        "bloco de contatos institucionais",
+        "mini mapa do endereço"
+      ],
+      "bullets": [
+        "WhatsApp institucional",
+        "site e Instagram",
+        "Impact HUB Brasília como base operacional"
+      ],
+      "data_points": [],
+      "cta_primary": {
+        "label": "Abrir formulário executivo",
+        "action": "openLeadForm",
+        "target": "lead_form"
+      },
+      "cta_secondary": {
+        "label": "Baixar one-page",
+        "action": "downloadAsset",
+        "target": "onepage_publico_pdf"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": ""
+    },
+    {
+      "id": "S14_FECHAMENTO",
+      "title": "Vamos desenhar a rota de implementação ideal para o seu contexto",
+      "subtitle": "Leve o Programa Felicidade e Crescimento para Todos para o setor público com método, beleza, governança e impacto mensurável.",
+      "layout": "final-cta-split",
+      "goal": "converter reunião executiva e demo",
+      "visuals": [
+        "painel de próximo passo em 3 etapas",
+        "QR code do WhatsApp",
+        "lockup institucional com logo dark"
+      ],
+      "bullets": [
+        "1. diagnóstico de maturidade",
+        "2. demo dos apps prioritários",
+        "3. proposta com roadmap 90-365 dias"
+      ],
+      "data_points": [],
+      "cta_primary": {
+        "label": "Agendar reunião executiva",
+        "action": "openLeadForm",
+        "target": "lead_form"
+      },
+      "cta_secondary": {
+        "label": "Abrir demo dos apps",
+        "action": "goToRoute",
+        "target": "/demos/setor-publico"
+      },
+      "modal": {
+        "type": "footer-card",
+        "content": "mostrar dados institucionais, QR do WhatsApp, endereço e canais oficiais"
+      },
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": ""
+    }
+  ]
+}

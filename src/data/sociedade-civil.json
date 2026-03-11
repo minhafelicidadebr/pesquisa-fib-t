@@ -1,0 +1,792 @@
+{
+  "artifact_id": "JSON_03_WEBDECK_SOCIEDADE_CIVIL",
+  "artifact_type": "segment_presentation_deck",
+  "segment": "sociedade_civil",
+  "segment_label": "Sociedade Civil",
+  "version": "1.0.0",
+  "brand": {
+    "institution": "Instituto Felicidade para Todos",
+    "program_name": "Programa Felicidade e Crescimento para Todos",
+    "logos": {
+      "light_bg": "https://static.wixstatic.com/media/575677_ce0c369dcc2848eab2911000d392c7db~mv2.png/v1/fill/w_1198,h_481,al_c,q_90,enc_avif,quality_auto/Logos%20-%20Instituto%20e%20Confer%C3%AAncia%20(60)_edited.png",
+      "dark_bg": "https://static.wixstatic.com/media/575677_386e5f9273d14adf9b36d5a87a5207b8~mv2.png/v1/crop/x_0,y_758,w_2400,h_884/fill/w_248,h_91,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/2.png",
+      "icon": "https://static.wixstatic.com/media/575677_11e5bfdb643b47d28d70ff33bf0c1646~mv2.png/v1/fill/w_363,h_374,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/6.png"
+    },
+    "contact": {
+      "address": "Impact HUB Brasília - SGAN 601, Lote H Edifício Íon, Ala Amarela, Asa Norte, Brasília/DF - Brasil",
+      "phone": "(61) 3550-8779",
+      "website": "https://www.felicidadeparatodos.com.br",
+      "instagram": "https://www.instagram.com/felicidadeparatodosbr",
+      "whatsapp_qr": "https://static.wixstatic.com/media/575677_a847e9799fef4ac19fadf79d6cb85b88~mv2.png/v1/fill/w_838,h_838,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/qrcode%20whatsapp%20instituto.png",
+      "copyright": "© 2025 - Instituto Felicidade para Todos. Todos os direitos reservados."
+    },
+    "impact_numbers": [
+      {
+        "label": "Aplicação Pesquisa FIB com lideranças e colaboradores",
+        "value": "+110.000",
+        "badge": "Recorde Mundial"
+      },
+      {
+        "label": "Municípios impactados",
+        "value": "+219"
+      },
+      {
+        "label": "Instituições e organizações",
+        "value": "+700"
+      },
+      {
+        "label": "Projetos classificados por ODS",
+        "value": "+1300"
+      }
+    ],
+    "palette": {
+      "brand_gold": "#FFBD0C",
+      "brand_magenta": "#D71765",
+      "brand_cyan": "#00C2CB",
+      "brand_green": "#4EAD2B",
+      "brand_orange": "#F59E0B",
+      "brand_charcoal": "#1F2430",
+      "surface_dark": "#0B1220",
+      "surface_light": "#FFF8E8",
+      "text_dark": "#111827",
+      "text_light": "#F9FAFB",
+      "line_soft": "rgba(255,255,255,0.12)"
+    },
+    "typography": {
+      "display": "Fraunces, Merriweather, Georgia, serif",
+      "heading": "Manrope, Inter, Arial, sans-serif",
+      "body": "Inter, Manrope, Arial, sans-serif"
+    },
+    "visual_principles": [
+      "misturar credibilidade institucional com estética de startup premium",
+      "usar composição modular com cards, painéis e progressão horizontal",
+      "maximizar contraste, legibilidade e foco em conversão",
+      "privilegiar animações curtas, suaves e semanticamente úteis"
+    ]
+  },
+  "shared_ui": {
+    "presentation_modes": [
+      "webdeck",
+      "slides",
+      "speaker_view",
+      "pdf_export"
+    ],
+    "navigation": {
+      "desktop": [
+        "top_progress_nav",
+        "segment_switcher",
+        "sticky_cta_rail",
+        "slide_index_overlay"
+      ],
+      "mobile": [
+        "bottom_sheet_nav",
+        "swipe_horizontal",
+        "tap_to_expand_cards"
+      ],
+      "keyboard": [
+        "ArrowLeft",
+        "ArrowRight",
+        "PageUp",
+        "PageDown",
+        "Home",
+        "End",
+        "Enter",
+        "Escape"
+      ]
+    },
+    "motion_system": {
+      "principles": [
+        "motion for orientation",
+        "micro-feedback for CTA confidence",
+        "avoid motion overload",
+        "respect reduced motion"
+      ],
+      "default_transition": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720,
+        "easing": "cubic-bezier(0.22,1,0.36,1)"
+      },
+      "special_effects": [
+        "glassmorphism cards",
+        "halo gradients",
+        "count-up metrics",
+        "parallax icon drift",
+        "spotlight hover",
+        "timeline reveal",
+        "modal spring-open"
+      ],
+      "reduced_motion_fallback": {
+        "duration_ms": 120,
+        "effects": [
+          "opacity-only",
+          "no parallax",
+          "no scale"
+        ]
+      }
+    },
+    "accessibility": {
+      "standards": [
+        "WCAG 2.2 AA",
+        "focus-visible on all interactive elements",
+        "aria labels for CTAs and charts",
+        "screen-reader friendly slide announcements"
+      ],
+      "contrast_policy": "minimum 4.5:1 for body text and 3:1 for large text",
+      "type_scale": {
+        "mobile_min_body_px": 16,
+        "desktop_min_body_px": 18,
+        "display_max_px": 72
+      },
+      "interaction_aids": [
+        "skip-to-content",
+        "high-contrast toggle",
+        "font-size toggle",
+        "captions in all videos",
+        "reduced-motion toggle"
+      ]
+    },
+    "lead_capture_patterns": {
+      "entry_points": [
+        "hero_cta",
+        "sticky_footer_cta",
+        "inline card cta",
+        "end-of-deck cta",
+        "sidebar quick action"
+      ],
+      "modal_style": "right-side glass panel with progressive disclosure and 2-step form",
+      "trust_elements": [
+        "privacy note",
+        "LGPD consent",
+        "time-to-response badge",
+        "logo lockup",
+        "impact metrics strip"
+      ],
+      "success_state": "show thank-you card + option to agendar reunião + option to abrir demo roadmap"
+    },
+    "forms": {
+      "lead_form_fields": [
+        "nome",
+        "email_corporativo_ou_institucional",
+        "telefone",
+        "organizacao",
+        "cargo",
+        "segmento",
+        "porte",
+        "principal_prioridade",
+        "janela_de_implantacao",
+        "mensagem"
+      ],
+      "roadmap_form_fields": [
+        "objetivo_estrategico",
+        "publico_prioritario",
+        "unidades_ou_territorio",
+        "maturidade_atual",
+        "urgencia_regulatoria",
+        "interesse_em_demo_apps",
+        "prazo_de_decisao"
+      ],
+      "consent_copy": "Ao enviar, autorizo contato do Instituto Felicidade para Todos para apresentação de proposta, demo e roadmap."
+    }
+  },
+  "audience": [
+    "ONGs",
+    "OSCIPs",
+    "fundações",
+    "institutos",
+    "redes comunitárias",
+    "movimentos",
+    "escolas comunitárias",
+    "projetos de base territorial"
+  ],
+  "north_star": "fortalecer comunidades, equipes, voluntários e redes com cuidado, aprendizagem, governança e impacto mensurável",
+  "conversion_objectives": [
+    "captar parceiros",
+    "abrir demo comunitária",
+    "solicitar proposta",
+    "montar roadmap territorial"
+  ],
+  "regulatory_basis": [
+    {
+      "id": "LEI_14540_2023",
+      "label": "referência para prevenção e enfrentamento ao assédio na administração pública",
+      "use_in_deck": "mostrar alinhamento com cultura de proteção e integridade"
+    },
+    {
+      "id": "LEI_14831_2024",
+      "label": "reconhecimento institucional ligado à saúde mental",
+      "use_in_deck": "inspirar padrões de governança e cuidado"
+    },
+    {
+      "id": "NR_REFERENCIAS",
+      "label": "NR-1 e NR-7 como referências úteis quando houver vínculos celetistas e contratos sujeitos ao regime de SST",
+      "use_in_deck": "enquadrar organizações com empregados e estruturas formais"
+    }
+  ],
+  "slides": [
+    {
+      "id": "S01_CAPA",
+      "title": "Programa Felicidade e Crescimento para Todos",
+      "subtitle": "Uma apresentação premium para a Sociedade Civil: fortalecer pessoas, comunidades e redes com ciência, tecnologia e impacto real.",
+      "layout": "hero-community",
+      "goal": "abrir com calor humano e credibilidade",
+      "visuals": [
+        "fundo branco com manchas de cor da marca",
+        "mosaico de pessoas e territórios",
+        "logo light em destaque"
+      ],
+      "bullets": [
+        "comunidades mais vivas",
+        "equipes menos exaustas",
+        "impacto mais visível e sustentável"
+      ],
+      "data_points": [],
+      "cta_primary": {
+        "label": "Explorar a apresentação",
+        "action": "nextSlide"
+      },
+      "cta_secondary": {
+        "label": "Quero parceria",
+        "action": "openLeadForm",
+        "target": "lead_form"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": ""
+    },
+    {
+      "id": "S02_DOR_SETOR",
+      "title": "As organizações de impacto também precisam de infraestrutura de bem-estar",
+      "subtitle": "Quem cuida da sociedade muitas vezes opera sob sobrecarga, captação instável, burnout silencioso e fragmentação de dados.",
+      "layout": "pain-points-community",
+      "goal": "gerar identificação e urgência",
+      "visuals": [
+        "4 cards de dor com ícones orgânicos",
+        "faixa inferior com consequências invisíveis"
+      ],
+      "bullets": [
+        "equipes pequenas e missões grandes",
+        "voluntariado e coordenação sob pressão",
+        "baixa visibilidade do impacto humano da própria organização",
+        "risco de perda de energia, confiança e continuidade"
+      ],
+      "data_points": [],
+      "cta_primary": {
+        "label": "Ver resposta do programa",
+        "action": "goToSlide",
+        "target": "S04_4LENTES"
+      },
+      "cta_secondary": {
+        "label": "Abrir formulário de parceria",
+        "action": "openLeadForm",
+        "target": "lead_form"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": ""
+    },
+    {
+      "id": "S03_NOVA_NARRATIVA",
+      "title": "Felicidade sustentável como capacidade coletiva",
+      "subtitle": "A proposta do Instituto não é superficial: é uma arquitetura para fortalecer vínculos, propósito, segurança relacional e potência de transformação.",
+      "layout": "conceptual-story",
+      "goal": "reposicionar felicidade como infraestrutura",
+      "visuals": [
+        "animação de círculo sistêmico",
+        "cards com palavras-chave: propósito, pertencimento, prevenção, evolução"
+      ],
+      "bullets": [
+        "bem-estar como condição para impacto social sustentável",
+        "aprendizagem e gamificação como motores de adesão",
+        "dados como suporte à captação, governança e legitimidade"
+      ],
+      "data_points": [],
+      "cta_primary": null,
+      "cta_secondary": null,
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": ""
+    },
+    {
+      "id": "S04_4LENTES",
+      "title": "4 Lentes para ler pessoas, redes e territórios",
+      "subtitle": "A combinação das lentes permite desenhar intervenções mais humanas e mais inteligentes.",
+      "layout": "quad-lens-grid-community",
+      "goal": "mostrar método adaptável à base social",
+      "visuals": [
+        "cards com ilustrações orgânicas e ícones",
+        "linhas que conectam indivíduo, equipe e território"
+      ],
+      "bullets": [
+        "FIB: vida, comunidade, sentido e sustentabilidade",
+        "PERMA+V: energia, engajamento e vitalidade",
+        "VIA: forças humanas e liderança distribuída",
+        "COPSOQ: fatores de risco psicossocial no trabalho e nas relações organizacionais"
+      ],
+      "data_points": [],
+      "cta_primary": {
+        "label": "Entender as 4 lentes",
+        "action": "openModal",
+        "target": "modal_4lentes_sociedade"
+      },
+      "cta_secondary": {
+        "label": "Abrir demo comunitária",
+        "action": "goToRoute",
+        "target": "/demos/sociedade-civil/diagnostico"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": ""
+    },
+    {
+      "id": "S05_CICLO",
+      "title": "Mensurar, Educar, Transformar e Evoluir",
+      "subtitle": "Uma jornada simples de entender e poderosa para implementar.",
+      "layout": "4-pillar-orbit",
+      "goal": "ancorar a metodologia",
+      "visuals": [
+        "órbita em 4 pilares",
+        "cada pilar abre mini-janela com exemplo"
+      ],
+      "bullets": [
+        "Mensurar: ouvir e mapear",
+        "Educar: formar e engajar",
+        "Transformar: agir com método",
+        "Evoluir: dar continuidade e mostrar impacto"
+      ],
+      "data_points": [],
+      "cta_primary": {
+        "label": "Abrir exemplos por pilar",
+        "action": "openModal",
+        "target": "modal_pilares_sociedade"
+      },
+      "cta_secondary": {
+        "label": "Solicitar desenho de jornada",
+        "action": "openLeadForm",
+        "target": "roadmap_form"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": ""
+    },
+    {
+      "id": "S06_DEMO_APPS",
+      "title": "Demos que ajudam a mobilizar financiadores, lideranças e equipes",
+      "subtitle": "A apresentação pode abrir portas para pilotos, projetos, editais e captação.",
+      "layout": "device-stack-community",
+      "goal": "conectar emoção e tecnologia",
+      "visuals": [
+        "mockup mobile com jornada gamificada",
+        "dashboard de impacto ODS",
+        "chatbot acolhedor com IA"
+      ],
+      "bullets": [
+        "Pulso de bem-estar da equipe",
+        "Mapa de forças e comunidades",
+        "Dashboard de impacto e evolução ODS"
+      ],
+      "data_points": [],
+      "cta_primary": {
+        "label": "Ver demos",
+        "action": "goToRoute",
+        "target": "/demos/sociedade-civil"
+      },
+      "cta_secondary": {
+        "label": "Quero demo para edital ou parceria",
+        "action": "openLeadForm",
+        "target": "lead_form"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": ""
+    },
+    {
+      "id": "S07_FORMACOES",
+      "title": "Academy, trilhas e gamificação",
+      "subtitle": "A mudança se sustenta quando as pessoas aprendem, praticam e percebem avanço.",
+      "layout": "learning-gamification",
+      "goal": "valorizar design instrucional",
+      "visuals": [
+        "cards de trilhas",
+        "barras de progresso",
+        "selos de missão"
+      ],
+      "bullets": [
+        "trilhas para lideranças comunitárias, educadores e facilitadores",
+        "missões de cuidado, pertencimento e ação coletiva",
+        "microcertificações e evidências de aprendizagem"
+      ],
+      "data_points": [],
+      "cta_primary": {
+        "label": "Ver trilhas e jornadas",
+        "action": "openModal",
+        "target": "modal_trilhas_sociedade"
+      },
+      "cta_secondary": {
+        "label": "Solicitar formação customizada",
+        "action": "openLeadForm",
+        "target": "lead_form"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": ""
+    },
+    {
+      "id": "S08_GOVERNANCA_IMPACTO",
+      "title": "Governança que mostra o impacto humano do impacto social",
+      "subtitle": "Quem financia e quem lidera precisa ver não apenas o projeto, mas a saúde do ecossistema que sustenta o projeto.",
+      "layout": "impact-governance-community",
+      "goal": "conectar cuidado e accountability",
+      "visuals": [
+        "dashboard com indicadores humanos, comunitários e ODS",
+        "card lateral com histórias e evidências"
+      ],
+      "bullets": [
+        "painel de evolução do bem-estar",
+        "relatório de impacto e bem-estar",
+        "conexão com ODS, território e narrativa de transformação"
+      ],
+      "data_points": [],
+      "cta_primary": {
+        "label": "Abrir modelo de relatório",
+        "action": "openModal",
+        "target": "modal_relatorio_sociedade"
+      },
+      "cta_secondary": {
+        "label": "Montar painel para minha rede",
+        "action": "openLeadForm",
+        "target": "roadmap_form"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": ""
+    },
+    {
+      "id": "S09_FORMATOS",
+      "title": "Formatos de parceria possíveis",
+      "subtitle": "A mesma proposta pode nascer como piloto, projeto, formação, laboratório ou plataforma de rede.",
+      "layout": "partnership-cards",
+      "goal": "facilitar entrada comercial e institucional",
+      "visuals": [
+        "5 cards com ícones: piloto, edital, formação, laboratório, plataforma"
+      ],
+      "bullets": [
+        "piloto em uma organização",
+        "rede territorial ou temática",
+        "programa para educadores e lideranças",
+        "laboratório de inovação e evidências"
+      ],
+      "data_points": [],
+      "cta_primary": {
+        "label": "Escolher formato de parceria",
+        "action": "openModal",
+        "target": "modal_parcerias_sociedade"
+      },
+      "cta_secondary": {
+        "label": "Quero proposta",
+        "action": "openLeadForm",
+        "target": "lead_form"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": ""
+    },
+    {
+      "id": "S10_ECOSSISTEMA",
+      "title": "Ecossistema Integrado de Serviços e Produtos",
+      "subtitle": "A mesma arquitetura pode começar com um piloto e evoluir para um sistema completo de bem-estar, aprendizagem, governança e impacto.",
+      "layout": "catalog-grid-10",
+      "goal": "ampliar ticket, cross-sell e percepção de plataforma",
+      "visuals": [
+        "10 cards com tags coloridas por solução",
+        "hover com micro-resumo",
+        "CTA contextual por card"
+      ],
+      "bullets": [
+        "Mensurar, Educar, Transformar e Evoluir como jornada contínua",
+        "SaaS, consultoria, mentoria, gamificação, P&D e compliance conectados",
+        "navegação com filtros por dor, maturidade e segmento"
+      ],
+      "data_points": [],
+      "cta_primary": {
+        "label": "Explorar ecossistema completo",
+        "action": "openModal",
+        "target": "modal_ecossistema_ift"
+      },
+      "cta_secondary": {
+        "label": "Solicitar arquitetura integrada",
+        "action": "openLeadForm",
+        "target": "roadmap_form"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": "",
+      "service_cards": [
+        {
+          "pillar": "Mensurar",
+          "title": "Diagnóstico com 4 Lentes Científicas",
+          "items": [
+            "Raio-X do Bem-Estar",
+            "Pulso do Bem-Estar",
+            "Mapa da Felicidade"
+          ],
+          "cta": "Conhecer soluções"
+        },
+        {
+          "pillar": "Educar",
+          "title": "Academy & Formações de Impacto",
+          "items": [
+            "Academia Felicidade para Todos",
+            "Escola de Liderança que Faz Bem",
+            "Trilhas para uma Vida com Mais Sentido"
+          ],
+          "cta": "Conhecer soluções"
+        },
+        {
+          "pillar": "Transformar",
+          "title": "Programas de Impacto Baseados em Evidências",
+          "items": [
+            "Virada de Bem-Estar em 90 Dias",
+            "Cultura que Faz Bem",
+            "Comunidade Viva"
+          ],
+          "cta": "Conhecer soluções"
+        },
+        {
+          "pillar": "Evoluir",
+          "title": "Relatórios, Governança & Selo",
+          "items": [
+            "Painel de Evolução do Bem-Estar",
+            "Relatório de Impacto e Bem-Estar",
+            "Selo Felicidade para Todos"
+          ],
+          "cta": "Conhecer soluções"
+        },
+        {
+          "pillar": "SaaS",
+          "title": "Plataforma Digital",
+          "items": [
+            "IA",
+            "Dashboards",
+            "Automação"
+          ],
+          "cta": "Saiba mais"
+        },
+        {
+          "pillar": "Consultoria",
+          "title": "Estratégia & Implementação",
+          "items": [
+            "NR-1",
+            "ESG",
+            "Estratégia"
+          ],
+          "cta": "Saiba mais"
+        },
+        {
+          "pillar": "Mentoria",
+          "title": "Desenvolvimento de Lideranças",
+          "items": [
+            "Lideranças",
+            "Gestores",
+            "Educadores"
+          ],
+          "cta": "Saiba mais"
+        },
+        {
+          "pillar": "Gamificação",
+          "title": "Engajamento Inteligente",
+          "items": [
+            "Missões",
+            "Desafios",
+            "Jornadas"
+          ],
+          "cta": "Saiba mais"
+        },
+        {
+          "pillar": "P&D",
+          "title": "Pesquisa & Desenvolvimento",
+          "items": [
+            "Pesquisa",
+            "Benchmarking",
+            "Inovação"
+          ],
+          "cta": "Saiba mais"
+        },
+        {
+          "pillar": "Compliance",
+          "title": "Bem-Estar & Regulatório",
+          "items": [
+            "NR-1",
+            "Lei 14.831",
+            "Auditoria"
+          ],
+          "cta": "Saiba mais"
+        }
+      ]
+    },
+    {
+      "id": "S11_CREDIBILIDADE",
+      "title": "Escala e legitimidade para sustentar redes e programas",
+      "subtitle": "O Instituto combina base científica, experiência de campo e ativos digitais.",
+      "layout": "proof-numbers-community",
+      "goal": "dar segurança para parceria",
+      "visuals": [
+        "números de impacto com mapa e badges",
+        "faixa com missão institucional"
+      ],
+      "bullets": [
+        "ciência, dados e tecnologia a serviço da transformação",
+        "capacidade de operar em organizações, cidades e comunidades",
+        "histórico de impacto e aprendizagem aplicada"
+      ],
+      "data_points": [
+        {
+          "label": "Aplicação Pesquisa FIB com lideranças e colaboradores",
+          "value": "+110.000",
+          "badge": "Recorde Mundial"
+        },
+        {
+          "label": "Municípios impactados",
+          "value": "+219"
+        },
+        {
+          "label": "Instituições e organizações",
+          "value": "+700"
+        },
+        {
+          "label": "Projetos classificados por ODS",
+          "value": "+1300"
+        }
+      ],
+      "cta_primary": {
+        "label": "Conhecer a trajetória do Instituto",
+        "action": "openModal",
+        "target": "modal_sobre_ift"
+      },
+      "cta_secondary": {
+        "label": "Falar sobre parceria",
+        "action": "openLeadForm",
+        "target": "lead_form"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": ""
+    },
+    {
+      "id": "S12_QR_CONTATOS",
+      "title": "Contato e ativação imediata",
+      "subtitle": "Use o QR code para iniciar conversa, marcar uma reunião ou avançar para um desenho de piloto.",
+      "layout": "qr-contact-layout",
+      "goal": "simplificar próximo passo",
+      "visuals": [
+        "QR code em painel de vidro",
+        "dados institucionais em lista elegante"
+      ],
+      "bullets": [
+        "WhatsApp institucional",
+        "site e Instagram",
+        "endereçamento oficial do Instituto"
+      ],
+      "data_points": [],
+      "cta_primary": {
+        "label": "Abrir formulário de parceria",
+        "action": "openLeadForm",
+        "target": "lead_form"
+      },
+      "cta_secondary": {
+        "label": "Ver demo de impacto",
+        "action": "goToRoute",
+        "target": "/demos/sociedade-civil/impacto"
+      },
+      "modal": null,
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": ""
+    },
+    {
+      "id": "S14_FECHAMENTO",
+      "title": "Vamos desenhar a rota de implementação ideal para o seu contexto",
+      "subtitle": "Leve o Programa Felicidade e Crescimento para Todos para o sociedade civil com método, beleza, governança e impacto mensurável.",
+      "layout": "final-cta-split",
+      "goal": "converter reunião executiva e demo",
+      "visuals": [
+        "painel de próximo passo em 3 etapas",
+        "QR code do WhatsApp",
+        "lockup institucional com logo dark"
+      ],
+      "bullets": [
+        "1. diagnóstico de maturidade",
+        "2. demo dos apps prioritários",
+        "3. proposta com roadmap 90-365 dias"
+      ],
+      "data_points": [],
+      "cta_primary": {
+        "label": "Agendar reunião executiva",
+        "action": "openLeadForm",
+        "target": "lead_form"
+      },
+      "cta_secondary": {
+        "label": "Abrir demo dos apps",
+        "action": "goToRoute",
+        "target": "/demos/sociedade-civil"
+      },
+      "modal": {
+        "type": "footer-card",
+        "content": "mostrar dados institucionais, QR do WhatsApp, endereço e canais oficiais"
+      },
+      "transitions": {
+        "enter": "fade-up-soft",
+        "exit": "cross-dissolve",
+        "duration_ms": 720
+      },
+      "speaker_note": ""
+    }
+  ]
+}
