@@ -93,6 +93,14 @@ export default function SegmentDeck() {
 
   const progress = ((currentSlide + 1) / total) * 100;
 
+  if (!data) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <p className="text-muted-foreground">Segmento não encontrado.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Top bar */}
