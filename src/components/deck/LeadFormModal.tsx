@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, CheckCircle, Clock, Shield } from "lucide-react";
+import { X, Send, CheckCircle, Clock, Shield, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface LeadFormModalProps {
   isOpen: boolean;
@@ -8,9 +10,72 @@ interface LeadFormModalProps {
   segment?: string;
 }
 
+// Segment-specific cargo options
+const cargosBySegment: Record<string, string[]> = {
+  "Setor Público": [
+    "Secretário(a) Municipal/Estadual",
+    "Diretor(a) de RH / Gestão de Pessoas",
+    "Coordenador(a) de Programa",
+    "Assessor(a) Técnico(a)",
+    "Superintendente",
+    "Gestor(a) de Políticas Públicas",
+    "Prefeito(a) / Vice-prefeito(a)",
+    "Vereador(a) / Deputado(a)",
+    "Analista de Gestão",
+    "Outro",
+  ],
+  "Setor Privado": [
+    "CEO / Presidente",
+    "CHRO / VP de RH",
+    "Diretor(a) de Pessoas & Cultura",
+    "Gerente de RH / DHO",
+    "Head de Bem-Estar / Saúde Ocupacional",
+    "Gerente de ESG / Sustentabilidade",
+    "Coordenador(a) de T&D",
+    "Business Partner de RH",
+    "Analista de Clima / Engajamento",
+    "Outro",
+  ],
+  "Sociedade Civil": [
+    "Diretor(a) Executivo(a)",
+    "Coordenador(a) de Projetos",
+    "Gerente de Programas",
+    "Gestor(a) de Impacto Social",
+    "Assessor(a) Institucional",
+    "Analista de Captação / Fundraising",
+    "Líder Comunitário(a)",
+    "Pesquisador(a) / Consultor(a)",
+    "Voluntário(a) Estratégico(a)",
+    "Outro",
+  ],
+};
+
+const porteOptions = [
+  "Até 50 colaboradores",
+  "50–100 colaboradores",
+  "100–500 colaboradores",
+  "500–2.000 colaboradores",
+  "2.000–10.000 colaboradores",
+  "Acima de 10.000 colaboradores",
+];
+
+const prioridadeOptions = [
+  "Cultura Organizacional",
+  "NR-1 / Risco Psicossocial",
+  "Educação para Felicidade",
+  "Clima e Engajamento",
+  "Saúde Mental e Bem-estar",
+  "Integridade / Prevenção ao Assédio",
+  "ESG / Impacto Social",
+  "Liderança Positiva",
+  "Aprendizagem e Desenvolvimento",
+  "Diversidade e Inclusão",
+];
+
 export function LeadFormModal({ isOpen, onClose, segment }: LeadFormModalProps) {
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
   const [form, setForm] = useState({
     nome: "",
     email: "",
@@ -27,16 +92,40 @@ export function LeadFormModal({ isOpen, onClose, segment }: LeadFormModalProps) 
   const update = (field: string, value: string) =>
     setForm((prev) => ({ ...prev, [field]: value }));
 
-  const handleSubmit = () => {
-    setSubmitted(true);
+  const handleSubmit = async () => {
+    if (!form.nome.trim() || !form.email.trim()) {
+      toast.error("Preencha pelo menos nome e e-mail.");
+      return;
+    }
+
+    setSending(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("send-lead", {
+        body: form,
+      });
+
+      if (error) throw error;
+      setSubmitted(true);
+      toast.success("Formulário enviado com sucesso!");
+    } catch (err) {
+      console.error("Error sending lead:", err);
+      toast.error("Erro ao enviar. Tente novamente.");
+    } finally {
+      setSending(false);
+    }
   };
 
   const reset = () => {
     setStep(1);
     setSubmitted(false);
-    setForm({ nome: "", email: "", telefone: "", organizacao: "", cargo: "", segmento: segment || "", porte: "", prioridade: "", janela: "", mensagem: "" });
+    setForm({
+      nome: "", email: "", telefone: "", organizacao: "", cargo: "",
+      segmento: segment || "", porte: "", prioridade: "", janela: "", mensagem: "",
+    });
     onClose();
   };
+
+  const currentCargos = cargosBySegment[form.segmento] || cargosBySegment["Setor Privado"];
 
   return (
     <AnimatePresence>
@@ -61,74 +150,37 @@ export function LeadFormModal({ isOpen, onClose, segment }: LeadFormModalProps) 
                 <h2 className="font-heading text-xl font-bold text-foreground">
                   {submitted ? "Obrigado!" : "Agendar reunião"}
                 </h2>
-                <button
-                  onClick={reset}
-                  className="text-muted-foreground hover:text-foreground transition-colors p-1"
-                >
+                <button onClick={reset} className="text-muted-foreground hover:text-foreground transition-colors p-1">
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               {submitted ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="text-center py-12"
-                >
-                  <CheckCircle className="w-16 h-16 text-brand-gold mx-auto mb-6" />
-                  <h3 className="font-heading text-2xl font-bold text-foreground mb-3">
-                    Recebemos seu contato!
-                  </h3>
-                  <p className="text-muted-foreground mb-8">
-                    Nossa equipe retornará em até 24h com uma proposta e demo personalizada.
-                  </p>
-                  <button
-                    onClick={reset}
-                    className="gradient-gold text-primary-foreground font-heading font-bold px-6 py-3 rounded-lg"
-                  >
-                    Fechar
-                  </button>
-                </motion.div>
+                <SuccessState onClose={reset} />
               ) : (
                 <>
-                  {/* Trust badges */}
-                  <div className="flex gap-4 mb-8">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Clock className="w-3.5 h-3.5 text-brand-gold" />
-                      <span>Retorno em 24h</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Shield className="w-3.5 h-3.5 text-brand-cyan" />
-                      <span>LGPD Compliant</span>
-                    </div>
-                  </div>
-
-                  {/* Steps indicator */}
-                  <div className="flex gap-2 mb-8">
-                    {[1, 2].map((s) => (
-                      <div
-                        key={s}
-                        className={`h-1 flex-1 rounded-full transition-colors ${
-                          s <= step ? "gradient-gold" : "bg-muted"
-                        }`}
-                      />
-                    ))}
-                  </div>
+                  <TrustBadges />
+                  <StepIndicator step={step} />
 
                   <AnimatePresence mode="wait">
                     {step === 1 ? (
-                      <motion.div
-                        key="step1"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        className="space-y-4"
-                      >
-                        <InputField label="Nome completo" value={form.nome} onChange={(v) => update("nome", v)} />
-                        <InputField label="E-mail corporativo" value={form.email} onChange={(v) => update("email", v)} type="email" />
-                        <InputField label="Telefone" value={form.telefone} onChange={(v) => update("telefone", v)} />
+                      <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
+                        <InputField label="Nome completo *" value={form.nome} onChange={(v) => update("nome", v)} />
+                        <InputField label="E-mail corporativo *" value={form.email} onChange={(v) => update("email", v)} type="email" />
+                        <InputField label="Telefone / WhatsApp" value={form.telefone} onChange={(v) => update("telefone", v)} />
                         <InputField label="Organização" value={form.organizacao} onChange={(v) => update("organizacao", v)} />
-                        <InputField label="Cargo" value={form.cargo} onChange={(v) => update("cargo", v)} />
+                        <SelectField
+                          label="Segmento"
+                          value={form.segmento}
+                          onChange={(v) => { update("segmento", v); update("cargo", ""); }}
+                          options={["Setor Público", "Setor Privado", "Sociedade Civil"]}
+                        />
+                        <SelectField
+                          label="Cargo"
+                          value={form.cargo}
+                          onChange={(v) => update("cargo", v)}
+                          options={currentCargos}
+                        />
                         <button
                           onClick={() => setStep(2)}
                           className="w-full gradient-gold text-primary-foreground font-heading font-bold py-3 rounded-lg mt-4 hover:opacity-90 transition-opacity"
@@ -137,30 +189,18 @@ export function LeadFormModal({ isOpen, onClose, segment }: LeadFormModalProps) 
                         </button>
                       </motion.div>
                     ) : (
-                      <motion.div
-                        key="step2"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        className="space-y-4"
-                      >
+                      <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
                         <SelectField
-                          label="Segmento"
-                          value={form.segmento}
-                          onChange={(v) => update("segmento", v)}
-                          options={["Setor Público", "Setor Privado", "Sociedade Civil"]}
-                        />
-                        <SelectField
-                          label="Porte"
+                          label="Porte da organização"
                           value={form.porte}
                           onChange={(v) => update("porte", v)}
-                          options={["Até 100 pessoas", "100–500", "500–2.000", "2.000–10.000", "Acima de 10.000"]}
+                          options={porteOptions}
                         />
                         <SelectField
                           label="Principal prioridade"
                           value={form.prioridade}
                           onChange={(v) => update("prioridade", v)}
-                          options={["NR-1 / Risco Psicossocial", "Clima e Engajamento", "Integridade / Assédio", "ESG", "Aprendizagem", "Bem-estar geral"]}
+                          options={prioridadeOptions}
                         />
                         <SelectField
                           label="Janela de implantação"
@@ -189,10 +229,11 @@ export function LeadFormModal({ isOpen, onClose, segment }: LeadFormModalProps) 
                           </button>
                           <button
                             onClick={handleSubmit}
-                            className="flex-1 gradient-gold text-primary-foreground font-heading font-bold py-3 rounded-lg flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                            disabled={sending}
+                            className="flex-1 gradient-gold text-primary-foreground font-heading font-bold py-3 rounded-lg flex items-center justify-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-50"
                           >
-                            <Send className="w-4 h-4" />
-                            Enviar
+                            {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                            {sending ? "Enviando..." : "Enviar"}
                           </button>
                         </div>
                       </motion.div>
@@ -205,6 +246,42 @@ export function LeadFormModal({ isOpen, onClose, segment }: LeadFormModalProps) 
         </>
       )}
     </AnimatePresence>
+  );
+}
+
+function SuccessState({ onClose }: { onClose: () => void }) {
+  return (
+    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-12">
+      <CheckCircle className="w-16 h-16 text-brand-gold mx-auto mb-6" />
+      <h3 className="font-heading text-2xl font-bold text-foreground mb-3">Recebemos seu contato!</h3>
+      <p className="text-muted-foreground mb-8">Nossa equipe retornará em até 24h com uma proposta e demo personalizada.</p>
+      <button onClick={onClose} className="gradient-gold text-primary-foreground font-heading font-bold px-6 py-3 rounded-lg">Fechar</button>
+    </motion.div>
+  );
+}
+
+function TrustBadges() {
+  return (
+    <div className="flex gap-4 mb-8">
+      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <Clock className="w-3.5 h-3.5 text-brand-gold" />
+        <span>Retorno em 24h</span>
+      </div>
+      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <Shield className="w-3.5 h-3.5 text-brand-cyan" />
+        <span>LGPD Compliant</span>
+      </div>
+    </div>
+  );
+}
+
+function StepIndicator({ step }: { step: number }) {
+  return (
+    <div className="flex gap-2 mb-8">
+      {[1, 2].map((s) => (
+        <div key={s} className={`h-1 flex-1 rounded-full transition-colors ${s <= step ? "gradient-gold" : "bg-muted"}`} />
+      ))}
+    </div>
   );
 }
 

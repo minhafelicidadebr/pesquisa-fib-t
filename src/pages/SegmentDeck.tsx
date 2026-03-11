@@ -1,13 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, ChevronLeft, Home, Menu, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronLeft, Menu, X } from "lucide-react";
 import setorPublicoData from "@/data/setor-publico.json";
 import setorPrivadoData from "@/data/setor-privado.json";
 import sociedadeCivilData from "@/data/sociedade-civil.json";
 import { LeadFormModal } from "@/components/deck/LeadFormModal";
 import { InstitutionalFooter } from "@/components/deck/InstitutionalFooter";
 import { ImpactCounter } from "@/components/deck/ImpactCounter";
+import { PasswordGate } from "@/components/deck/PasswordGate";
 
 const segmentDataMap: Record<string, any> = {
   "setor-publico": setorPublicoData,
@@ -15,24 +16,27 @@ const segmentDataMap: Record<string, any> = {
   "sociedade-civil": sociedadeCivilData,
 };
 
-const segmentColorMap: Record<string, { gradient: string; glow: string; textGradient: string; badge: string }> = {
+const segmentColorMap: Record<string, { gradient: string; glow: string; textGradient: string; badge: string; colorClass: "gold" | "cyan" | "magenta" }> = {
   "setor-publico": {
     gradient: "gradient-gold",
     glow: "glow-gold",
     textGradient: "text-gradient-gold",
     badge: "bg-brand-gold/15 text-brand-gold",
+    colorClass: "gold",
   },
   "setor-privado": {
     gradient: "gradient-cyan",
     glow: "glow-cyan",
     textGradient: "text-gradient-cyan",
     badge: "bg-brand-cyan/15 text-brand-cyan",
+    colorClass: "cyan",
   },
   "sociedade-civil": {
     gradient: "gradient-magenta",
     glow: "glow-magenta",
     textGradient: "text-gradient-magenta",
     badge: "bg-brand-magenta/15 text-brand-magenta",
+    colorClass: "magenta",
   },
 };
 
@@ -43,12 +47,26 @@ export default function SegmentDeck() {
   const [formOpen, setFormOpen] = useState(false);
   const [indexOpen, setIndexOpen] = useState(false);
   const [direction, setDirection] = useState(0);
+  const [unlocked, setUnlocked] = useState(false);
 
   const data = segmentDataMap[segment || ""];
   const colors = segmentColorMap[segment || ""] || segmentColorMap["setor-publico"];
   const slides = (data?.slides || []) as any[];
   const total = slides.length;
   const slide = slides[currentSlide];
+
+  // Check if already unlocked in session
+  useEffect(() => {
+    const key = `deck_unlocked_${segment}`;
+    if (sessionStorage.getItem(key) === "true") {
+      setUnlocked(true);
+    }
+  }, [segment]);
+
+  const handleUnlock = () => {
+    setUnlocked(true);
+    sessionStorage.setItem(`deck_unlocked_${segment}`, "true");
+  };
 
   const goTo = useCallback((index: number) => {
     setDirection(index > currentSlide ? 1 : -1);
@@ -66,7 +84,7 @@ export default function SegmentDeck() {
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (formOpen || indexOpen) return;
+      if (formOpen || indexOpen || !unlocked) return;
       if (e.key === "ArrowRight" || e.key === "PageDown") next();
       if (e.key === "ArrowLeft" || e.key === "PageUp") prev();
       if (e.key === "Home") goTo(0);
@@ -75,7 +93,7 @@ export default function SegmentDeck() {
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [next, prev, goTo, total, formOpen, indexOpen, navigate]);
+  }, [next, prev, goTo, total, formOpen, indexOpen, navigate, unlocked]);
 
   const handleCta = (action: string, target?: string) => {
     if (action === "nextSlide") next();
@@ -84,14 +102,25 @@ export default function SegmentDeck() {
       const idx = slides.findIndex((s: any) => s.id === target);
       if (idx >= 0) goTo(idx);
     } else if (action === "openModal") {
-      // For now, show as an inline expansion or just next slide
-      next();
+      // Modals not implemented yet → open lead form as fallback
+      setFormOpen(true);
     } else if (action === "goToRoute" && target) {
-      navigate(target);
+      // If route doesn't exist (demos etc.), open lead form
+      if (target.startsWith("/demos")) {
+        setFormOpen(true);
+      } else {
+        navigate(target);
+      }
+    } else if (action === "downloadAsset") {
+      // Downloads not available yet → open lead form
+      setFormOpen(true);
+    } else {
+      // Any unhandled action → open lead form
+      setFormOpen(true);
     }
   };
 
-  const progress = ((currentSlide + 1) / total) * 100;
+  const progress = total > 0 ? ((currentSlide + 1) / total) * 100 : 0;
 
   if (!data) {
     return (
@@ -101,46 +130,37 @@ export default function SegmentDeck() {
     );
   }
 
+  // Password gate
+  if (!unlocked) {
+    return (
+      <PasswordGate
+        segmentLabel={data.segment_label}
+        onUnlock={handleUnlock}
+        colorClass={colors.colorClass}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Top bar */}
       <div className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-foreground/5">
-        {/* Progress bar */}
         <div className="h-0.5 bg-muted">
-          <motion.div
-            className={`h-full ${colors.gradient}`}
-            animate={{ width: `${progress}%` }}
-            transition={{ duration: 0.3 }}
-          />
+          <motion.div className={`h-full ${colors.gradient}`} animate={{ width: `${progress}%` }} transition={{ duration: 0.3 }} />
         </div>
         <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate("/")}
-              className="text-muted-foreground hover:text-foreground transition-colors p-1.5"
-              aria-label="Voltar ao hub"
-            >
+            <button onClick={() => navigate("/")} className="text-muted-foreground hover:text-foreground transition-colors p-1.5" aria-label="Voltar ao hub">
               <ChevronLeft className="w-5 h-5" />
             </button>
-            <span className={`font-heading font-bold text-sm ${colors.textGradient}`}>
-              {data.segment_label}
-            </span>
-            <span className="text-xs text-muted-foreground tabular-nums-data">
-              {currentSlide + 1} / {total}
-            </span>
+            <span className={`font-heading font-bold text-sm ${colors.textGradient}`}>{data.segment_label}</span>
+            <span className="text-xs text-muted-foreground tabular-nums-data">{currentSlide + 1} / {total}</span>
           </div>
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => setIndexOpen(!indexOpen)}
-              className="text-muted-foreground hover:text-foreground p-1.5 transition-colors"
-              aria-label="Índice de slides"
-            >
+            <button onClick={() => setIndexOpen(!indexOpen)} className="text-muted-foreground hover:text-foreground p-1.5 transition-colors" aria-label="Índice">
               <Menu className="w-5 h-5" />
             </button>
-            <button
-              onClick={() => setFormOpen(true)}
-              className={`${colors.gradient} text-primary-foreground font-heading font-bold text-xs px-4 py-1.5 rounded-lg hover:opacity-90 transition-opacity hidden sm:block`}
-            >
+            <button onClick={() => setFormOpen(true)} className={`${colors.gradient} text-primary-foreground font-heading font-bold text-xs px-4 py-1.5 rounded-lg hover:opacity-90 transition-opacity hidden sm:block`}>
               Agendar reunião
             </button>
           </div>
@@ -150,36 +170,17 @@ export default function SegmentDeck() {
       {/* Slide index overlay */}
       <AnimatePresence>
         {indexOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-background/95 backdrop-blur-sm overflow-y-auto pt-20 pb-8 px-6"
-          >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-40 bg-background/95 backdrop-blur-sm overflow-y-auto pt-20 pb-8 px-6">
             <div className="max-w-4xl mx-auto">
               <div className="flex items-center justify-between mb-8">
-                <h2 className="font-heading text-xl font-bold text-foreground">
-                  Índice — {data.segment_label}
-                </h2>
-                <button onClick={() => setIndexOpen(false)} className="text-muted-foreground hover:text-foreground">
-                  <X className="w-5 h-5" />
-                </button>
+                <h2 className="font-heading text-xl font-bold text-foreground">Índice — {data.segment_label}</h2>
+                <button onClick={() => setIndexOpen(false)} className="text-muted-foreground hover:text-foreground"><X className="w-5 h-5" /></button>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {slides.map((s: any, i: number) => (
-                  <button
-                    key={s.id}
-                    onClick={() => goTo(i)}
-                    className={`text-left glass-card rounded-lg p-4 hover:border-brand-gold/20 transition-all ${
-                      i === currentSlide ? "border-brand-gold/40 glow-gold" : ""
-                    }`}
-                  >
-                    <span className="text-xs text-muted-foreground font-heading tabular-nums-data">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <h3 className="font-heading font-semibold text-sm text-foreground mt-1 line-clamp-2">
-                      {s.title}
-                    </h3>
+                  <button key={s.id} onClick={() => goTo(i)} className={`text-left glass-card rounded-lg p-4 hover:border-brand-gold/20 transition-all ${i === currentSlide ? "border-brand-gold/40 glow-gold" : ""}`}>
+                    <span className="text-xs text-muted-foreground font-heading tabular-nums-data">{String(i + 1).padStart(2, "0")}</span>
+                    <h3 className="font-heading font-semibold text-sm text-foreground mt-1 line-clamp-2">{s.title}</h3>
                   </button>
                 ))}
               </div>
@@ -201,87 +202,45 @@ export default function SegmentDeck() {
                 exit={{ opacity: 0, y: direction >= 0 ? -40 : 40 }}
                 transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               >
-                {/* Slide number */}
                 <div className="flex items-center gap-3 mb-6">
-                  <span className={`text-xs font-heading font-bold ${colors.badge} px-3 py-1 rounded-full`}>
-                    {String(currentSlide + 1).padStart(2, "0")}
-                  </span>
-                  {slide.goal && (
-                    <span className="text-xs text-muted-foreground italic">
-                      {slide.goal}
-                    </span>
-                  )}
+                  <span className={`text-xs font-heading font-bold ${colors.badge} px-3 py-1 rounded-full`}>{String(currentSlide + 1).padStart(2, "0")}</span>
+                  {slide.goal && <span className="text-xs text-muted-foreground italic">{slide.goal}</span>}
                 </div>
 
-                {/* Title */}
-                <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4 leading-[1.15] tracking-tight">
-                  {slide.title}
-                </h1>
+                <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4 leading-[1.15] tracking-tight">{slide.title}</h1>
 
-                {/* Subtitle */}
                 {slide.subtitle && (
-                  <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-10 max-w-3xl">
-                    {slide.subtitle}
-                  </p>
+                  <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-10 max-w-3xl">{slide.subtitle}</p>
                 )}
 
-                {/* Bullets */}
                 {slide.bullets && slide.bullets.length > 0 && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-10">
                     {slide.bullets.map((bullet: string, i: number) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.3 + i * 0.08 }}
-                        className="glass-card rounded-lg px-5 py-4 flex items-start gap-3"
-                      >
+                      <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 + i * 0.08 }} className="glass-card rounded-lg px-5 py-4 flex items-start gap-3">
                         <span className={`w-2 h-2 rounded-full ${colors.gradient} mt-2 shrink-0`} />
-                        <span className="text-foreground/90 text-sm leading-relaxed">
-                          {bullet}
-                        </span>
+                        <span className="text-foreground/90 text-sm leading-relaxed">{bullet}</span>
                       </motion.div>
                     ))}
                   </div>
                 )}
 
-                {/* Data points / impact counters */}
                 {slide.data_points && slide.data_points.length > 0 && (
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
                     {slide.data_points.map((dp: any, i: number) => (
-                      <ImpactCounter
-                        key={dp.label}
-                        value={dp.value}
-                        label={dp.label}
-                        badge={dp.badge}
-                        delay={i * 150}
-                      />
+                      <ImpactCounter key={dp.label} value={dp.value} label={dp.label} badge={dp.badge} delay={i * 150} />
                     ))}
                   </div>
                 )}
 
-                {/* Service cards (for ecosystem slides) */}
                 {slide.service_cards && (
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-10">
                     {slide.service_cards.map((sc: any, i: number) => (
-                      <motion.div
-                        key={sc.pillar}
-                        initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 + i * 0.05 }}
-                        className="glass-card rounded-lg p-4 hover:border-brand-gold/20 transition-all cursor-pointer group"
-                      >
-                        <span className={`text-[10px] font-heading font-bold uppercase tracking-wider ${colors.textGradient}`}>
-                          {sc.pillar}
-                        </span>
-                        <h4 className="font-heading font-bold text-xs text-foreground mt-1 mb-2 line-clamp-2">
-                          {sc.title}
-                        </h4>
+                      <motion.div key={sc.pillar} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 + i * 0.05 }} className="glass-card rounded-lg p-4 hover:border-brand-gold/20 transition-all cursor-pointer group">
+                        <span className={`text-[10px] font-heading font-bold uppercase tracking-wider ${colors.textGradient}`}>{sc.pillar}</span>
+                        <h4 className="font-heading font-bold text-xs text-foreground mt-1 mb-2 line-clamp-2">{sc.title}</h4>
                         <ul className="space-y-1">
                           {sc.items.map((item: string) => (
-                            <li key={item} className="text-[11px] text-muted-foreground">
-                              • {item}
-                            </li>
+                            <li key={item} className="text-[11px] text-muted-foreground">• {item}</li>
                           ))}
                         </ul>
                       </motion.div>
@@ -317,36 +276,16 @@ export default function SegmentDeck() {
         {/* Bottom nav */}
         <div className="sticky bottom-0 glass-card border-t border-foreground/5 px-6 py-3">
           <div className="max-w-5xl mx-auto flex items-center justify-between">
-            <button
-              onClick={prev}
-              disabled={currentSlide === 0}
-              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground disabled:opacity-30 transition-all font-heading"
-            >
+            <button onClick={prev} disabled={currentSlide === 0} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground disabled:opacity-30 transition-all font-heading">
               <ArrowLeft className="w-4 h-4" />
               <span className="hidden sm:inline">Anterior</span>
             </button>
-
-            {/* Dot indicators */}
             <div className="flex gap-1.5 max-w-xs overflow-hidden">
               {slides.map((_: any, i: number) => (
-                <button
-                  key={i}
-                  onClick={() => goTo(i)}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    i === currentSlide
-                      ? `${colors.gradient} w-6`
-                      : "bg-muted hover:bg-muted-foreground/30"
-                  }`}
-                  aria-label={`Slide ${i + 1}`}
-                />
+                <button key={i} onClick={() => goTo(i)} className={`w-2 h-2 rounded-full transition-all ${i === currentSlide ? `${colors.gradient} w-6` : "bg-muted hover:bg-muted-foreground/30"}`} aria-label={`Slide ${i + 1}`} />
               ))}
             </div>
-
-            <button
-              onClick={next}
-              disabled={currentSlide === total - 1}
-              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground disabled:opacity-30 transition-all font-heading"
-            >
+            <button onClick={next} disabled={currentSlide === total - 1} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground disabled:opacity-30 transition-all font-heading">
               <span className="hidden sm:inline">Próximo</span>
               <ArrowRight className="w-4 h-4" />
             </button>
@@ -354,9 +293,7 @@ export default function SegmentDeck() {
         </div>
       </main>
 
-      {/* Show footer on last slide */}
       {currentSlide === total - 1 && <InstitutionalFooter />}
-
       <LeadFormModal isOpen={formOpen} onClose={() => setFormOpen(false)} segment={data.segment_label} />
     </div>
   );
