@@ -46,16 +46,7 @@ export default function SegmentDeck() {
 
   const data = segmentDataMap[segment || ""];
   const colors = segmentColorMap[segment || ""] || segmentColorMap["setor-publico"];
-
-  if (!data) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <p className="text-muted-foreground">Segmento não encontrado.</p>
-      </div>
-    );
-  }
-
-  const slides = data.slides as any[];
+  const slides = (data?.slides || []) as any[];
   const total = slides.length;
   const slide = slides[currentSlide];
 
