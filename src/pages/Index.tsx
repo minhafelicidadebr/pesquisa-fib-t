@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowDown, Sparkles } from "lucide-react";
+import { ArrowDown, Sparkles, MessageCircle } from "lucide-react";
 import hubData from "@/data/hub.json";
 import { ImpactCounter } from "@/components/deck/ImpactCounter";
 import { SegmentCard } from "@/components/deck/SegmentCard";
 import { LeadFormModal } from "@/components/deck/LeadFormModal";
 import { InstitutionalFooter } from "@/components/deck/InstitutionalFooter";
+import fibiaAvatar from "@/assets/fibia-avatar.png";
 
 const Index = () => {
   const [formOpen, setFormOpen] = useState(false);
@@ -200,6 +201,47 @@ const Index = () => {
 
       <InstitutionalFooter />
       <LeadFormModal isOpen={formOpen} onClose={() => setFormOpen(false)} />
+
+      {/* FIBia Floating CTA - Bottom Right */}
+      <motion.a
+        href="/fibia"
+        initial={{ opacity: 0, scale: 0.8, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ delay: 2, duration: 0.5, type: "spring", damping: 15 }}
+        className="fixed bottom-6 right-6 z-50 group"
+      >
+        <div className="relative">
+          {/* Pulse ring */}
+          <div className="absolute inset-0 bg-brand-gold/30 rounded-full blur-xl animate-ping" style={{ animationDuration: "3s" }} />
+          <div className="absolute -inset-2 bg-gradient-to-r from-brand-gold via-brand-cyan to-brand-magenta rounded-full blur-lg opacity-60 group-hover:opacity-80 transition-opacity animate-pulse-glow" />
+          
+          {/* Main button */}
+          <div className="relative flex items-center gap-3 bg-surface-strong border border-brand-gold/30 rounded-full pl-2 pr-5 py-2 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 cursor-pointer">
+            {/* Avatar */}
+            <div className="relative">
+              <img
+                src={fibiaAvatar}
+                alt="FIBia"
+                className="w-12 h-12 rounded-full border-2 border-brand-gold/50 object-cover"
+              />
+              <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 rounded-full border-2 border-background animate-pulse" />
+            </div>
+            
+            {/* Text */}
+            <div className="flex flex-col">
+              <span className="font-heading font-bold text-sm text-foreground group-hover:text-brand-gold transition-colors">
+                Converse com a FIBia
+              </span>
+              <span className="text-[10px] text-muted-foreground">
+                Teste seu bem-estar grátis
+              </span>
+            </div>
+            
+            {/* Icon */}
+            <MessageCircle className="w-4 h-4 text-brand-gold group-hover:scale-110 transition-transform" />
+          </div>
+        </div>
+      </motion.a>
     </div>
   );
 };
