@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, ChevronLeft, Menu, X, Home, Shield, Globe, Zap, 
 import setorPublicoData from "@/data/setor-publico.json";
 import setorPrivadoData from "@/data/setor-privado.json";
 import sociedadeCivilData from "@/data/sociedade-civil.json";
+import fibiaAvatar from "@/assets/fibia-avatar.png";
 import { LeadFormModal } from "@/components/deck/LeadFormModal";
 import { InstitutionalFooter } from "@/components/deck/InstitutionalFooter";
 import { ImpactCounter } from "@/components/deck/ImpactCounter";
