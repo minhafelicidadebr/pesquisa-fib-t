@@ -143,6 +143,9 @@ export default function SegmentDeck() {
             <button onClick={() => navigate("/")} className="text-muted-foreground hover:text-foreground p-1.5 transition-colors" aria-label="Página inicial">
               <Home className="w-4 h-4" />
             </button>
+            <button onClick={toggleFullscreen} className="text-muted-foreground hover:text-foreground p-1.5 transition-colors" aria-label="Modo apresentação (F5)" title="Apresentar (F5)">
+              {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
+            </button>
             <button onClick={() => setIndexOpen(!indexOpen)} className="text-muted-foreground hover:text-foreground p-1.5 transition-colors" aria-label="Índice">
               <Menu className="w-5 h-5" />
             </button>
