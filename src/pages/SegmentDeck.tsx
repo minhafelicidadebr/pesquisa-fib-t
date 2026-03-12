@@ -70,18 +70,34 @@ export default function SegmentDeck() {
   const next = useCallback(() => { if (currentSlide < total - 1) goTo(currentSlide + 1); }, [currentSlide, total, goTo]);
   const prev = useCallback(() => { if (currentSlide > 0) goTo(currentSlide - 1); }, [currentSlide, goTo]);
 
+  const toggleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {});
+    } else {
+      document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {});
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleFsChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", handleFsChange);
+    return () => document.removeEventListener("fullscreenchange", handleFsChange);
+  }, []);
+
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (formOpen || indexOpen || lensOpen || !unlocked) return;
-      if (e.key === "ArrowRight" || e.key === "PageDown") next();
+      if (e.key === "F5") { e.preventDefault(); toggleFullscreen(); return; }
+      if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") { e.preventDefault(); next(); }
       if (e.key === "ArrowLeft" || e.key === "PageUp") prev();
       if (e.key === "Home") goTo(0);
       if (e.key === "End") goTo(total - 1);
+      if (e.key === "Escape" && isFullscreen) { document.exitFullscreen(); return; }
       if (e.key === "Escape") navigate("/");
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [next, prev, goTo, total, formOpen, indexOpen, lensOpen, navigate, unlocked]);
+  }, [next, prev, goTo, total, formOpen, indexOpen, lensOpen, navigate, unlocked, isFullscreen, toggleFullscreen]);
 
   const openLens = (lensId?: string) => {
     setLensInitial(lensId);
