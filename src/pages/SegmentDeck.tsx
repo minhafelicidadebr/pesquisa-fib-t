@@ -7,11 +7,11 @@ import setorPrivadoData from "@/data/setor-privado.json";
 import sociedadeCivilData from "@/data/sociedade-civil.json";
 import fibiaAvatar from "@/assets/fibia-avatar.png";
 import { LeadFormModal } from "@/components/deck/LeadFormModal";
-import { InstitutionalFooter } from "@/components/deck/InstitutionalFooter";
 import { ImpactCounter } from "@/components/deck/ImpactCounter";
 import { PasswordGate } from "@/components/deck/PasswordGate";
 import { DiagnosticLensModal } from "@/components/deck/DiagnosticLensModal";
 import { ScienceSlide } from "@/components/deck/ScienceSlide";
+import { FinalSlide } from "@/components/deck/FinalSlide";
 
 const segmentDataMap: Record<string, any> = {
   "setor-publico": setorPublicoData,
