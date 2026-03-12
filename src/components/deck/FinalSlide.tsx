@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Instagram, Globe, MapPin, Phone, TrendingUp, TrendingDown } from "lucide-react";
+import { ArrowRight, Instagram, Globe, MapPin, Phone, TrendingUp, TrendingDown, BookOpen } from "lucide-react";
 import fibiaAvatar from "@/assets/fibia-avatar.png";
 
 interface FinalSlideProps {
