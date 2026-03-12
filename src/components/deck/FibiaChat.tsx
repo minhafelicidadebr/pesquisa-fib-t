@@ -5,6 +5,7 @@ import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Responsi
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import fibiaAvatar from "@/assets/fibia-avatar.png";
+import { FibiaPdfExport } from "@/components/deck/FibiaPdfExport";
 
 // FIB-T Questions (32 total)
 const questions = [
