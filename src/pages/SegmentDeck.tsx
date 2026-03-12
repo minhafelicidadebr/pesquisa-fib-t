@@ -194,7 +194,7 @@ export default function SegmentDeck() {
                               <IconComp className="w-5 h-5 text-brand-gold mt-0.5 shrink-0 group-hover:scale-110 transition-transform" />
                               <div>
                                 <span className="text-foreground/90 text-sm leading-relaxed">{bullet}</span>
-                                <p className="text-xs text-brand-gold mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Clique para explorar →</p>
+                                <p className="text-xs text-brand-gold mt-1.5 font-heading font-semibold">Clique para explorar →</p>
                               </div>
                             </motion.button>
                           );
