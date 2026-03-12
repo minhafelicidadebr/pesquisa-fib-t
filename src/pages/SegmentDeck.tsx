@@ -270,61 +270,9 @@ export default function SegmentDeck() {
       </main>
 
       {currentSlide === total - 1 && (
-        <>
-          {/* FIBia CTA on last slide */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-            className="max-w-5xl mx-auto px-6 -mt-8 mb-12"
-          >
-            <div className="glass-card-strong rounded-2xl p-6 md:p-8 border-brand-cyan/20 relative overflow-hidden">
-              {/* Background glow */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-brand-cyan/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/4" />
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-brand-gold/10 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/4" />
-              
-              <div className="relative flex flex-col md:flex-row items-center gap-6">
-                {/* Avatar section */}
-                <div className="relative shrink-0">
-                  <div className="absolute inset-0 bg-brand-cyan/20 rounded-full blur-xl animate-pulse-glow" />
-                  <img
-                    src="/src/assets/fibia-avatar.png"
-                    alt="FIBia"
-                    className="w-20 h-20 md:w-24 md:h-24 rounded-full border-3 border-brand-cyan/30 relative z-10 object-cover"
-                  />
-                  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-background animate-pulse" />
-                </div>
-                
-                {/* Content */}
-                <div className="flex-1 text-center md:text-left">
-                  <h3 className="font-display text-xl md:text-2xl font-bold text-foreground mb-2">
-                    Quer ir <span className="text-gradient-cyan">mais fundo</span>?
-                  </h3>
-                  <p className="text-muted-foreground text-sm md:text-base mb-4 max-w-xl">
-                    Teste a <strong className="text-brand-cyan">FIBia</strong>, nossa IA de Felicidade Interna Bruta. 
-                    Um diagnóstico completo com 32 questões científicas, dashboard personalizado e trilhas de desenvolvimento.
-                  </p>
-                  <div className="flex flex-wrap gap-2 justify-center md:justify-start mb-4">
-                    <span className="text-[10px] bg-brand-cyan/15 text-brand-cyan px-2 py-1 rounded-full">9 Domínios</span>
-                    <span className="text-[10px] bg-brand-gold/15 text-brand-gold px-2 py-1 rounded-full">IA + Ciência</span>
-                    <span className="text-[10px] bg-brand-magenta/15 text-brand-magenta px-2 py-1 rounded-full">Trilhas Personalizadas</span>
-                  </div>
-                </div>
-                
-                {/* CTA Button */}
-                <a
-                  href="/fibia"
-                  className="shrink-0 gradient-cyan text-primary-foreground font-heading font-bold px-6 py-3 rounded-xl flex items-center gap-2 hover:opacity-90 transition-all hover:scale-105 glow-cyan"
-                >
-                  Testar Demo da FIBia
-                  <ArrowRight className="w-4 h-4" />
-                </a>
-              </div>
-            </div>
-          </motion.div>
-          
-          <InstitutionalFooter />
-        </>
+        <div className="max-w-5xl mx-auto px-6 pb-12 -mt-4">
+          <FinalSlide colorClass={colors.colorClass} />
+        </div>
       )}
       <LeadFormModal isOpen={formOpen} onClose={() => setFormOpen(false)} segment={data.segment_label} />
       <DiagnosticLensModal isOpen={lensOpen} onClose={() => setLensOpen(false)} initialLens={lensInitial} colorClass={colors.colorClass} />
