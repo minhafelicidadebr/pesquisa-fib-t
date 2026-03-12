@@ -6,6 +6,7 @@ import { ImpactCounter } from "@/components/deck/ImpactCounter";
 import { SegmentCard } from "@/components/deck/SegmentCard";
 import { LeadFormModal } from "@/components/deck/LeadFormModal";
 import { InstitutionalFooter } from "@/components/deck/InstitutionalFooter";
+import { KnowledgeSection } from "@/components/deck/KnowledgeSection";
 import fibiaAvatar from "@/assets/fibia-avatar.png";
 
 const Index = () => {
