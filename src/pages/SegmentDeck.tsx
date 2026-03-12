@@ -37,6 +37,7 @@ export default function SegmentDeck() {
   const [lensInitial, setLensInitial] = useState<string | undefined>();
   const [direction, setDirection] = useState(0);
   const [unlocked, setUnlocked] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const data = segmentDataMap[segment || ""];
   const colors = segmentColorMap[segment || ""] || segmentColorMap["setor-publico"];
