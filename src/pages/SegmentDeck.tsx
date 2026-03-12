@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, ChevronLeft, Menu, X, Home, Shield, Globe, Zap, Star } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronLeft, Menu, X, Home, Shield, Globe, Zap, Star, Maximize, Minimize } from "lucide-react";
 import setorPublicoData from "@/data/setor-publico.json";
 import setorPrivadoData from "@/data/setor-privado.json";
 import sociedadeCivilData from "@/data/sociedade-civil.json";
@@ -37,6 +37,7 @@ export default function SegmentDeck() {
   const [lensInitial, setLensInitial] = useState<string | undefined>();
   const [direction, setDirection] = useState(0);
   const [unlocked, setUnlocked] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const data = segmentDataMap[segment || ""];
   const colors = segmentColorMap[segment || ""] || segmentColorMap["setor-publico"];
@@ -69,18 +70,34 @@ export default function SegmentDeck() {
   const next = useCallback(() => { if (currentSlide < total - 1) goTo(currentSlide + 1); }, [currentSlide, total, goTo]);
   const prev = useCallback(() => { if (currentSlide > 0) goTo(currentSlide - 1); }, [currentSlide, goTo]);
 
+  const toggleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {});
+    } else {
+      document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {});
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleFsChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", handleFsChange);
+    return () => document.removeEventListener("fullscreenchange", handleFsChange);
+  }, []);
+
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (formOpen || indexOpen || lensOpen || !unlocked) return;
-      if (e.key === "ArrowRight" || e.key === "PageDown") next();
+      if (e.key === "F5") { e.preventDefault(); toggleFullscreen(); return; }
+      if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") { e.preventDefault(); next(); }
       if (e.key === "ArrowLeft" || e.key === "PageUp") prev();
       if (e.key === "Home") goTo(0);
       if (e.key === "End") goTo(total - 1);
+      if (e.key === "Escape" && isFullscreen) { document.exitFullscreen(); return; }
       if (e.key === "Escape") navigate("/");
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [next, prev, goTo, total, formOpen, indexOpen, lensOpen, navigate, unlocked]);
+  }, [next, prev, goTo, total, formOpen, indexOpen, lensOpen, navigate, unlocked, isFullscreen, toggleFullscreen]);
 
   const openLens = (lensId?: string) => {
     setLensInitial(lensId);
@@ -108,9 +125,9 @@ export default function SegmentDeck() {
   if (!unlocked) return <PasswordGate segmentLabel={data.segment_label} onUnlock={handleUnlock} colorClass={colors.colorClass} />;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className={`min-h-screen bg-background flex flex-col ${isFullscreen ? "cursor-none" : ""}`}>
       {/* Top bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-foreground/5">
+      <div className={`fixed top-0 left-0 right-0 z-50 glass-card border-b border-foreground/5 transition-transform duration-300 ${isFullscreen ? "-translate-y-full" : ""}`}>
         <div className="h-0.5 bg-muted">
           <motion.div className={`h-full ${colors.gradient}`} animate={{ width: `${progress}%` }} transition={{ duration: 0.3 }} />
         </div>
@@ -125,6 +142,9 @@ export default function SegmentDeck() {
           <div className="flex items-center gap-2">
             <button onClick={() => navigate("/")} className="text-muted-foreground hover:text-foreground p-1.5 transition-colors" aria-label="Página inicial">
               <Home className="w-4 h-4" />
+            </button>
+            <button onClick={toggleFullscreen} className="text-muted-foreground hover:text-foreground p-1.5 transition-colors" aria-label="Modo apresentação (F5)" title="Apresentar (F5)">
+              {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
             </button>
             <button onClick={() => setIndexOpen(!indexOpen)} className="text-muted-foreground hover:text-foreground p-1.5 transition-colors" aria-label="Índice">
               <Menu className="w-5 h-5" />
@@ -257,7 +277,7 @@ export default function SegmentDeck() {
         </div>
 
         {/* Bottom nav */}
-        <div className="sticky bottom-0 glass-card border-t border-foreground/5 px-6 py-3">
+        <div className={`sticky bottom-0 glass-card border-t border-foreground/5 px-6 py-3 transition-transform duration-300 ${isFullscreen ? "translate-y-full" : ""}`}>
           <div className="max-w-5xl mx-auto flex items-center justify-between">
             <button onClick={prev} disabled={currentSlide === 0} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground disabled:opacity-30 transition-all font-heading">
               <ArrowLeft className="w-4 h-4" /><span className="hidden sm:inline">Anterior</span>

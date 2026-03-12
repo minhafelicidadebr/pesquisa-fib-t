@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Instagram, Globe, MapPin, Phone, TrendingUp, TrendingDown } from "lucide-react";
+import { ArrowRight, Instagram, Globe, MapPin, Phone, TrendingUp, TrendingDown, BookOpen } from "lucide-react";
 import fibiaAvatar from "@/assets/fibia-avatar.png";
 
 interface FinalSlideProps {
@@ -59,7 +59,12 @@ export function FinalSlide({ colorClass }: FinalSlideProps) {
             {impactPhrases[phraseIndex]}
           </motion.p>
         </AnimatePresence>
-        <p className="text-[10px] text-muted-foreground mt-1">Fonte: Gallup, Achor & Seligman — Delivering Happiness</p>
+        <div className="flex items-center justify-center gap-3 mt-2">
+          <p className="text-[10px] text-muted-foreground">Fonte: Gallup, Achor & Seligman — Delivering Happiness</p>
+          <a href="/evidencias" className="text-[10px] text-brand-gold font-heading font-semibold hover:underline flex items-center gap-1">
+            <BookOpen className="w-3 h-3" /> Ver evidências
+          </a>
+        </div>
       </div>
 
       {/* Stats grid — compact */}
