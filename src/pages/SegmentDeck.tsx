@@ -40,12 +40,15 @@ export default function SegmentDeck() {
 
   const data = segmentDataMap[segment || ""];
   const colors = segmentColorMap[segment || ""] || segmentColorMap["setor-publico"];
-  const slides = (data?.slides || []) as any[];
+  const dataSlides = (data?.slides || []) as any[];
+  // Append a virtual final slide
+  const slides = [...dataSlides, { id: "FINAL_SLIDE", title: "Impacto & Próximos Passos", layout: "final" }];
   const total = slides.length;
   const slide = slides[currentSlide];
 
   const isScienceSlide = slide?.id === "S01B_CIENCIA";
   const is4LensSlide = slide?.id?.includes("4LENTES");
+  const isFinalSlide = slide?.id === "FINAL_SLIDE";
 
   useEffect(() => {
     const key = `deck_unlocked_${segment}`;
@@ -167,8 +170,10 @@ export default function SegmentDeck() {
                 exit={{ opacity: 0, y: direction >= 0 ? -40 : 40 }}
                 transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               >
-                {/* Science slide override */}
-                {isScienceSlide ? (
+                {/* Final slide override */}
+                {isFinalSlide ? (
+                  <FinalSlide colorClass={colors.colorClass} />
+                ) : isScienceSlide ? (
                   <ScienceSlide colorClass={colors.colorClass} onCtaClick={() => setFormOpen(true)} onNextSlide={next} />
                 ) : (
                   <>
@@ -269,11 +274,6 @@ export default function SegmentDeck() {
         </div>
       </main>
 
-      {currentSlide === total - 1 && (
-        <div className="max-w-5xl mx-auto px-6 pb-12 -mt-4">
-          <FinalSlide colorClass={colors.colorClass} />
-        </div>
-      )}
       <LeadFormModal isOpen={formOpen} onClose={() => setFormOpen(false)} segment={data.segment_label} />
       <DiagnosticLensModal isOpen={lensOpen} onClose={() => setLensOpen(false)} initialLens={lensInitial} colorClass={colors.colorClass} />
     </div>
