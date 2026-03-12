@@ -274,6 +274,21 @@
       "speaker_note": "Abrir pela missão pública: ambientes mais saudáveis produzem melhor política pública, melhor clima institucional e melhor serviço ao cidadão."
     },
     {
+      "id": "S01B_CIENCIA",
+      "title": "+3.000 artigos científicos. Uma metodologia validada.",
+      "subtitle": "O Work Wellbeing Playbook 2.0 da Universidade de Oxford é a maior revisão sistemática de intervenções baseadas em evidências para bem-estar no trabalho.",
+      "layout": "science-highlight",
+      "goal": "",
+      "visuals": [],
+      "bullets": [],
+      "data_points": [],
+      "cta_primary": { "label": "Continuar apresentação", "action": "nextSlide" },
+      "cta_secondary": { "label": "Agendar reunião científica", "action": "openLeadForm" },
+      "modal": null,
+      "transitions": { "enter": "fade-up-soft", "exit": "cross-dissolve", "duration_ms": 720 },
+      "speaker_note": ""
+    },
+    {
       "id": "S02_POR_QUE_AGORA",
       "title": "Por que isso importa agora para o Setor Público",
       "subtitle": "Saúde institucional, prevenção ao assédio, qualidade do serviço e confiança pública passaram a ser temas de gestão, não apenas de discurso.",
@@ -457,9 +472,9 @@
       ],
       "bullets": [
         "fortalecer cultura de respeito e prevenção",
-        "reduzir ruído, fricção e desgaste organizacional",
+        "elevar o florescimento humano: reduzir estresse sistêmico e ampliar emoções positivas no ambiente institucional",
         "ampliar aprendizagem institucional e colaboração entre áreas",
-        "qualificar prestação de serviço e confiança interna"
+        "promover confiança e sentido de propósito: quando servidores florescem, o serviço público se transforma"
       ],
       "data_points": [],
       "cta_primary": {
