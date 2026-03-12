@@ -274,11 +274,6 @@ export default function SegmentDeck() {
         </div>
       </main>
 
-      {currentSlide === total - 1 && (
-        <div className="max-w-5xl mx-auto px-6 pb-12 -mt-4">
-          <FinalSlide colorClass={colors.colorClass} />
-        </div>
-      )}
       <LeadFormModal isOpen={formOpen} onClose={() => setFormOpen(false)} segment={data.segment_label} />
       <DiagnosticLensModal isOpen={lensOpen} onClose={() => setLensOpen(false)} initialLens={lensInitial} colorClass={colors.colorClass} />
     </div>
