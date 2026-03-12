@@ -277,7 +277,7 @@ export default function SegmentDeck() {
         </div>
 
         {/* Bottom nav */}
-        <div className="sticky bottom-0 glass-card border-t border-foreground/5 px-6 py-3">
+        <div className={`sticky bottom-0 glass-card border-t border-foreground/5 px-6 py-3 transition-transform duration-300 ${isFullscreen ? "translate-y-full" : ""}`}>
           <div className="max-w-5xl mx-auto flex items-center justify-between">
             <button onClick={prev} disabled={currentSlide === 0} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground disabled:opacity-30 transition-all font-heading">
               <ArrowLeft className="w-4 h-4" /><span className="hidden sm:inline">Anterior</span>
