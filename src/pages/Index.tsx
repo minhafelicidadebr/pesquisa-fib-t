@@ -200,6 +200,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Knowledge Section */}
+      <KnowledgeSection />
+
       <InstitutionalFooter />
       <LeadFormModal isOpen={formOpen} onClose={() => setFormOpen(false)} />
 

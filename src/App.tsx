@@ -22,6 +22,7 @@ const App = () => (
           <Route path="/apresentacoes" element={<Index />} />
           <Route path="/apresentacoes/:segment" element={<SegmentDeck />} />
           <Route path="/fibia" element={<FibiaDemo />} />
+          <Route path="/evidencias" element={<EvidenceBank />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

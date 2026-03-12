@@ -560,6 +560,7 @@ export function FibiaChat() {
 
               {/* Actions */}
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                {analysis && <FibiaPdfExport analysis={analysis} />}
                 <button onClick={restart} className="border border-foreground/20 text-foreground/80 font-heading text-sm px-6 py-3 rounded-lg hover:bg-foreground/5 transition-colors flex items-center justify-center gap-2">
                   <RotateCcw className="w-4 h-4" />
                   Refazer diagnóstico
