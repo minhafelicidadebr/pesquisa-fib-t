@@ -170,8 +170,10 @@ export default function SegmentDeck() {
                 exit={{ opacity: 0, y: direction >= 0 ? -40 : 40 }}
                 transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               >
-                {/* Science slide override */}
-                {isScienceSlide ? (
+                {/* Final slide override */}
+                {isFinalSlide ? (
+                  <FinalSlide colorClass={colors.colorClass} />
+                ) : isScienceSlide ? (
                   <ScienceSlide colorClass={colors.colorClass} onCtaClick={() => setFormOpen(true)} onNextSlide={next} />
                 ) : (
                   <>
