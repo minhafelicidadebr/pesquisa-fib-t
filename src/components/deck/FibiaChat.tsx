@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Loader2, ChevronRight, BarChart3, ArrowRight, Home, RotateCcw } from "lucide-react";
+import { Send, Loader2, ChevronRight, BarChart3, ArrowRight, Home, RotateCcw, Download } from "lucide-react";
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
