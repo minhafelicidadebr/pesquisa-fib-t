@@ -125,9 +125,9 @@ export default function SegmentDeck() {
   if (!unlocked) return <PasswordGate segmentLabel={data.segment_label} onUnlock={handleUnlock} colorClass={colors.colorClass} />;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className={`min-h-screen bg-background flex flex-col ${isFullscreen ? "cursor-none" : ""}`}>
       {/* Top bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-foreground/5">
+      <div className={`fixed top-0 left-0 right-0 z-50 glass-card border-b border-foreground/5 transition-transform duration-300 ${isFullscreen ? "-translate-y-full" : ""}`}>
         <div className="h-0.5 bg-muted">
           <motion.div className={`h-full ${colors.gradient}`} animate={{ width: `${progress}%` }} transition={{ duration: 0.3 }} />
         </div>
