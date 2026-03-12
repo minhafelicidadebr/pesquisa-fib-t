@@ -40,12 +40,15 @@ export default function SegmentDeck() {
 
   const data = segmentDataMap[segment || ""];
   const colors = segmentColorMap[segment || ""] || segmentColorMap["setor-publico"];
-  const slides = (data?.slides || []) as any[];
+  const dataSlides = (data?.slides || []) as any[];
+  // Append a virtual final slide
+  const slides = [...dataSlides, { id: "FINAL_SLIDE", title: "Impacto & Próximos Passos", layout: "final" }];
   const total = slides.length;
   const slide = slides[currentSlide];
 
   const isScienceSlide = slide?.id === "S01B_CIENCIA";
   const is4LensSlide = slide?.id?.includes("4LENTES");
+  const isFinalSlide = slide?.id === "FINAL_SLIDE";
 
   useEffect(() => {
     const key = `deck_unlocked_${segment}`;
