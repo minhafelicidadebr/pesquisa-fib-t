@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, ChevronLeft, Menu, X, Home, Shield, Globe, Zap, Star } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronLeft, Menu, X, Home, Shield, Globe, Zap, Star, Maximize, Minimize } from "lucide-react";
 import setorPublicoData from "@/data/setor-publico.json";
 import setorPrivadoData from "@/data/setor-privado.json";
 import sociedadeCivilData from "@/data/sociedade-civil.json";
