@@ -284,6 +284,21 @@
       "speaker_note": ""
     },
     {
+      "id": "S01B_CIENCIA",
+      "title": "+3.000 artigos científicos. Uma metodologia validada.",
+      "subtitle": "O Work Wellbeing Playbook 2.0 da Universidade de Oxford é a maior revisão sistemática de intervenções baseadas em evidências para bem-estar no trabalho.",
+      "layout": "science-highlight",
+      "goal": "",
+      "visuals": [],
+      "bullets": [],
+      "data_points": [],
+      "cta_primary": { "label": "Continuar apresentação", "action": "nextSlide" },
+      "cta_secondary": { "label": "Agendar reunião científica", "action": "openLeadForm" },
+      "modal": null,
+      "transitions": { "enter": "fade-up-soft", "exit": "cross-dissolve", "duration_ms": 720 },
+      "speaker_note": ""
+    },
+    {
       "id": "S02_RISCO_E_ALPHA",
       "title": "A crise emocional já é risco de balanço",
       "subtitle": "Absenteísmo, rotatividade, acidentes, conflito, assédio e baixa energia corroem EBITDA, marca empregadora e execução.",
