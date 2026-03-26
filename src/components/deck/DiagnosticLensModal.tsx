@@ -122,7 +122,7 @@ export function DiagnosticLensModal({ isOpen, onClose, initialLens, colorClass }
   const [activeLens, setActiveLens] = useState(initialLens || "copsoq");
 
   // Sync active lens when modal opens with a different lens
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen && initialLens) {
       setActiveLens(initialLens);
     }
