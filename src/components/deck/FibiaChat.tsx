@@ -1,11 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Loader2, ChevronRight, BarChart3, ArrowRight, Home, RotateCcw, Download } from "lucide-react";
-import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import fibiaAvatar from "@/assets/fibia-avatar.png";
-import { FibiaPdfExport } from "@/components/deck/FibiaPdfExport";
+import { FibiaDashboard } from "@/components/deck/FibiaDashboard";
 
 // FIB-T Questions (32 total)
 const questions = [
@@ -406,171 +405,7 @@ export function FibiaChat() {
 
           {/* DASHBOARD */}
           {phase === "dashboard" && analysis && (
-            <motion.div key="dashboard" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="pt-8 pb-16 space-y-8">
-              {/* Summary header */}
-              <div className="text-center mb-8">
-                <img src={fibiaAvatar} alt="FIBia" className="w-16 h-16 rounded-full border-3 border-brand-gold/30 mx-auto mb-4" />
-                <h1 className="font-display text-2xl md:text-3xl font-bold text-foreground mb-2">
-                  Seu Dashboard de <span className="text-gradient-gold">Felicidade</span>
-                </h1>
-                <p className="text-sm text-muted-foreground">Diagnóstico FIB-T • Análise por IA</p>
-              </div>
-
-              {/* Summary */}
-              <div className="glass-card-strong rounded-2xl p-6">
-                <h3 className="font-heading font-bold text-foreground mb-3 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full gradient-gold" />
-                  Análise Geral
-                </h3>
-                <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-line">{analysis.summary}</p>
-              </div>
-
-              {/* Radar Chart */}
-              <div className="glass-card rounded-2xl p-6">
-                <h3 className="font-heading font-bold text-foreground mb-4 flex items-center gap-2">
-                  <BarChart3 className="w-4 h-4 text-brand-gold" />
-                  Mapa dos 9 Domínios FIB
-                </h3>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <RadarChart data={Object.entries(analysis.domains).map(([key, val]) => ({
-                      domain: val.label,
-                      score: val.score,
-                      fullMark: 4,
-                    }))}>
-                      <PolarGrid stroke="hsl(222 15% 25%)" />
-                      <PolarAngleAxis dataKey="domain" tick={{ fill: "hsl(220 10% 60%)", fontSize: 10 }} />
-                      <PolarRadiusAxis angle={90} domain={[0, 4]} tick={{ fill: "hsl(220 10% 50%)", fontSize: 9 }} />
-                      <Radar name="Seu Score" dataKey="score" stroke="hsl(43 100% 52%)" fill="hsl(43 100% 52%)" fillOpacity={0.3} strokeWidth={2} />
-                    </RadarChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-
-              {/* Factors bar chart */}
-              <div className="glass-card rounded-2xl p-6">
-                <h3 className="font-heading font-bold text-foreground mb-4">3 Fatores FIB-T</h3>
-                <div className="h-48">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={Object.values(analysis.factors).map((f) => ({ name: f.label, score: f.score }))} layout="vertical">
-                      <XAxis type="number" domain={[0, 4]} tick={{ fill: "hsl(220 10% 60%)", fontSize: 11 }} />
-                      <YAxis dataKey="name" type="category" width={150} tick={{ fill: "hsl(220 10% 70%)", fontSize: 11 }} />
-                      <Tooltip contentStyle={{ background: "hsl(222 30% 12%)", border: "1px solid hsl(222 15% 20%)", borderRadius: 8, color: "#fff" }} />
-                      <Bar dataKey="score" radius={[0, 6, 6, 0]}>
-                        {Object.values(analysis.factors).map((_, i) => (
-                          <Cell key={i} fill={["hsl(43 100% 52%)", "hsl(181 100% 40%)", "hsl(340 82% 47%)"][i]} />
-                        ))}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-
-              {/* Strengths & Vulnerabilities */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="glass-card rounded-2xl p-6">
-                  <h3 className="font-heading font-bold text-foreground mb-3 flex items-center gap-2">
-                    <span className="text-green-400">✦</span> Potências
-                  </h3>
-                  <div className="space-y-2">
-                    {analysis.strengths.map((s, i) => (
-                      <div key={i} className="flex items-center gap-2 bg-green-500/10 rounded-lg px-3 py-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
-                        <span className="text-sm text-foreground/90">{s}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="glass-card rounded-2xl p-6">
-                  <h3 className="font-heading font-bold text-foreground mb-3 flex items-center gap-2">
-                    <span className="text-amber-400">⚡</span> Atenção Prioritária
-                  </h3>
-                  <div className="space-y-2">
-                    {analysis.vulnerabilities.map((v, i) => (
-                      <div key={i} className="flex items-center gap-2 bg-amber-500/10 rounded-lg px-3 py-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                        <span className="text-sm text-foreground/90">{v}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Recommendations */}
-              {analysis.recommendations.length > 0 && (
-                <div className="glass-card rounded-2xl p-6">
-                  <h3 className="font-heading font-bold text-foreground mb-4 flex items-center gap-2">
-                    <ChevronRight className="w-4 h-4 text-brand-gold" />
-                    Recomendações Personalizadas
-                  </h3>
-                  <div className="space-y-3">
-                    {analysis.recommendations.map((rec, i) => (
-                      <div key={i} className="glass-card rounded-lg p-4 flex items-start gap-3">
-                        <span className={`text-[10px] font-heading font-bold px-2 py-0.5 rounded-full shrink-0 ${
-                          rec.timeframe === "7d" ? "bg-green-500/15 text-green-400" :
-                          rec.timeframe === "30d" ? "bg-blue-500/15 text-blue-400" :
-                          "bg-purple-500/15 text-purple-400"
-                        }`}>
-                          {rec.timeframe === "7d" ? "7 dias" : rec.timeframe === "30d" ? "30 dias" : "90 dias"}
-                        </span>
-                        <div>
-                          <p className="text-sm text-foreground/90">{rec.action}</p>
-                          <p className="text-xs text-muted-foreground mt-1">{rec.domain} • {rec.driver_category}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Learning trails */}
-              {analysis.learning_trails.length > 0 && (
-                <div className="glass-card rounded-2xl p-6">
-                  <h3 className="font-heading font-bold text-foreground mb-4 flex items-center gap-2">
-                    📚 Trilhas de Aprendizagem Sugeridas
-                  </h3>
-                  <div className="space-y-3">
-                    {analysis.learning_trails.map((trail, i) => (
-                      <div key={i} className="glass-card rounded-lg p-4 border-l-3 border-brand-gold">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h4 className="font-heading font-bold text-sm text-foreground">{trail.title}</h4>
-                          <span className={`text-[9px] font-heading font-bold px-2 py-0.5 rounded-full ${
-                            trail.priority === "high" ? "bg-red-500/15 text-red-400" :
-                            trail.priority === "medium" ? "bg-amber-500/15 text-amber-400" :
-                            "bg-green-500/15 text-green-400"
-                          }`}>
-                            {trail.priority === "high" ? "Alta" : trail.priority === "medium" ? "Média" : "Baixa"}
-                          </span>
-                        </div>
-                        <p className="text-xs text-muted-foreground">{trail.description}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Encouragement */}
-              <div className="glass-card-strong rounded-2xl p-6 text-center border border-brand-gold/20 glow-gold">
-                <img src={fibiaAvatar} alt="FIBia" className="w-12 h-12 rounded-full mx-auto mb-3 border-2 border-brand-gold/30" />
-                <p className="text-foreground/90 text-sm leading-relaxed italic max-w-lg mx-auto">
-                  "{analysis.encouragement}"
-                </p>
-                <p className="text-xs text-muted-foreground mt-2">— FIBia, sua assistente de bem-estar 🌻</p>
-              </div>
-
-              {/* Actions */}
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                {analysis && <FibiaPdfExport analysis={analysis} />}
-                <button onClick={restart} className="border border-foreground/20 text-foreground/80 font-heading text-sm px-6 py-3 rounded-lg hover:bg-foreground/5 transition-colors flex items-center justify-center gap-2">
-                  <RotateCcw className="w-4 h-4" />
-                  Refazer diagnóstico
-                </button>
-                <a href="/" className="gradient-gold text-primary-foreground font-heading font-bold text-sm px-6 py-3 rounded-lg flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
-                  <Home className="w-4 h-4" />
-                  Voltar ao início
-                </a>
-              </div>
-            </motion.div>
+            <FibiaDashboard analysis={analysis} onRestart={restart} />
           )}
         </AnimatePresence>
       </main>
