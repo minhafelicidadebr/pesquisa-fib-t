@@ -1,11 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Loader2, ChevronRight, BarChart3, ArrowRight, Home, RotateCcw, Download } from "lucide-react";
-import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import fibiaAvatar from "@/assets/fibia-avatar.png";
-import { FibiaPdfExport } from "@/components/deck/FibiaPdfExport";
+import { FibiaDashboard } from "@/components/deck/FibiaDashboard";
 
 // FIB-T Questions (32 total)
 const questions = [
