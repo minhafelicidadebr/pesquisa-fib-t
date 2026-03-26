@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Shield, Globe, Zap, Star, ChevronRight, Target, BookOpen, Scale, Users } from "lucide-react";
 
@@ -120,6 +120,13 @@ const colorMap = {
 
 export function DiagnosticLensModal({ isOpen, onClose, initialLens, colorClass }: DiagnosticLensModalProps) {
   const [activeLens, setActiveLens] = useState(initialLens || "copsoq");
+
+  // Sync active lens when modal opens with a different lens
+  useEffect(() => {
+    if (isOpen && initialLens) {
+      setActiveLens(initialLens);
+    }
+  }, [isOpen, initialLens]);
   const colors = colorMap[colorClass];
   const lens = lensData.find((l) => l.id === activeLens) || lensData[0];
   const Icon = lens.icon;
