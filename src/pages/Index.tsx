@@ -7,6 +7,8 @@ import { SegmentCard } from "@/components/deck/SegmentCard";
 import { LeadFormModal } from "@/components/deck/LeadFormModal";
 import { InstitutionalFooter } from "@/components/deck/InstitutionalFooter";
 import { KnowledgeSection } from "@/components/deck/KnowledgeSection";
+import { CrisisDashboard } from "@/components/deck/CrisisDashboard";
+import { ImpactCalculator } from "@/components/deck/ImpactCalculator";
 import fibiaAvatar from "@/assets/fibia-avatar.png";
 
 const Index = () => {
@@ -199,6 +201,12 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Crisis Dashboard */}
+      <CrisisDashboard />
+
+      {/* Impact Calculator */}
+      <ImpactCalculator />
 
       {/* Knowledge Section */}
       <KnowledgeSection />
