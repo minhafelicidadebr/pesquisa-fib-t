@@ -202,6 +202,12 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Crisis Dashboard */}
+      <CrisisDashboard />
+
+      {/* Impact Calculator */}
+      <ImpactCalculator />
+
       {/* Knowledge Section */}
       <KnowledgeSection />
 
