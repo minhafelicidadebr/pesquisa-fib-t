@@ -273,9 +273,11 @@ export function ImpactCalculator() {
                         <YAxis type="category" dataKey="name" width={90}
                           tick={{ fontSize: 11, fill: "hsl(220, 10%, 60%)" }} axisLine={false} tickLine={false} />
                         <Tooltip
-                          formatter={(v: number) => formatBRL(v)}
+                          formatter={(v: number) => [formatBRL(v), ""]}
                           contentStyle={{ background: "hsl(222, 30%, 12%)", border: "1px solid hsl(222, 15%, 20%)", borderRadius: 8, fontSize: 12 }}
                           labelStyle={{ color: "hsl(210, 20%, 98%)" }}
+                          itemStyle={{ color: "hsl(210, 20%, 98%)" }}
+                          cursor={{ fill: "hsl(222, 15%, 20%, 0.3)" }}
                         />
                         <Bar dataKey="value" radius={[0, 6, 6, 0]}>
                           {costBreakdown.map((entry, i) => (
@@ -344,7 +346,11 @@ export function ImpactCalculator() {
                         <PolarRadiusAxis tick={false} axisLine={false} />
                         <Radar name="Custo atual" dataKey="full" stroke="hsl(340, 82%, 47%)" fill="hsl(340, 82%, 47%)" fillOpacity={0.15} />
                         <Radar name="Economia" dataKey="saving" stroke="hsl(105, 58%, 42%)" fill="hsl(105, 58%, 42%)" fillOpacity={0.3} />
-                        <Tooltip contentStyle={{ background: "hsl(222, 30%, 12%)", border: "1px solid hsl(222, 15%, 20%)", borderRadius: 8, fontSize: 11 }} />
+                        <Tooltip
+                          contentStyle={{ background: "hsl(222, 30%, 12%)", border: "1px solid hsl(222, 15%, 20%)", borderRadius: 8, fontSize: 11 }}
+                          labelStyle={{ color: "hsl(210, 20%, 98%)" }}
+                          itemStyle={{ color: "hsl(210, 20%, 98%)" }}
+                        />
                       </RadarChart>
                     </ResponsiveContainer>
                     <div className="flex items-center justify-center gap-4 mt-1">
