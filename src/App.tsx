@@ -11,6 +11,11 @@ import FibiaDemo from "./pages/FibiaDemo.tsx";
 import EvidenceBank from "./pages/EvidenceBank.tsx";
 import Auth from "./pages/Auth.tsx";
 import Profile from "./pages/Profile.tsx";
+import Diagnostico from "./pages/Diagnostico.tsx";
+import Dashboard from "./pages/Dashboard.tsx";
+import Academy from "./pages/Academy.tsx";
+import Intervencoes from "./pages/Intervencoes.tsx";
+import Relatorios from "./pages/Relatorios.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -28,6 +33,11 @@ const App = () => (
             <Route path="/apresentacoes/:segment" element={<SegmentDeck />} />
             <Route path="/fibia" element={<FibiaDemo />} />
             <Route path="/evidencias" element={<EvidenceBank />} />
+            <Route path="/diagnostico" element={<Diagnostico />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/academy" element={<Academy />} />
+            <Route path="/intervencoes" element={<Intervencoes />} />
+            <Route path="/relatorios" element={<Relatorios />} />
             <Route path="/auth" element={<Auth />} />
             <Route
               path="/perfil"

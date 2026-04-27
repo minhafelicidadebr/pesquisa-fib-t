@@ -1,0 +1,36 @@
+# Project Memory
+
+## Core
+- **Stack**: React, Tailwind, Framer Motion. Backend: Supabase Edge Functions, Resend.
+- **Aesthetic**: Dark immersive, glassmorphism. Premium colors: Gold, Magenta, Cyan, Green.
+- **Typography**: Fraunces (display), Manrope (titles/body).
+- **UI Constraints**: No slide numbering (e.g. "01...") or proposition titles. Clean aesthetic.
+- **Narrative**: Empathetic, 1st person. Focus on "human flourishing". Science of Happiness terms, no admin jargon.
+- **Auth**: Email/password only, auto-confirm enabled. Profiles + user_roles tables. Use `useAuth()` hook from `@/hooks/useAuth`.
+- **Navbar**: Use `<AppNavbar onCtaClick={...} />` from `@/components/layout/AppNavbar` on all top-level pages.
+- **Roadmap**: Sprint 1 (Auth) ✓, Sprint 2 (Navbar+5 rotas) ✓, Sprint 3 (Landing Premium) ✓. Next: Diagnóstico FIB real, Academy, Dashboard data.
+
+## Memories
+- [Auth & Profiles](mem://features/auth) — Sprint 1: profiles, user_roles, useAuth, ProtectedRoute, /auth, /perfil
+- [Ecosystem Routes](mem://features/ecosystem-routes) — Sprint 2: AppNavbar + 5 placeholder pages (/diagnostico, /dashboard, /academy, /intervencoes, /relatorios)
+- [Landing Premium](mem://features/landing-premium) — Sprint 3: Neuromarketing hero, 4 axes, social proof, science, final CTA
+- [Aesthetic & Colors](mem://style/aesthetic) — Dark immersive aesthetic, glassmorphism, and premium color palette
+- [JSON Slide Rendering](mem://architecture/json-rendering) — Dynamic presentation ecosystem where slide content/structure are generated from JSON
+- [Presentation Navigation](mem://features/navigation-system) — Keyboard navigation, progress bar, index overlay, and fullscreen mode logic
+- [Presentation Passwords](mem://auth/presentation-passwords) — Segment-specific passwords for accessing presentations (Public, Private, Civil)
+- [Lead Capture Form](mem://features/lead-capture) — Configuration for lead capture form, dynamic fields, and Resend email destination
+- [Empty CTA Routing](mem://features/cta-routing) — Behavior of CTAs without defined links and demo flow buttons
+- [Scientific Frameworks](mem://features/scientific-foundation) — Core scientific foundation based on Oxford's Work-Wellbeing-Playbook 2.0
+- [4 Scientific Lenses](mem://features/diagnostic-lenses) — Interactive diagnostic lenses (COPSOQ, FIB-T, PERMA+V, VIA) with contextual modals
+- [FIBia Chatbot Diagnostic](mem://features/fibia-chatbot) — AI chatbot for organizational diagnosis, generating premium dashboards and action plans
+- [Supabase Backend Architecture](mem://architecture/backend) — Infrastructure built on Supabase Edge Functions, including Resend and FIBia AI engine
+- [FIBia Access Points](mem://features/fibia-access) — Entry points to the FIBia chatbot in the UI (floating CTA, final slide)
+- [Unified Final Slide](mem://features/presentation-final-slide) — Layout and content of the final slide for all presentations (metrics, quotes, QR)
+- [FIBia Voice Synthesis](mem://features/fibia-voice-preference) — Preference for ElevenLabs for future voice synthesis implementation
+- [Virtual Slide Injection](mem://architecture/presentation-flow) — Technique for dynamically inserting the final slide into the presentation deck
+- [FIBia PDF Report](mem://features/fibia-pdf-report) — Premium PDF report generation for the FIBia diagnostic
+- [Evidence Bank Route](mem://features/scientific-evidence-bank) — Interactive scientific evidence bank (/evidencias) with 3000+ articles
+- [Homepage Knowledge Section](mem://features/knowledge-section) — Interactive homepage section highlighting wellbeing frameworks with pop-outs
+- [Crisis Dashboard](mem://features/crisis-dashboard) — Interactive global metrics dashboard categorizing data by confidence level
+- [Financial Impact Calculator](mem://features/financial-impact-calculator) — Scientific calculator for Cost of Inaction and ROI of wellbeing
+- [Gamification Principles](mem://features/gamification-principles) — IFT Coin, privacy-first design, LGPD compliance, and personal progress focus
