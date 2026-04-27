@@ -9,6 +9,7 @@ import { InstitutionalFooter } from "@/components/deck/InstitutionalFooter";
 import { KnowledgeSection } from "@/components/deck/KnowledgeSection";
 import { CrisisDashboard } from "@/components/deck/CrisisDashboard";
 import { ImpactCalculator } from "@/components/deck/ImpactCalculator";
+import { AuthMenu } from "@/components/auth/AuthMenu";
 import fibiaAvatar from "@/assets/fibia-avatar.png";
 
 const Index = () => {
@@ -35,12 +36,15 @@ const Index = () => {
             alt="Instituto Felicidade para Todos"
             className="h-8 md:h-10"
           />
-          <button
-            onClick={() => setFormOpen(true)}
-            className="gradient-gold text-primary-foreground font-heading font-bold text-sm px-5 py-2 rounded-lg hover:opacity-90 transition-opacity"
-          >
-            Agendar reunião
-          </button>
+          <div className="flex items-center gap-2">
+            <AuthMenu />
+            <button
+              onClick={() => setFormOpen(true)}
+              className="gradient-gold text-primary-foreground font-heading font-bold text-sm px-5 py-2 rounded-lg hover:opacity-90 transition-opacity"
+            >
+              Agendar reunião
+            </button>
+          </div>
         </div>
       </motion.nav>
 
