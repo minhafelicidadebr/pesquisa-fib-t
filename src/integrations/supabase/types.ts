@@ -62,6 +62,48 @@ export type Database = {
         }
         Relationships: []
       }
+      nr1_assessments: {
+        Row: {
+          created_at: string
+          global_risk: string
+          global_score: number
+          green_flags: Json
+          id: string
+          raw_answers: Json
+          recommendations: Json
+          red_flags: Json
+          subscales: Json
+          summary: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          global_risk: string
+          global_score: number
+          green_flags?: Json
+          id?: string
+          raw_answers: Json
+          recommendations?: Json
+          red_flags?: Json
+          subscales: Json
+          summary?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          global_risk?: string
+          global_score?: number
+          green_flags?: Json
+          id?: string
+          raw_answers?: Json
+          recommendations?: Json
+          red_flags?: Json
+          subscales?: Json
+          summary?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
