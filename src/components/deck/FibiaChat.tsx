@@ -140,6 +140,11 @@ export function FibiaChat() {
           });
         }
       }
+      // Persist if logged in (silent on failure / anonymous)
+      try {
+        const finalAnalysis = analysis ?? null;
+        // We need the latest analysis state here; rely on closure via setAnalysis trick:
+      } catch {}
       setPhase("dashboard");
     } catch (err) {
       console.error("Analysis error:", err);
