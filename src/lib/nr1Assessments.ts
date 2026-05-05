@@ -24,17 +24,17 @@ export async function saveNR1(payload: {
   const { analysis } = payload;
   const { data, error } = await supabase
     .from("nr1_assessments")
-    .insert({
+    .insert([{
       user_id: auth.user.id,
       global_risk: analysis.global_risk,
       global_score: analysis.global_score,
-      subscales: analysis.subscales,
-      red_flags: analysis.red_flags,
-      green_flags: analysis.green_flags,
-      recommendations: payload.recommendations,
+      subscales: analysis.subscales as any,
+      red_flags: analysis.red_flags as any,
+      green_flags: analysis.green_flags as any,
+      recommendations: payload.recommendations as any,
       summary: payload.summary,
-      raw_answers: payload.raw_answers,
-    })
+      raw_answers: payload.raw_answers as any,
+    }])
     .select()
     .single();
   if (error) {
