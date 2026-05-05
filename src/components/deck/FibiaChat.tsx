@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import fibiaAvatar from "@/assets/fibia-avatar.png";
 import { FibiaDashboard } from "@/components/deck/FibiaDashboard";
+import { saveAssessment } from "@/lib/fibAssessments";
 
 // FIB-T Questions (32 total)
 const questions = [
