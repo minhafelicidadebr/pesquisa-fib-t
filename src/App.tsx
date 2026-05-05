@@ -16,6 +16,8 @@ import Dashboard from "./pages/Dashboard.tsx";
 import Academy from "./pages/Academy.tsx";
 import Intervencoes from "./pages/Intervencoes.tsx";
 import Relatorios from "./pages/Relatorios.tsx";
+import NR1Hub from "./pages/NR1Hub.tsx";
+import NR1Chat from "./pages/NR1Chat.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -38,6 +40,8 @@ const App = () => (
             <Route path="/academy" element={<Academy />} />
             <Route path="/intervencoes" element={<Intervencoes />} />
             <Route path="/relatorios" element={<Relatorios />} />
+            <Route path="/nr1" element={<NR1Hub />} />
+            <Route path="/nr1/avaliacao" element={<NR1Chat />} />
             <Route path="/auth" element={<Auth />} />
             <Route
               path="/perfil"

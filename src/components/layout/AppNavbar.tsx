@@ -11,6 +11,7 @@ import {
   MessageCircle,
   Microscope,
   PresentationIcon,
+  ShieldAlert,
   Sparkles,
   Stethoscope,
   X,
@@ -29,6 +30,7 @@ interface NavItem {
 
 const PRIMARY_NAV: NavItem[] = [
   { label: "Diagnóstico", to: "/diagnostico", icon: Stethoscope, description: "Avaliação FIB-T conversacional", accent: "gold" },
+  { label: "NR-1", to: "/nr1", icon: ShieldAlert, description: "COPSOQ II · Saúde mental no trabalho", accent: "magenta" },
   { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard, description: "Painel pessoal e organizacional", accent: "cyan" },
   { label: "Academy", to: "/academy", icon: BookOpen, description: "Trilhas gamificadas com IFT Coin", accent: "gold" },
   { label: "Intervenções", to: "/intervencoes", icon: Activity, description: "Práticas baseadas em evidência", accent: "magenta" },
@@ -37,7 +39,8 @@ const PRIMARY_NAV: NavItem[] = [
 
 const SECONDARY_NAV: NavItem[] = [
   { label: "Apresentações", to: "/apresentacoes", icon: PresentationIcon, description: "Decks por segmento", accent: "gold" },
-  { label: "FIBia", to: "/fibia", icon: MessageCircle, description: "Diagnóstico com IA", accent: "magenta" },
+  { label: "FIBia", to: "/fibia", icon: MessageCircle, description: "Diagnóstico FIB-T com IA", accent: "magenta" },
+  { label: "NORA (NR-1)", to: "/nr1/avaliacao", icon: ShieldAlert, description: "Chatbot COPSOQ II", accent: "magenta" },
   { label: "Evidências", to: "/evidencias", icon: Microscope, description: "Banco científico (3.000+)", accent: "cyan" },
 ];
 
