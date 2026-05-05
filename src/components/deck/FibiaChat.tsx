@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import fibiaAvatar from "@/assets/fibia-avatar.png";
 import { FibiaDashboard } from "@/components/deck/FibiaDashboard";
+import { saveAssessment } from "@/lib/fibAssessments";
 
 // FIB-T Questions (32 total)
 const questions = [
@@ -95,9 +96,28 @@ export function FibiaChat() {
 
   const canFinish = Object.keys(answers).length === questions.length;
 
+  const persist = async (result: AnalysisResult) => {
+    try {
+      await saveAssessment({
+        domains: result.domains,
+        factors: result.factors,
+        strengths: result.strengths,
+        vulnerabilities: result.vulnerabilities,
+        recommendations: result.recommendations,
+        learning_trails: result.learning_trails,
+        summary: result.summary,
+        encouragement: result.encouragement,
+        raw_answers: answers,
+      });
+    } catch (e) {
+      console.warn("persist skipped", e);
+    }
+  };
+
   const submitForAnalysis = async () => {
     setPhase("analyzing");
     setAnalyzing(true);
+    let result: AnalysisResult | null = null;
     try {
       const formattedAnswers = questions.map((q) => ({
         id: q.id,
@@ -114,20 +134,15 @@ export function FibiaChat() {
       if (error) throw error;
 
       const content = data?.content || "";
-      // Extract JSON from response
       const jsonMatch = content.match(/```json\s*([\s\S]*?)```/);
       if (jsonMatch) {
-        const parsed = JSON.parse(jsonMatch[1]);
-        setAnalysis(parsed);
+        result = JSON.parse(jsonMatch[1]);
       } else {
-        // Try parsing the whole content as JSON
         try {
-          const parsed = JSON.parse(content);
-          setAnalysis(parsed);
+          result = JSON.parse(content);
         } catch {
-          // Build a basic analysis from the answers
           const domainScores = calculateDomainScores();
-          setAnalysis({
+          result = {
             summary: content || "Análise concluída com sucesso.",
             domains: domainScores,
             factors: calculateFactorScores(),
@@ -136,17 +151,15 @@ export function FibiaChat() {
             recommendations: [],
             learning_trails: [],
             encouragement: "Continue investindo no seu bem-estar! 🌟",
-          });
+          };
         }
       }
-      setPhase("dashboard");
     } catch (err) {
       console.error("Analysis error:", err);
-      toast.error("Erro ao analisar resultados. Gerando análise local.");
-      // Fallback to local analysis
+      toast.error("Análise local gerada (IA indisponível).");
       const domainScores = calculateDomainScores();
-      setAnalysis({
-        summary: "Sua Felicidade Interna Bruta foi calculada com base nas suas respostas. Confira abaixo seus resultados por domínio.",
+      result = {
+        summary: "Sua Felicidade Interna Bruta foi calculada com base nas suas respostas.",
         domains: domainScores,
         factors: calculateFactorScores(),
         strengths: getTopDomains(domainScores, true),
@@ -154,9 +167,13 @@ export function FibiaChat() {
         recommendations: [],
         learning_trails: [],
         encouragement: "O autoconhecimento é o primeiro passo para a transformação. 🌟",
-      });
-      setPhase("dashboard");
+      };
     } finally {
+      if (result) {
+        setAnalysis(result);
+        await persist(result);
+      }
+      setPhase("dashboard");
       setAnalyzing(false);
     }
   };

@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      fib_assessments: {
+        Row: {
+          created_at: string
+          domains: Json
+          encouragement: string | null
+          factors: Json
+          fib_score: number
+          id: string
+          learning_trails: Json
+          raw_answers: Json
+          recommendations: Json
+          strengths: Json
+          summary: string | null
+          user_id: string
+          vulnerabilities: Json
+        }
+        Insert: {
+          created_at?: string
+          domains: Json
+          encouragement?: string | null
+          factors: Json
+          fib_score: number
+          id?: string
+          learning_trails?: Json
+          raw_answers: Json
+          recommendations?: Json
+          strengths?: Json
+          summary?: string | null
+          user_id: string
+          vulnerabilities?: Json
+        }
+        Update: {
+          created_at?: string
+          domains?: Json
+          encouragement?: string | null
+          factors?: Json
+          fib_score?: number
+          id?: string
+          learning_trails?: Json
+          raw_answers?: Json
+          recommendations?: Json
+          strengths?: Json
+          summary?: string | null
+          user_id?: string
+          vulnerabilities?: Json
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
