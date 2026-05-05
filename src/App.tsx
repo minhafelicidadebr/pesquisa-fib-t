@@ -16,6 +16,8 @@ import Dashboard from "./pages/Dashboard.tsx";
 import Academy from "./pages/Academy.tsx";
 import Intervencoes from "./pages/Intervencoes.tsx";
 import Relatorios from "./pages/Relatorios.tsx";
+import NR1Hub from "./pages/NR1Hub.tsx";
+import NR1Chat from "./pages/NR1Chat.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
