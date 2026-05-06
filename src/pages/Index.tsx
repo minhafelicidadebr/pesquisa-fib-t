@@ -114,13 +114,13 @@ const Index = () => {
               Diagnóstico gratuito agora
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
-            <a
-              href="#segmentos"
+            <Link
+              to="/apresentacoes"
               className="inline-flex items-center justify-center gap-2 glass-card border-foreground/20 text-foreground font-heading font-semibold px-8 py-4 rounded-xl text-base sm:text-lg hover:bg-foreground/10 transition-colors"
             >
               <Sparkles className="w-5 h-5 text-brand-gold" />
-              Ver para o meu segmento
-            </a>
+              Ver apresentações por setor
+            </Link>
           </motion.div>
 
           {/* Impact numbers */}
