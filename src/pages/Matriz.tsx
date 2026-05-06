@@ -366,18 +366,18 @@ const Matriz = () => {
                 <h3 className="font-display text-2xl font-bold mb-4">Da matriz ao plano de ação</h3>
                 <div className="space-y-3">
                   {[
-                    { t: "1. Medir", d: "Aplicar COPSOQ II (curta/média/longa) com k-anonimato.", i: BookOpen, c: "brand-cyan" },
-                    { t: "2. Classificar", d: "Tercis verde/amarelo/vermelho fator a fator.", i: Activity, c: "brand-gold" },
-                    { t: "3. Associar", d: "Matriz aciona drivers com IAI ≥ 4,5 (críticos).", i: Network, c: "brand-magenta" },
-                    { t: "4. Intervir", d: "Aplicar intervenção Playbook no nível adequado.", i: Zap, c: "brand-green" },
-                    { t: "5. Registrar", d: "Inventário de riscos + plano de ação no PGR (NR-1).", i: ShieldCheck, c: "brand-cyan" },
-                    { t: "6. Reavaliar", d: "Indicadores + nova rodada COPSOQ em prazo definido.", i: GraduationCap, c: "brand-gold" },
-                  ].map((s, i) => {
+                    { t: "1. Medir", d: "Aplicar COPSOQ II (curta/média/longa) com k-anonimato.", i: BookOpen, bg: "bg-brand-cyan/15", fg: "text-brand-cyan" },
+                    { t: "2. Classificar", d: "Tercis verde/amarelo/vermelho fator a fator.", i: Activity, bg: "bg-brand-gold/15", fg: "text-brand-gold" },
+                    { t: "3. Associar", d: "Matriz aciona drivers com IAI ≥ 4,5 (críticos).", i: Network, bg: "bg-brand-magenta/15", fg: "text-brand-magenta" },
+                    { t: "4. Intervir", d: "Aplicar intervenção Playbook no nível adequado.", i: Zap, bg: "bg-brand-green/15", fg: "text-brand-green" },
+                    { t: "5. Registrar", d: "Inventário de riscos + plano de ação no PGR (NR-1).", i: ShieldCheck, bg: "bg-brand-cyan/15", fg: "text-brand-cyan" },
+                    { t: "6. Reavaliar", d: "Indicadores + nova rodada COPSOQ em prazo definido.", i: GraduationCap, bg: "bg-brand-gold/15", fg: "text-brand-gold" },
+                  ].map((s) => {
                     const Icon = s.i;
                     return (
                       <div key={s.t} className="flex gap-4 items-start">
-                        <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shrink-0", `bg-${s.c}/15`)}>
-                          <Icon className={cn("w-5 h-5", `text-${s.c}`)} />
+                        <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shrink-0", s.bg)}>
+                          <Icon className={cn("w-5 h-5", s.fg)} />
                         </div>
                         <div className="flex-1 pt-1">
                           <p className="font-heading font-bold text-sm">{s.t}</p>
