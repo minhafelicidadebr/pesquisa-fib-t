@@ -4,7 +4,6 @@ import { ArrowRight, MessageCircle, ShieldCheck, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import hubData from "@/data/hub.json";
 import { ImpactCounter } from "@/components/deck/ImpactCounter";
-import { SegmentCard } from "@/components/deck/SegmentCard";
 import { LeadFormModal } from "@/components/deck/LeadFormModal";
 import { InstitutionalFooter } from "@/components/deck/InstitutionalFooter";
 import { KnowledgeSection } from "@/components/deck/KnowledgeSection";
@@ -19,12 +18,6 @@ import fibiaAvatar from "@/assets/fibia-avatar.png";
 
 const Index = () => {
   const [formOpen, setFormOpen] = useState(false);
-
-  const segmentColors: Record<string, "gold" | "cyan" | "magenta"> = {
-    "Setor Público": "gold",
-    "Setor Privado": "cyan",
-    "Sociedade Civil": "magenta",
-  };
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
@@ -121,13 +114,13 @@ const Index = () => {
               Diagnóstico gratuito agora
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
-            <a
-              href="#segmentos"
+            <Link
+              to="/apresentacoes"
               className="inline-flex items-center justify-center gap-2 glass-card border-foreground/20 text-foreground font-heading font-semibold px-8 py-4 rounded-xl text-base sm:text-lg hover:bg-foreground/10 transition-colors"
             >
               <Sparkles className="w-5 h-5 text-brand-gold" />
-              Ver para o meu segmento
-            </a>
+              Ver apresentações por setor
+            </Link>
           </motion.div>
 
           {/* Impact numbers */}
@@ -155,47 +148,6 @@ const Index = () => {
 
       {/* PROVA SOCIAL */}
       <SocialProofSection />
-
-      {/* SEGMENTOS — apresentações */}
-      <section id="segmentos" className="py-24 px-4 sm:px-6 border-t border-foreground/5">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <p className="text-xs font-heading font-bold uppercase tracking-widest text-brand-magenta mb-3">
-              Apresentações executivas
-            </p>
-            <h2 className="font-display text-3xl md:text-5xl font-bold text-foreground mb-4 leading-tight">
-              Cada setor tem sua <span className="text-gradient-magenta">linguagem</span>.
-              <br />
-              Falamos todas elas.
-            </h2>
-            <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-              Decks premium desenhados para o contexto, vocabulário e prioridades do seu setor — com dados reais, casos e ROI mensurável.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {hubData.segment_cards.map((card, i) => (
-              <SegmentCard
-                key={card.id}
-                segment={card.segment}
-                headline={card.headline}
-                tags={card.quick_tags}
-                route={card.route}
-                ctaLabel={card.cta_primary.label}
-                ctaSecondaryLabel={card.cta_secondary.label}
-                colorClass={segmentColors[card.segment]}
-                onOpenForm={() => setFormOpen(true)}
-                index={i}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* CRISE — urgência baseada em dados */}
       <CrisisDashboard />
