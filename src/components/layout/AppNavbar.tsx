@@ -6,6 +6,7 @@ import {
   BookOpen,
   ChevronDown,
   FileBarChart,
+  Layers,
   LayoutDashboard,
   Menu,
   MessageCircle,
@@ -38,7 +39,8 @@ const PRIMARY_NAV: NavItem[] = [
 ];
 
 const SECONDARY_NAV: NavItem[] = [
-  { label: "Apresentações", to: "/apresentacoes", icon: PresentationIcon, description: "Decks por segmento", accent: "gold" },
+  { label: "Apresentações", to: "/apresentacoes", icon: PresentationIcon, description: "Decks por segmento (Público · Privado · Civil)", accent: "gold" },
+  { label: "Matriz Inteligente", to: "/matriz", icon: Layers, description: "COPSOQ × Playbook 2.0 × NR-1/GRO/PGR", accent: "cyan" },
   { label: "FIBia", to: "/fibia", icon: MessageCircle, description: "Diagnóstico FIB-T com IA", accent: "magenta" },
   { label: "NORA (NR-1)", to: "/nr1/avaliacao", icon: ShieldAlert, description: "Chatbot COPSOQ II", accent: "magenta" },
   { label: "Evidências", to: "/evidencias", icon: Microscope, description: "Banco científico (3.000+)", accent: "cyan" },
