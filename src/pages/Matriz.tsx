@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   Activity, AlertTriangle, BookOpen, Brain, ChevronRight, FileText, Filter,
-  GraduationCap, Layers, Microscope, Network, ShieldCheck, Sparkles, X, Zap,
+  GraduationCap, Layers, Microscope, Network, ShieldCheck, Sparkles, Zap,
 } from "lucide-react";
 import { AppNavbar } from "@/components/layout/AppNavbar";
 import { InstitutionalFooter } from "@/components/deck/InstitutionalFooter";
