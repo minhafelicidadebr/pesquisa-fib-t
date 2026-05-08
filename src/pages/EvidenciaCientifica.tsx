@@ -963,7 +963,7 @@ export default function EvidenciaCientifica() {
                         {intensityLabel[val][0]}
                       </button>
                     ))}
-                  </>
+                  </Fragment>
                 ))}
               </div>
             </div>
