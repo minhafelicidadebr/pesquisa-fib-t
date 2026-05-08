@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion, AnimatePresence, useInView } from "framer-motion";
-import { useRef } from "react";
+import { motion, useInView } from "framer-motion";
 import {
   Activity,
   ArrowRight,
@@ -947,8 +946,8 @@ export default function EvidenciaCientifica() {
                   </div>
                 ))}
                 {HEATMAP_ROWS.map((row, ri) => (
-                  <>
-                    <div key={`r-${ri}`} className="text-xs font-heading text-foreground/90 py-2 pr-3 self-center">
+                  <Fragment key={`row-${ri}`}>
+                    <div className="text-xs font-heading text-foreground/90 py-2 pr-3 self-center">
                       {row}
                     </div>
                     {HEATMAP[ri].map((val, ci) => (
