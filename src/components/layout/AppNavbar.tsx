@@ -44,6 +44,7 @@ const SECONDARY_NAV: NavItem[] = [
   { label: "FIBia", to: "/fibia", icon: MessageCircle, description: "Diagnóstico FIB-T com IA", accent: "magenta" },
   { label: "NORA (NR-1)", to: "/nr1/avaliacao", icon: ShieldAlert, description: "Chatbot COPSOQ II", accent: "magenta" },
   { label: "Evidências", to: "/evidencias", icon: Microscope, description: "Banco científico (3.000+)", accent: "cyan" },
+  { label: "Evidência Científica", to: "/evidencia-cientifica", icon: Microscope, description: "Página premium · COPSOQ × Oxford × NR-1", accent: "gold" },
 ];
 
 const accentRing = {

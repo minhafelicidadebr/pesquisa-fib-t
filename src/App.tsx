@@ -20,6 +20,7 @@ import NR1Hub from "./pages/NR1Hub.tsx";
 import NR1Chat from "./pages/NR1Chat.tsx";
 import Matriz from "./pages/Matriz.tsx";
 import Apresentacoes from "./pages/Apresentacoes.tsx";
+import EvidenciaCientifica from "./pages/EvidenciaCientifica.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="/apresentacoes" element={<Apresentacoes />} />
             <Route path="/apresentacoes/:segment" element={<SegmentDeck />} />
             <Route path="/matriz" element={<Matriz />} />
+            <Route path="/evidencia-cientifica" element={<EvidenciaCientifica />} />
             <Route path="/fibia" element={<FibiaDemo />} />
             <Route path="/evidencias" element={<EvidenceBank />} />
             <Route path="/diagnostico" element={<Diagnostico />} />
