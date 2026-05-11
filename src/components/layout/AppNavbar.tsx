@@ -30,21 +30,21 @@ interface NavItem {
 }
 
 const PRIMARY_NAV: NavItem[] = [
+  { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard, description: "Painel pessoal e organizacional", accent: "cyan" },
   { label: "Diagnóstico", to: "/diagnostico", icon: Stethoscope, description: "Avaliação FIB-T conversacional", accent: "gold" },
   { label: "NR-1", to: "/nr1", icon: ShieldAlert, description: "COPSOQ II · Saúde mental no trabalho", accent: "magenta" },
-  { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard, description: "Painel pessoal e organizacional", accent: "cyan" },
-  { label: "Academy", to: "/academy", icon: BookOpen, description: "Trilhas gamificadas com IFT Coin", accent: "gold" },
-  { label: "Intervenções", to: "/intervencoes", icon: Activity, description: "Práticas baseadas em evidência", accent: "magenta" },
-  { label: "Relatórios", to: "/relatorios", icon: FileBarChart, description: "ESG, NR-1 e impacto", accent: "cyan" },
+  { label: "Matriz", to: "/matriz", icon: Layers, description: "COPSOQ × Playbook 2.0 × NR-1", accent: "cyan" },
+  { label: "Relatórios", to: "/relatorios", icon: FileBarChart, description: "DRPS PDF · ESG · NR-1", accent: "gold" },
 ];
 
 const SECONDARY_NAV: NavItem[] = [
-  { label: "Apresentações", to: "/apresentacoes", icon: PresentationIcon, description: "Decks por segmento (Público · Privado · Civil)", accent: "gold" },
-  { label: "Matriz Inteligente", to: "/matriz", icon: Layers, description: "COPSOQ × Playbook 2.0 × NR-1/GRO/PGR", accent: "cyan" },
-  { label: "FIBia", to: "/fibia", icon: MessageCircle, description: "Diagnóstico FIB-T com IA", accent: "magenta" },
+  { label: "FIBia", to: "/fibia", icon: MessageCircle, description: "Chatbot diagnóstico FIB-T", accent: "gold" },
   { label: "NORA (NR-1)", to: "/nr1/avaliacao", icon: ShieldAlert, description: "Chatbot COPSOQ II", accent: "magenta" },
-  { label: "Evidências", to: "/evidencias", icon: Microscope, description: "Banco científico (3.000+)", accent: "cyan" },
-  { label: "Evidência Científica", to: "/evidencia-cientifica", icon: Microscope, description: "Página premium · COPSOQ × Oxford × NR-1", accent: "gold" },
+  { label: "Apresentações", to: "/apresentacoes", icon: PresentationIcon, description: "Decks setoriais", accent: "gold" },
+  { label: "Academy", to: "/academy", icon: BookOpen, description: "Trilhas gamificadas IFT Coin", accent: "gold" },
+  { label: "Intervenções", to: "/intervencoes", icon: Activity, description: "Práticas baseadas em evidência", accent: "magenta" },
+  { label: "Evidências (banco)", to: "/evidencias", icon: Microscope, description: "3.000+ artigos", accent: "cyan" },
+  { label: "Evidência Científica", to: "/evidencia-cientifica", icon: Microscope, description: "Página premium COPSOQ × Oxford × NR-1", accent: "cyan" },
 ];
 
 const accentRing = {
