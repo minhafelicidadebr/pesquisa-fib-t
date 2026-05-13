@@ -318,17 +318,17 @@ export default function Auth() {
                           key={p.id}
                           type="button"
                           onClick={() => setPersona(p.id)}
-                          className={`group text-left p-5 rounded-xl border border-border/40 bg-background/40 hover:border-${p.accent}/50 hover:bg-${p.accent}/5 transition-all flex items-start gap-4`}
+                          className={`group text-left p-5 rounded-xl border border-border/40 bg-background/40 ${p.hover} transition-all flex items-start gap-4`}
                         >
-                          <div className={`w-12 h-12 rounded-xl bg-${p.accent}/15 border border-${p.accent}/30 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
-                            <Icon className={`w-6 h-6 text-${p.accent}`} />
+                          <div className={`w-12 h-12 rounded-xl border ${p.iconWrap} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
+                            <Icon className={`w-6 h-6 ${p.iconColor}`} />
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="font-heading font-bold text-foreground">{p.title}</p>
                             <p className="text-xs text-muted-foreground font-body mb-1">{p.subtitle}</p>
                             <p className="text-xs text-muted-foreground/80 font-body">{p.description}</p>
                           </div>
-                          <ArrowRight className={`w-5 h-5 text-${p.accent} opacity-0 group-hover:opacity-100 transition-opacity self-center`} />
+                          <ArrowRight className={`w-5 h-5 ${p.iconColor} opacity-0 group-hover:opacity-100 transition-opacity self-center`} />
                         </button>
                       );
                     })}
