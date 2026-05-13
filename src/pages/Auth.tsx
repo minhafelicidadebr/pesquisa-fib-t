@@ -22,7 +22,9 @@ const personas: Array<{
   title: string;
   subtitle: string;
   icon: typeof Shield;
-  accent: string;
+  iconWrap: string;
+  iconColor: string;
+  hover: string;
   description: string;
 }> = [
   {
@@ -30,7 +32,9 @@ const personas: Array<{
     title: "SST · Saúde Ocupacional",
     subtitle: "Crio a empresa e gerencio o PGR",
     icon: HardHat,
-    accent: "brand-gold",
+    iconWrap: "bg-brand-gold/15 border-brand-gold/30",
+    iconColor: "text-brand-gold",
+    hover: "hover:border-brand-gold/50 hover:bg-brand-gold/5",
     description: "Cadastro a organização, configuro a versão do COPSOQ II e compartilho o código de acesso.",
   },
   {
@@ -38,7 +42,9 @@ const personas: Array<{
     title: "Gestor · Liderança",
     subtitle: "Acesso aos dashboards de equipe",
     icon: Shield,
-    accent: "brand-cyan",
+    iconWrap: "bg-brand-cyan/15 border-brand-cyan/30",
+    iconColor: "text-brand-cyan",
+    hover: "hover:border-brand-cyan/50 hover:bg-brand-cyan/5",
     description: "Recebo o código da empresa, respondo a pesquisa e acompanho indicadores agregados.",
   },
   {
@@ -46,7 +52,9 @@ const personas: Array<{
     title: "Colaborador",
     subtitle: "Participo das pesquisas anônimas",
     icon: Users,
-    accent: "brand-magenta",
+    iconWrap: "bg-brand-magenta/15 border-brand-magenta/30",
+    iconColor: "text-brand-magenta",
+    hover: "hover:border-brand-magenta/50 hover:bg-brand-magenta/5",
     description: "Uso o código da empresa para responder o COPSOQ II e acessar trilhas da Academy.",
   },
 ];
