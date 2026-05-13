@@ -397,6 +397,11 @@ export default function NR1Chat() {
           )}
         </AnimatePresence>
       </main>
+      <CelebrationModal
+        open={showCelebration}
+        onClose={() => setShowCelebration(false)}
+        onPrimary={() => { setShowCelebration(false); navigate("/"); }}
+      />
     </div>
   );
 }
