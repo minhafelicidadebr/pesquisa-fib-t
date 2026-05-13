@@ -31,11 +31,20 @@ const riskLabel = (cls: string) =>
   cls === "vermelho" ? "Risco alto" : cls === "amarelo" ? "Atenção" : "Risco baixo";
 
 export default function NR1Chat() {
+  const navigate = useNavigate();
   const [phase, setPhase] = useState<Phase>("intro");
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [analysis, setAnalysis] = useState<CopsoqAnalysis | null>(null);
   const [ai, setAi] = useState<AIResponse | null>(null);
+  const [showCelebration, setShowCelebration] = useState(false);
+
+  useEffect(() => {
+    if (phase === "dashboard") {
+      const t = setTimeout(() => setShowCelebration(true), 600);
+      return () => clearTimeout(t);
+    }
+  }, [phase]);
 
   const total = copsoqItems.length;
   const progress = (Object.keys(answers).length / total) * 100;
