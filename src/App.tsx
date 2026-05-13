@@ -21,6 +21,7 @@ import NR1Chat from "./pages/NR1Chat.tsx";
 import Matriz from "./pages/Matriz.tsx";
 import Apresentacoes from "./pages/Apresentacoes.tsx";
 import EvidenciaCientifica from "./pages/EvidenciaCientifica.tsx";
+import EmpresaConfigurar from "./pages/EmpresaConfigurar.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
