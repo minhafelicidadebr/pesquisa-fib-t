@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { CelebrationModal } from "@/components/nr1/CelebrationModal";
 import { Loader2, Home, ArrowRight, ShieldAlert, ShieldCheck, Sparkles, RotateCcw, AlertTriangle, CheckCircle2 } from "lucide-react";
 import {
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
@@ -30,11 +31,20 @@ const riskLabel = (cls: string) =>
   cls === "vermelho" ? "Risco alto" : cls === "amarelo" ? "Atenção" : "Risco baixo";
 
 export default function NR1Chat() {
+  const navigate = useNavigate();
   const [phase, setPhase] = useState<Phase>("intro");
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [analysis, setAnalysis] = useState<CopsoqAnalysis | null>(null);
   const [ai, setAi] = useState<AIResponse | null>(null);
+  const [showCelebration, setShowCelebration] = useState(false);
+
+  useEffect(() => {
+    if (phase === "dashboard") {
+      const t = setTimeout(() => setShowCelebration(true), 600);
+      return () => clearTimeout(t);
+    }
+  }, [phase]);
 
   const total = copsoqItems.length;
   const progress = (Object.keys(answers).length / total) * 100;
@@ -387,6 +397,11 @@ export default function NR1Chat() {
           )}
         </AnimatePresence>
       </main>
+      <CelebrationModal
+        open={showCelebration}
+        onClose={() => setShowCelebration(false)}
+        onPrimary={() => { setShowCelebration(false); navigate("/"); }}
+      />
     </div>
   );
 }

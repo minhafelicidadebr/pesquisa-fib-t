@@ -14,6 +14,83 @@ export type Database = {
   }
   public: {
     Tables: {
+      companies: {
+        Row: {
+          cnpj: string | null
+          copsoq_version: Database["public"]["Enums"]["copsoq_version"]
+          created_at: string
+          estimated_employees: number | null
+          id: string
+          invite_code: string
+          legal_name: string
+          owner_id: string
+          sector: string | null
+          sectors: string[]
+          updated_at: string
+        }
+        Insert: {
+          cnpj?: string | null
+          copsoq_version?: Database["public"]["Enums"]["copsoq_version"]
+          created_at?: string
+          estimated_employees?: number | null
+          id?: string
+          invite_code: string
+          legal_name: string
+          owner_id: string
+          sector?: string | null
+          sectors?: string[]
+          updated_at?: string
+        }
+        Update: {
+          cnpj?: string | null
+          copsoq_version?: Database["public"]["Enums"]["copsoq_version"]
+          created_at?: string
+          estimated_employees?: number | null
+          id?: string
+          invite_code?: string
+          legal_name?: string
+          owner_id?: string
+          sector?: string | null
+          sectors?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      company_members: {
+        Row: {
+          company_id: string
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          sector: string | null
+          user_id: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          sector?: string | null
+          user_id: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          sector?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_members_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fib_assessments: {
         Row: {
           created_at: string
@@ -64,6 +141,7 @@ export type Database = {
       }
       nr1_assessments: {
         Row: {
+          company_id: string | null
           created_at: string
           global_risk: string
           global_score: number
@@ -77,6 +155,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          company_id?: string | null
           created_at?: string
           global_risk: string
           global_score: number
@@ -90,6 +169,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          company_id?: string | null
           created_at?: string
           global_risk?: string
           global_score?: number
@@ -166,6 +246,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_invite_code: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -173,9 +254,22 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_company_member: {
+        Args: { _company_id: string; _user_id: string }
+        Returns: boolean
+      }
+      join_company_by_code: {
+        Args: {
+          _code: string
+          _role?: Database["public"]["Enums"]["app_role"]
+          _sector?: string
+        }
+        Returns: string
+      }
     }
     Enums: {
-      app_role: "admin" | "gestor" | "colaborador"
+      app_role: "admin" | "gestor" | "colaborador" | "sst"
+      copsoq_version: "curto" | "medio" | "longo" | "brasil"
       user_segment:
         | "setor_publico"
         | "setor_privado"
@@ -308,7 +402,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "gestor", "colaborador"],
+      app_role: ["admin", "gestor", "colaborador", "sst"],
+      copsoq_version: ["curto", "medio", "longo", "brasil"],
       user_segment: [
         "setor_publico",
         "setor_privado",
