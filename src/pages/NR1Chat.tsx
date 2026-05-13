@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { CelebrationModal } from "@/components/nr1/CelebrationModal";
 import { Loader2, Home, ArrowRight, ShieldAlert, ShieldCheck, Sparkles, RotateCcw, AlertTriangle, CheckCircle2 } from "lucide-react";
 import {
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
