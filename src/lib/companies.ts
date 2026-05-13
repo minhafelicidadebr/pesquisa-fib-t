@@ -23,6 +23,7 @@ export async function createCompany(input: CreateCompanyInput): Promise<Company>
     .from("companies")
     .insert({
       owner_id: user.id,
+      invite_code: "", // trigger overrides
       legal_name: input.legal_name,
       cnpj: input.cnpj ?? null,
       sector: input.sector ?? null,
