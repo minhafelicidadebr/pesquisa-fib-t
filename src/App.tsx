@@ -50,6 +50,14 @@ const App = () => (
             <Route path="/nr1/avaliacao" element={<NR1Chat />} />
             <Route path="/auth" element={<Auth />} />
             <Route
+              path="/empresa/configurar"
+              element={
+                <ProtectedRoute>
+                  <EmpresaConfigurar />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/perfil"
               element={
                 <ProtectedRoute>
