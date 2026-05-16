@@ -130,21 +130,22 @@ export function AppNavbar({ onCtaClick }: { onCtaClick?: () => void }) {
               );
             })}
 
-            {/* Ecossistema dropdown */}
+            {/* Ecossistema & Dashboards — atalho premium para o hub central */}
             <div
               className="relative"
               onMouseEnter={() => setEcosystemOpen(true)}
               onMouseLeave={() => setEcosystemOpen(false)}
             >
-              <button
-                className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-heading font-medium text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-all"
-                aria-expanded={ecosystemOpen}
+              <Link
+                to="/dashboard"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-heading font-bold text-foreground bg-gradient-to-r from-brand-gold/10 via-brand-cyan/10 to-brand-magenta/10 border border-brand-gold/30 hover:border-brand-gold/60 transition-all"
                 aria-haspopup="true"
+                aria-expanded={ecosystemOpen}
               >
-                <Sparkles className="w-4 h-4" />
-                Ecossistema
+                <Sparkles className="w-4 h-4 text-brand-gold" />
+                Ecossistema & Dashboards
                 <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", ecosystemOpen && "rotate-180")} />
-              </button>
+              </Link>
               <AnimatePresence>
                 {ecosystemOpen && (
                   <motion.div
@@ -155,6 +156,18 @@ export function AppNavbar({ onCtaClick }: { onCtaClick?: () => void }) {
                     className="absolute right-0 top-full pt-2 w-80"
                   >
                     <div className="glass-card-strong rounded-2xl p-2 shadow-2xl">
+                      <Link
+                        to="/dashboard"
+                        className="flex items-start gap-3 p-3 rounded-xl bg-gradient-to-br from-brand-gold/10 to-brand-cyan/5 border border-brand-gold/20 mb-1"
+                      >
+                        <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-brand-gold/20 text-brand-gold shrink-0">
+                          <LayoutDashboard className="w-4 h-4" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-heading text-sm font-bold text-foreground">Abrir hub completo</p>
+                          <p className="text-xs text-muted-foreground leading-relaxed">Todas as funcionalidades em um só lugar</p>
+                        </div>
+                      </Link>
                       {SECONDARY_NAV.map((item) => {
                         const Icon = item.icon;
                         return (
