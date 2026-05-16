@@ -18,6 +18,7 @@ import { listNR1, NR1Record } from "@/lib/nr1Assessments";
 import { useAuth } from "@/hooks/useAuth";
 import { MOCK_NR1, nr1ToPayload, ReportPayload } from "@/lib/nr1Mock";
 import { EcosystemHub } from "@/components/dashboard/EcosystemHub";
+import { DisruptiveLab } from "@/components/dashboard/DisruptiveLab";
 
 const FN_URL = `https://${import.meta.env.VITE_SUPABASE_PROJECT_ID}.supabase.co/functions/v1/nr1-pdf-report`;
 
