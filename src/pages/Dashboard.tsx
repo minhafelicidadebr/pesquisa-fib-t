@@ -273,15 +273,19 @@ function DashboardContent() {
         </p>
       </div>
 
-      <Tabs defaultValue="ecosystem" className="w-full">
+      <Tabs defaultValue="lab" className="w-full">
         <TabsList className="mb-6 flex-wrap h-auto">
+          <TabsTrigger value="lab" className="gap-1.5">
+            <Sparkles className="w-3.5 h-3.5" /> Disruptive Lab
+          </TabsTrigger>
           <TabsTrigger value="ecosystem" className="gap-1.5">
-            <Sparkles className="w-3.5 h-3.5" /> Ecossistema & Dashboards
+            <LayoutDashboard className="w-3.5 h-3.5" /> Ecossistema
           </TabsTrigger>
           <TabsTrigger value="overview">Visão Geral</TabsTrigger>
           <TabsTrigger value="nr1">NR-1 · COPSOQ</TabsTrigger>
           <TabsTrigger value="fib">FIB-T</TabsTrigger>
         </TabsList>
+        <TabsContent value="lab"><DisruptiveLab /></TabsContent>
         <TabsContent value="ecosystem"><EcosystemHub companyName={profile?.organization} /></TabsContent>
         <TabsContent value="overview"><OverviewTab fib={fib} nr1={nr1} /></TabsContent>
         <TabsContent value="nr1"><Nr1Tab items={nr1} /></TabsContent>
