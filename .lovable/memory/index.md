@@ -8,10 +8,11 @@
 - **Narrative**: Empathetic, 1st person. Focus on "human flourishing". Science of Happiness terms, no admin jargon.
 - **Auth**: Email/password only, auto-confirm enabled. Profiles + user_roles tables. Use `useAuth()` hook from `@/hooks/useAuth`.
 - **Navbar**: Use `<AppNavbar onCtaClick={...} />` from `@/components/layout/AppNavbar` on all top-level pages.
-- **Roadmap**: Sprints 1-4 ✓ (Auth, Navbar, Landing, SaaS multi-tenant). **Próximo: Sprint 5 — Onboarding Wizard**. Arquitetura por verbos Mensurar/Transformar/Educar/Governar inspirada em `plataforma-nr1`. Ver `.lovable/plan.md`.
+- **Roadmap**: Sprints 1-5 ✓ (Auth, Navbar, Landing, SaaS multi-tenant, Onboarding Wizard). **Próximo: Sprint 6 — Jornada do Colaborador (`/jornada`)**. Arquitetura por verbos Mensurar/Transformar/Educar/Governar inspirada em `plataforma-nr1`. Ver `.lovable/plan.md`.
 
 ## Memories
 - [Roadmap NR-1 Inspired](mem://features/roadmap-nr1-inspired) — 12 sprints com verbos Mensurar/Transformar/Educar/Governar, mapeamento ref→app
+- [Onboarding Wizard](mem://features/onboarding-wizard) — Sprint 5: /onboarding em 4 passos (persona → empresa → setor → 1ª missão)
 - [Auth & Profiles](mem://features/auth) — Sprint 1: profiles, user_roles, useAuth, ProtectedRoute, /auth, /perfil
 - [Ecosystem Routes](mem://features/ecosystem-routes) — Sprint 2: AppNavbar + 5 placeholder pages (/diagnostico, /dashboard, /academy, /intervencoes, /relatorios)
 - [Landing Premium](mem://features/landing-premium) — Sprint 3: Neuromarketing hero, 4 axes, social proof, science, final CTA
