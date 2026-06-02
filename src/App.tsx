@@ -22,6 +22,7 @@ import Matriz from "./pages/Matriz.tsx";
 import Apresentacoes from "./pages/Apresentacoes.tsx";
 import EvidenciaCientifica from "./pages/EvidenciaCientifica.tsx";
 import EmpresaConfigurar from "./pages/EmpresaConfigurar.tsx";
+import Onboarding from "./pages/Onboarding.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -49,6 +50,14 @@ const App = () => (
             <Route path="/nr1" element={<NR1Hub />} />
             <Route path="/nr1/avaliacao" element={<NR1Chat />} />
             <Route path="/auth" element={<Auth />} />
+            <Route
+              path="/onboarding"
+              element={
+                <ProtectedRoute>
+                  <Onboarding />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/empresa/configurar"
               element={
