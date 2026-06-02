@@ -1,75 +1,118 @@
-# Roadmap — Arquitetura SaaS NR-1 Multi-Perfil
+# FIB · COP · NR-1 — Roadmap Operacional (v4.8)
 
-Comitê interdisciplinar (Opus 4.7 + Claude Design) recomenda **3 ondas incrementais** para evitar gasto desnecessário de créditos e garantir cada camada validada antes da próxima.
-
----
-
-## 🌳 Tree of Thoughts — decisões-chave
-
-**T1. Modelo de tenancy** → escolhemos **company-based multi-tenant** com `companies` + `company_members` (vs. workspace genérico ou flat). Razão: alinha 1:1 com NR-1 (cada CNPJ = um PGR).
-
-**T2. Onboarding** → **código de convite alfanumérico de 8 chars** (ex. `ABB7E790`) gerado por trigger no `INSERT` da company. SST cria → compartilha → Gestor/Colab usam no signup.
-
-**T3. Persona** → adicionamos enum `app_role` `sst | gestor | colaborador | admin` (mantém compatibilidade). Dashboard renderiza widgets por role.
-
-**T4. COPSOQ versões** → `copsoq_version` enum `curto|medio|longo|brasil` armazenado em `companies.copsoq_version`. Pesquisa lê do contexto da empresa.
-
-**T5. Celebração** → `canvas-confetti` (5KB), modal final + CTAs externos.
+> **Inspiração arquitetural:** `plataforma-nr1` — ecossistema por **verbos de ação**, multi-tenant SaaS, gate de assinatura, jornada do colaborador desacoplada do dashboard executivo.
+> **Diferencial nosso:** Ciência da Felicidade (FIB-T + PERMA+V + VIA) + COPSOQ II + Oxford Wellbeing Playbook 2.0, narrados em 1ª pessoa.
 
 ---
 
-## 🌊 Onda 1 — Backend SaaS (esta entrega)
+## 🌳 Tree of Thoughts — 4 Ramos Estratégicos
 
-### Migration
-- Enum `app_role` adiciona `'sst'`, `'gestor'` (mantém `colaborador`, `admin`)
-- Enum `copsoq_version` (`curto`, `medio`, `longo`, `brasil`)
-- Tabela `companies`: `id`, `owner_id`, `legal_name`, `cnpj`, `sector`, `estimated_employees`, `invite_code` (UNIQUE), `copsoq_version`, `sectors text[]`, timestamps
-- Tabela `company_members`: `company_id`, `user_id`, `role`, `sector`, joined_at — **UNIQUE(company_id,user_id)**
-- Função `generate_invite_code()` + trigger `BEFORE INSERT`
-- Função `join_company_by_code(code text, sector text)` SECURITY DEFINER
-- RLS: SST/owner gerencia sua company; membros leem própria company; colaboradores só leem dados agregados
-- Adicionar `company_id` em `nr1_assessments` (nullable p/ retrocompat)
+```text
+                     ECOSSISTEMA FIB·NR-1
+                            │
+        ┌───────────┬───────┴───────┬───────────┐
+        ▼           ▼               ▼           ▼
+    MENSURAR    TRANSFORMAR     EDUCAR      GOVERNAR
+   (escutar)    (agir)          (evoluir)   (decidir)
+        │           │               │           │
+   COPSOQ II   Intervenções    Academy IFT  Matriz NR-1
+   FIB-T       (ILI score)     Trilhas      PGR/DRPS
+   FIBia IA    Playbooks       Constelação  PDF Compliance
+   NORA bot    Job Crafting    IFT Coin     Heatmap setor
+```
 
-### Frontend (Onda 1)
-- `useAuth` expande p/ expor `companyId`, `companyRole`
-- `src/lib/companies.ts` — CRUD + joinByCode
-
----
-
-## 🌊 Onda 2 — Auth multi-perfil + Onboarding
-
-- `/auth` vira **seletor de persona** (cards: SST · Gestor · Colaborador) → roteia a 3 forms dedicados:
-  - **SST**: nome, empresa, CNPJ, setor, escolha COPSOQ → cria company + gera invite code → mostra código pós-cadastro
-  - **Gestor / Colaborador**: nome, **código da empresa**, setor, email, senha → join automático
-- `/empresa/configurar` (SST/admin only) — replica o print: invite code copiável, setores tags, versão COPSOQ
-- Pesquisa NR-1 lê `company.copsoq_version` para escolher banco de itens (placeholder p/ médio/longo/brasil)
+Cada verbo = um espaço dedicado no app, com KPIs próprios, agentes IA e relatórios.
 
 ---
 
-## 🌊 Onda 3 — Dashboard unificado + Celebração
+## 🧭 Mapeamento: referência → nosso app
 
-- Dashboard com **3 layouts por role**:
-  - **SST/Gestor**: KPIs agregados da empresa (n respondentes, risco médio, heatmap setores, alertas vermelhos)
-  - **Colaborador**: progresso pessoal + acesso a Academy/EdTech
-- Tela final do COPSOQ (`NR1Chat` conclusão) — **modal premium** com:
-  - 🎉 Confete (`canvas-confetti`)
-  - Card "Você desbloqueou acesso exclusivo"
-  - 2 CTAs externos:
-    - https://edtech-da-felicidade.lovable.app/
-    - https://curso-felicidade-adolescentes-yale.lovable.app/
-- Chatbot flutuante global (FIBia já existe) — habilitado em todas rotas autenticadas como copiloto
-
----
-
-## Tech notes
-- Sem novas deps além de `canvas-confetti` (~5KB)
-- Reaproveita: `Dashboard.tsx`, `NR1Chat.tsx`, `useAuth`, glass-card tokens, brand-magenta/gold
-- Tudo i18n pt-BR, A11y AA, responsivo (já temos breakpoints)
-- Edge functions existentes intactos
+| Referência (plataforma-nr1) | Nosso equivalente | Status |
+|---|---|---|
+| `/mensurar` | `/diagnostico` + `/nr1/avaliacao` (NORA) | ✅ existe, falta consolidar hub |
+| `/transformar` | `/intervencoes` | 🟡 placeholder, falta ILI score |
+| `/educar` + `/educar/:slug` + `/educar/constelacao` | `/academy` | 🟡 placeholder |
+| `/governar` + `/governar/pdf-intelligence` | `/relatorios` + `/matriz` | 🟡 parcial |
+| `/matriz-nr1` | `/matriz` | ✅ |
+| `/gestao-nr1` | `/nr1` (NR1Hub) | ✅ |
+| `/empresa` (CompanySetup) | `/empresa/configurar` | ✅ |
+| `/onboarding` | falta | 🔴 criar (Sprint 5) |
+| `/planos` (SubscriptionGate) | falta | 🔴 criar (Sprint 7) |
+| `/jornada` (jornada do colaborador) | falta | 🔴 criar (Sprint 6) |
+| `DashboardLayout` (sidebar persistente) | `Dashboard` (tabs) | 🟡 evoluir p/ layout SaaS |
 
 ---
 
-## Entrega desta resposta
-Vou executar **Onda 1 (migration) + Onda 3 (celebração com confete + CTAs)** agora — são as de maior impacto visível e menor risco. Aguardo sua aprovação da migration; depois executo Onda 2 (forms multi-perfil) em mensagem seguinte para manter qualidade e economia de créditos.
+## 🚀 Sprints (ordem de execução assertiva, baixo custo de crédito)
 
-Confirma esta sequência?
+### ✅ Sprint 1 — Auth & Profiles (concluído)
+### ✅ Sprint 2 — Navbar + 5 rotas placeholder
+### ✅ Sprint 3 — Landing Premium
+### ✅ Sprint 4 — Multi-tenant SaaS (companies + invite + EcosystemHub + DisruptiveLab)
+
+### 🔜 Sprint 5 — **Onboarding Wizard pós-signup** (próximo)
+- Rota `/onboarding` em 4 passos: persona → empresa (criar ou entrar c/ código) → setor → 1ª missão.
+- Redireciona automaticamente após `/auth` quando `profiles.segment = 'nao_informado'` ou sem empresa.
+- **Inspirado em:** `OnboardingPage.tsx` da referência.
+- **Arquivos:** `src/pages/Onboarding.tsx` + step components + guard no `ProtectedRoute`.
+
+### Sprint 6 — **Jornada do Colaborador (`/jornada`)**
+- Página pública/autenticada com timeline pessoal: missões diárias, IFT Coin, próximo módulo Academy, FIB-T evolutivo.
+- Substitui o "Dashboard Colaborador" — colaborador vê **jornada**, gestor vê **dashboard**.
+- **Inspirado em:** `JornadaPage.tsx`.
+
+### Sprint 7 — **Planos & Subscription Gate (`/planos`)**
+- Tabela de planos (Free / Pro / Enterprise) + `SubscriptionGate` HOC que bloqueia rotas operacionais.
+- Stripe via connector quando o usuário pedir; antes disso, mock + flag `companies.plan`.
+- **Inspirado em:** `PlansPage.tsx` + `SubscriptionGate.tsx`.
+
+### Sprint 8 — **Transformar com ILI score real**
+- `/intervencoes` deixa de ser placeholder: catálogo de práticas Oxford, cada uma com **ILI (Intervention Likelihood Index)** calculado a partir do COPSOQ da empresa.
+- Tabela `interventions` + `company_interventions` (status: planejada/ativa/concluída).
+- **Inspirado em:** dashboard da referência (linhas `nr1Recommendations`).
+
+### Sprint 9 — **Educar (Academy + Constelação + Driver Detail)**
+- `/academy` → grid de 9 trilhas (PERMA+V × VIA).
+- `/academy/:slug` → driver detail com micro-missões + IFT Coin.
+- `/academy/constelacao` → visualização interativa SVG da relação entre drivers.
+- **Inspirado em:** `EducarPage`, `DriverDetailPage`, `ConstelacaoPage`.
+
+### Sprint 10 — **Governar (PDF Intelligence + Relatórios)**
+- `/relatorios` real: gera PGR/DRPS via edge function (`nr1-pdf-report` já existe, expandir).
+- `/relatorios/pdf-intelligence` → upload de PDFs antigos da empresa, IA extrai pontos e cruza com COPSOQ atual.
+- **Inspirado em:** `PDFCompliancePage`.
+
+### Sprint 11 — **DashboardLayout SaaS persistente**
+- Migrar `/dashboard`, `/mensurar`, `/transformar`, `/educar`, `/governar` para um `DashboardLayout` com sidebar fixa + breadcrumb + user-menu.
+- Mantém `AppNavbar` apenas no público (landing, apresentações, evidências).
+
+### Sprint 12 — **Pesquisa pública anônima (`/pesquisa?code=...`)**
+- Link compartilhável que o gestor envia aos colaboradores; responde COPSOQ II sem login.
+- Vincula respostas a `companies.invite_code` com `k≥7` para anonimato.
+- **Inspirado em:** `SurveyPage.tsx` (rota pública sem auth).
+
+---
+
+## 🔧 Decisões técnicas (não-negociáveis)
+
+1. **Verbos de ação** viram primeira camada de navegação no `DashboardLayout` (sidebar).
+2. **Multi-tenant**: toda query operacional filtra por `company_id` via RLS já existente.
+3. **Privacy-by-design**: agregações sempre com `k ≥ 7` respondentes; nunca expor resposta individual ao gestor.
+4. **IA**: Lovable AI Gateway (`google/gemini-2.5-flash` default, `gpt-5` para PDF intelligence).
+5. **Gamificação**: IFT Coin é progresso pessoal — sem ranking público, sem comparação tóxica.
+6. **Acessibilidade**: todos os componentes novos com `aria-*`, foco visível, contraste AAA em texto principal.
+
+---
+
+## 📊 Definição de "pronto" por sprint
+
+- Rota navegável + dados reais (não-mock) quando há tabela.
+- RLS testada (owner vê tudo da empresa, colaborador vê só o próprio).
+- Mobile-first responsivo (≤ 360 px ok).
+- Memória `mem://features/<sprint>.md` atualizada.
+- Plan.md marcado ✅.
+
+---
+
+## 🎯 Próximo passo recomendado
+**Sprint 5 — Onboarding Wizard.** Desbloqueia toda a jornada SaaS (sem ele, usuário cria conta e cai num dashboard vazio). É a maior alavanca de ativação com o menor custo de crédito.
