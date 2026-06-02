@@ -50,11 +50,11 @@ Cada verbo = um espaço dedicado no app, com KPIs próprios, agentes IA e relat�
 ### ✅ Sprint 3 — Landing Premium
 ### ✅ Sprint 4 — Multi-tenant SaaS (companies + invite + EcosystemHub + DisruptiveLab)
 
-### 🔜 Sprint 5 — **Onboarding Wizard pós-signup** (próximo)
+### ✅ Sprint 5 — **Onboarding Wizard pós-signup** (concluído)
 - Rota `/onboarding` em 4 passos: persona → empresa (criar ou entrar c/ código) → setor → 1ª missão.
-- Redireciona automaticamente após `/auth` quando `profiles.segment = 'nao_informado'` ou sem empresa.
-- **Inspirado em:** `OnboardingPage.tsx` da referência.
-- **Arquivos:** `src/pages/Onboarding.tsx` + step components + guard no `ProtectedRoute`.
+- Pula automaticamente para `/dashboard` se o usuário já tiver empresa vinculada.
+- Atualiza `profiles.segment` + `profiles.organization` e cria/vincula `companies` via `createCompany`/`joinCompanyByCode`.
+- **Arquivos:** `src/pages/Onboarding.tsx` + rota protegida em `src/App.tsx`.
 
 ### Sprint 6 — **Jornada do Colaborador (`/jornada`)**
 - Página pública/autenticada com timeline pessoal: missões diárias, IFT Coin, próximo módulo Academy, FIB-T evolutivo.
