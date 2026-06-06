@@ -38,6 +38,7 @@ const PRIMARY_NAV: NavItem[] = [
 ];
 
 const SECONDARY_NAV: NavItem[] = [
+  { label: "Minha Jornada", to: "/jornada", icon: Sparkles, description: "Passo a passo personalizado do colaborador", accent: "gold" },
   { label: "FIBia", to: "/fibia", icon: MessageCircle, description: "Chatbot diagnóstico FIB-T", accent: "gold" },
   { label: "NORA (NR-1)", to: "/nr1/avaliacao", icon: ShieldAlert, description: "Chatbot COPSOQ II", accent: "magenta" },
   { label: "Apresentações", to: "/apresentacoes", icon: PresentationIcon, description: "Decks setoriais", accent: "gold" },
