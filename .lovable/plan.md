@@ -61,10 +61,12 @@ Cada verbo = um espaço dedicado no app, com KPIs próprios, agentes IA e relat�
 - Substitui o "Dashboard Colaborador" — colaborador vê **jornada**, gestor vê **dashboard**.
 - **Inspirado em:** `JornadaPage.tsx`.
 
-### Sprint 7 — **Planos & Subscription Gate (`/planos`)**
-- Tabela de planos (Free / Pro / Enterprise) + `SubscriptionGate` HOC que bloqueia rotas operacionais.
-- Stripe via connector quando o usuário pedir; antes disso, mock + flag `companies.plan`.
-- **Inspirado em:** `PlansPage.tsx` + `SubscriptionGate.tsx`.
+### ✅ Sprint 7 — **Planos & Subscription Gate (`/planos`)** (concluído)
+- Enum `company_plan` + coluna `companies.plan` (default 'free').
+- Página `/planos` com 3 cards (Essencial, Pro, Enterprise) e ativação mock via update direto.
+- `SubscriptionGate` HOC pronto para envolver rotas/features premium → CTA para `/planos`.
+- Link "Planos & Assinatura" em SECONDARY_NAV.
+- **Próximo:** Stripe connector real quando o usuário pedir.
 
 ### Sprint 8 — **Transformar com ILI score real**
 - `/intervencoes` deixa de ser placeholder: catálogo de práticas Oxford, cada uma com **ILI (Intervention Likelihood Index)** calculado a partir do COPSOQ da empresa.

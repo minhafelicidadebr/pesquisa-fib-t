@@ -24,6 +24,7 @@ import EvidenciaCientifica from "./pages/EvidenciaCientifica.tsx";
 import EmpresaConfigurar from "./pages/EmpresaConfigurar.tsx";
 import Onboarding from "./pages/Onboarding.tsx";
 import Jornada from "./pages/Jornada.tsx";
+import Planos from "./pages/Planos.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -51,6 +52,7 @@ const App = () => (
             <Route path="/nr1" element={<NR1Hub />} />
             <Route path="/nr1/avaliacao" element={<NR1Chat />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/planos" element={<Planos />} />
             <Route
               path="/onboarding"
               element={
