@@ -22,7 +22,6 @@ export function SubscriptionGate({ required, feature, children }: Props) {
     getMyCompany()
       .then((res) => {
         if (!mounted) return;
-        // @ts-expect-error plan exists after migration; types regen pending
         setPlan(((res?.company?.plan ?? "free") as PlanTier));
       })
       .finally(() => mounted && setLoading(false));

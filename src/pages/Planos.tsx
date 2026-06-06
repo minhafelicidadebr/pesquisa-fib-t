@@ -94,7 +94,6 @@ export default function Planos() {
       .then((res) => {
         if (res?.company) {
           setCompanyId(res.company.id);
-          // @ts-expect-error plan exists post-migration
           setCurrentPlan(((res.company.plan ?? "free") as PlanTier));
         }
       })
@@ -118,7 +117,6 @@ export default function Planos() {
     }
     setUpdating(plan);
     // Mock activation: real Stripe gateway entra na próxima sprint.
-    // @ts-expect-error plan column exists post-migration
     const { error } = await supabase.from("companies").update({ plan }).eq("id", companyId);
     setUpdating(null);
     if (error) {
