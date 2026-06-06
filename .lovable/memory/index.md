@@ -8,10 +8,11 @@
 - **Narrative**: Empathetic, 1st person. Focus on "human flourishing". Science of Happiness terms, no admin jargon.
 - **Auth**: Email/password only, auto-confirm enabled. Profiles + user_roles tables. Use `useAuth()` hook from `@/hooks/useAuth`.
 - **Navbar**: Use `<AppNavbar onCtaClick={...} />` from `@/components/layout/AppNavbar` on all top-level pages.
-- **Roadmap**: Sprints 1-6 ✓ (Auth, Navbar, Landing, SaaS multi-tenant, Onboarding, Jornada). **Próximo: Sprint 7 — Planos & Subscription Gate (`/planos`)**. Arquitetura por verbos Mensurar/Transformar/Educar/Governar. Ver `.lovable/plan.md`.
+- **Roadmap**: Sprints 1-7 ✓ (Auth, Navbar, Landing, SaaS multi-tenant, Onboarding, Jornada, Planos). **Próximo: Sprint 8 — Transformar com ILI score real (`/intervencoes`)**. Arquitetura por verbos Mensurar/Transformar/Educar/Governar. Ver `.lovable/plan.md`.
 
 ## Memories
 - [Roadmap NR-1 Inspired](mem://features/roadmap-nr1-inspired) — 12 sprints com verbos Mensurar/Transformar/Educar/Governar, mapeamento ref→app
+- [Planos & Subscription Gate](mem://features/planos-subscription) — Sprint 7: /planos + SubscriptionGate + companies.plan
 - [Jornada do Colaborador](mem://features/jornada-colaborador) — Sprint 6: /jornada timeline 6 etapas, IFT Coin, progresso real
 - [Onboarding Wizard](mem://features/onboarding-wizard) — Sprint 5: /onboarding em 4 passos (persona → empresa → setor → 1ª missão)
 - [Auth & Profiles](mem://features/auth) — Sprint 1: profiles, user_roles, useAuth, ProtectedRoute, /auth, /perfil

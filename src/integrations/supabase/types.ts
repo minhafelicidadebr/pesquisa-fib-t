@@ -24,6 +24,7 @@ export type Database = {
           invite_code: string
           legal_name: string
           owner_id: string
+          plan: Database["public"]["Enums"]["company_plan"]
           sector: string | null
           sectors: string[]
           updated_at: string
@@ -37,6 +38,7 @@ export type Database = {
           invite_code: string
           legal_name: string
           owner_id: string
+          plan?: Database["public"]["Enums"]["company_plan"]
           sector?: string | null
           sectors?: string[]
           updated_at?: string
@@ -50,6 +52,7 @@ export type Database = {
           invite_code?: string
           legal_name?: string
           owner_id?: string
+          plan?: Database["public"]["Enums"]["company_plan"]
           sector?: string | null
           sectors?: string[]
           updated_at?: string
@@ -269,6 +272,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "gestor" | "colaborador" | "sst"
+      company_plan: "free" | "pro" | "enterprise"
       copsoq_version: "curto" | "medio" | "longo" | "brasil"
       user_segment:
         | "setor_publico"
@@ -403,6 +407,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "gestor", "colaborador", "sst"],
+      company_plan: ["free", "pro", "enterprise"],
       copsoq_version: ["curto", "medio", "longo", "brasil"],
       user_segment: [
         "setor_publico",
