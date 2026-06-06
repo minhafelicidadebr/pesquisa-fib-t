@@ -23,6 +23,7 @@ import Apresentacoes from "./pages/Apresentacoes.tsx";
 import EvidenciaCientifica from "./pages/EvidenciaCientifica.tsx";
 import EmpresaConfigurar from "./pages/EmpresaConfigurar.tsx";
 import Onboarding from "./pages/Onboarding.tsx";
+import Jornada from "./pages/Jornada.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -55,6 +56,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Onboarding />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/jornada"
+              element={
+                <ProtectedRoute>
+                  <Jornada />
                 </ProtectedRoute>
               }
             />
