@@ -362,7 +362,7 @@ export default function Jornada() {
         )}
       </main>
 
-      <LeadFormModal open={leadOpen} onOpenChange={setLeadOpen} segmentLabel="Jornada" />
+      <LeadFormModal isOpen={leadOpen} onClose={() => setLeadOpen(false)} />
     </div>
   );
 }
