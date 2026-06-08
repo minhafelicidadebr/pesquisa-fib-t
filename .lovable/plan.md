@@ -74,11 +74,12 @@ Cada verbo = um espaço dedicado no app, com KPIs próprios, agentes IA e relat�
 - Filtros por nível (individual/equipe/organizacional) e plano local de ação (UI-only por enquanto, pronto para tabela `company_interventions` futura — evitando gasto de crédito agora).
 - **Arquivos:** `src/data/interventions.ts` (catálogo + função `rankInterventions`), `src/pages/Intervencoes.tsx`.
 
-### Sprint 9 — **Educar (Academy + Constelação + Driver Detail)**
-- `/academy` → grid de 9 trilhas (PERMA+V × VIA).
-- `/academy/:slug` → driver detail com micro-missões + IFT Coin.
-- `/academy/constelacao` → visualização interativa SVG da relação entre drivers.
-- **Inspirado em:** `EducarPage`, `DriverDetailPage`, `ConstelacaoPage`.
+### ✅ Sprint 9 — **Educar (Academy + Constelação + Driver Detail)** (concluído)
+- `/academy` → grid de 9 trilhas PERMA+V × VIA com stat strip (trilhas, missões, concluídas, IFT Coin).
+- `/academy/:slug` → driver detail com "por que importa" + evidência científica + 3 micro-missões marcáveis (IFT Coin reward) + drivers que ressoam.
+- `/academy/constelacao` → SVG interativo (9 nós em anel, arestas de ressonância, anel de progresso por driver, hover detail).
+- **IFT Coin**: persistido em localStorage via `useIftCoins` (privacy-first, sem ranking público). Pronto para migrar a tabela `user_missions` quando o usuário pedir.
+- **Arquivos:** `src/data/academy.ts`, `src/hooks/useIftCoins.ts`, `src/pages/Academy.tsx`, `src/pages/AcademyDriver.tsx`, `src/pages/AcademyConstelacao.tsx`.
 
 ### Sprint 10 — **Governar (PDF Intelligence + Relatórios)**
 - `/relatorios` real: gera PGR/DRPS via edge function (`nr1-pdf-report` já existe, expandir).
