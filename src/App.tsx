@@ -14,6 +14,8 @@ import Profile from "./pages/Profile.tsx";
 import Diagnostico from "./pages/Diagnostico.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import Academy from "./pages/Academy.tsx";
+import AcademyDriver from "./pages/AcademyDriver.tsx";
+import AcademyConstelacao from "./pages/AcademyConstelacao.tsx";
 import Intervencoes from "./pages/Intervencoes.tsx";
 import Relatorios from "./pages/Relatorios.tsx";
 import NR1Hub from "./pages/NR1Hub.tsx";
@@ -47,6 +49,8 @@ const App = () => (
             <Route path="/diagnostico" element={<Diagnostico />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/academy" element={<Academy />} />
+            <Route path="/academy/constelacao" element={<AcademyConstelacao />} />
+            <Route path="/academy/:slug" element={<AcademyDriver />} />
             <Route path="/intervencoes" element={<Intervencoes />} />
             <Route path="/relatorios" element={<Relatorios />} />
             <Route path="/nr1" element={<NR1Hub />} />
