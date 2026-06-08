@@ -38,7 +38,7 @@ import {
   type RankedIntervention,
   type SubscaleRisk,
 } from "@/data/interventions";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 const LEVEL_META: Record<InterventionLevel, { label: string; icon: typeof Users; color: string }> = {
   individual: { label: "Individual", icon: Sparkles, color: "text-gold-400" },
