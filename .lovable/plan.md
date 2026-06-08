@@ -68,10 +68,11 @@ Cada verbo = um espaço dedicado no app, com KPIs próprios, agentes IA e relat�
 - Link "Planos & Assinatura" em SECONDARY_NAV.
 - **Próximo:** Stripe connector real quando o usuário pedir.
 
-### Sprint 8 — **Transformar com ILI score real**
-- `/intervencoes` deixa de ser placeholder: catálogo de práticas Oxford, cada uma com **ILI (Intervention Likelihood Index)** calculado a partir do COPSOQ da empresa.
-- Tabela `interventions` + `company_interventions` (status: planejada/ativa/concluída).
-- **Inspirado em:** dashboard da referência (linhas `nr1Recommendations`).
+### ✅ Sprint 8 — **Transformar com ILI score real** (concluído)
+- `/intervencoes` agora é um catálogo vivo de 12 práticas Oxford/Cochrane/WHO com **ILI (Intervention Likelihood Index)** calculado em runtime a partir do último `nr1_assessment` (subscale × peso × effect size).
+- Top 3 picks + catálogo completo expansível com protocolo, subescalas alvo, KPI e evidência.
+- Filtros por nível (individual/equipe/organizacional) e plano local de ação (UI-only por enquanto, pronto para tabela `company_interventions` futura — evitando gasto de crédito agora).
+- **Arquivos:** `src/data/interventions.ts` (catálogo + função `rankInterventions`), `src/pages/Intervencoes.tsx`.
 
 ### Sprint 9 — **Educar (Academy + Constelação + Driver Detail)**
 - `/academy` → grid de 9 trilhas (PERMA+V × VIA).
