@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { AppSidebarRail } from "@/components/layout/AppSidebarRail";
 import Index from "./pages/Index.tsx";
 import SegmentDeck from "./pages/SegmentDeck.tsx";
 import FibiaDemo from "./pages/FibiaDemo.tsx";
@@ -39,6 +40,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
+          <AppSidebarRail />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/apresentacoes" element={<Apresentacoes />} />
