@@ -54,6 +54,7 @@ const App = () => (
             <Route path="/academy/:slug" element={<AcademyDriver />} />
             <Route path="/intervencoes" element={<Intervencoes />} />
             <Route path="/relatorios" element={<Relatorios />} />
+            <Route path="/relatorios/pdf-intelligence" element={<PdfIntelligence />} />
             <Route path="/nr1" element={<NR1Hub />} />
             <Route path="/nr1/avaliacao" element={<NR1Chat />} />
             <Route path="/auth" element={<Auth />} />
