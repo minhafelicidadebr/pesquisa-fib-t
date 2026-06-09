@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FileBarChart, Download, ShieldAlert, Sparkles, ArrowRight, Eye, FileText } from "lucide-react";
+import { FileBarChart, Download, ShieldAlert, Sparkles, ArrowRight, Eye, FileText, Brain } from "lucide-react";
 import { AppNavbar } from "@/components/layout/AppNavbar";
 import { InstitutionalFooter } from "@/components/deck/InstitutionalFooter";
 import { listNR1, NR1Record } from "@/lib/nr1Assessments";
