@@ -88,6 +88,31 @@ export default function Relatorios() {
             </div>
           </div>
 
+          {/* PDF Intelligence CTA */}
+          <Link
+            to="/relatorios/pdf-intelligence"
+            className="block glass-card rounded-2xl p-6 mb-10 border border-brand-magenta/25 hover:border-brand-magenta/50 transition-all group"
+          >
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-brand-magenta/15 text-brand-magenta grid place-items-center shrink-0">
+                  <Brain className="w-6 h-6" />
+                </div>
+                <div>
+                  <p className="text-[11px] uppercase tracking-widest text-brand-magenta font-heading font-bold mb-1">Novo · IA</p>
+                  <h3 className="font-display text-xl text-foreground mb-1">PDF Intelligence</h3>
+                  <p className="text-sm text-muted-foreground max-w-xl">
+                    Suba seu PGR, DRPS ou política. A IA extrai achados, mapeia subescalas COPSOQ II
+                    e identifica lacunas frente à NR-1.
+                  </p>
+                </div>
+              </div>
+              <span className="text-brand-magenta font-heading font-bold text-sm inline-flex items-center gap-1.5 group-hover:gap-2.5 transition-all">
+                Abrir <ArrowRight className="w-4 h-4" />
+              </span>
+            </div>
+          </Link>
+
           {/* Grid Reports */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* NR-1 reports */}
