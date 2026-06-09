@@ -38,3 +38,4 @@
 - [Crisis Dashboard](mem://features/crisis-dashboard) — Interactive global metrics dashboard categorizing data by confidence level
 - [Financial Impact Calculator](mem://features/financial-impact-calculator) — Scientific calculator for Cost of Inaction and ROI of wellbeing
 - [Gamification Principles](mem://features/gamification-principles) — IFT Coin, privacy-first design, LGPD compliance, and personal progress focus
+- [PDF Intelligence](mem://features/pdf-intelligence) — Edge function + /relatorios/pdf-intelligence cruzando PDFs com COPSOQ × NR-1 via Lovable AI

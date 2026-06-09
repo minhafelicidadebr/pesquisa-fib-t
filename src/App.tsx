@@ -18,6 +18,7 @@ import AcademyDriver from "./pages/AcademyDriver.tsx";
 import AcademyConstelacao from "./pages/AcademyConstelacao.tsx";
 import Intervencoes from "./pages/Intervencoes.tsx";
 import Relatorios from "./pages/Relatorios.tsx";
+import PdfIntelligence from "./pages/PdfIntelligence.tsx";
 import NR1Hub from "./pages/NR1Hub.tsx";
 import NR1Chat from "./pages/NR1Chat.tsx";
 import Matriz from "./pages/Matriz.tsx";
@@ -53,6 +54,7 @@ const App = () => (
             <Route path="/academy/:slug" element={<AcademyDriver />} />
             <Route path="/intervencoes" element={<Intervencoes />} />
             <Route path="/relatorios" element={<Relatorios />} />
+            <Route path="/relatorios/pdf-intelligence" element={<PdfIntelligence />} />
             <Route path="/nr1" element={<NR1Hub />} />
             <Route path="/nr1/avaliacao" element={<NR1Chat />} />
             <Route path="/auth" element={<Auth />} />

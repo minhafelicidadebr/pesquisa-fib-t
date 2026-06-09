@@ -81,10 +81,11 @@ Cada verbo = um espaço dedicado no app, com KPIs próprios, agentes IA e relat�
 - **IFT Coin**: persistido em localStorage via `useIftCoins` (privacy-first, sem ranking público). Pronto para migrar a tabela `user_missions` quando o usuário pedir.
 - **Arquivos:** `src/data/academy.ts`, `src/hooks/useIftCoins.ts`, `src/pages/Academy.tsx`, `src/pages/AcademyDriver.tsx`, `src/pages/AcademyConstelacao.tsx`.
 
-### Sprint 10 — **Governar (PDF Intelligence + Relatórios)**
-- `/relatorios` real: gera PGR/DRPS via edge function (`nr1-pdf-report` já existe, expandir).
-- `/relatorios/pdf-intelligence` → upload de PDFs antigos da empresa, IA extrai pontos e cruza com COPSOQ atual.
-- **Inspirado em:** `PDFCompliancePage`.
+### ✅ Sprint 10 — **Governar (PDF Intelligence + Relatórios)** (concluído)
+- Edge function `pdf-intelligence` (Lovable AI · `google/gemini-2.5-flash`, JSON mode) analisa texto extraído de PDFs de compliance (PGR/DRPS/ASO) e devolve: tipo, resumo, compliance_score (0-100), achados (severidade + subescalas COPSOQ + cláusula NR-1), lacunas e próximas ações.
+- Página `/relatorios/pdf-intelligence`: upload de PDF (extração client-side de texto via heurística Tj/TJ — zero servidor para tokenização) **ou** colagem manual; UI premium com badges de severidade, tags COPSOQ traduzidas via `copsoqSubscales`, CTAs para `/intervencoes` e `/nr1/avaliacao`.
+- Card de entrada destacado em `/relatorios`; rota adicionada em `App.tsx`.
+- Roadmap futuro: OCR para PDFs escaneados, persistência em `company_pdf_analyses` (evitado agora para não consumir crédito sem demanda).
 
 ### Sprint 11 — **DashboardLayout SaaS persistente**
 - Migrar `/dashboard`, `/mensurar`, `/transformar`, `/educar`, `/governar` para um `DashboardLayout` com sidebar fixa + breadcrumb + user-menu.
