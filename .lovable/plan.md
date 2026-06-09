@@ -87,9 +87,11 @@ Cada verbo = um espaço dedicado no app, com KPIs próprios, agentes IA e relat�
 - Card de entrada destacado em `/relatorios`; rota adicionada em `App.tsx`.
 - Roadmap futuro: OCR para PDFs escaneados, persistência em `company_pdf_analyses` (evitado agora para não consumir crédito sem demanda).
 
-### Sprint 11 — **DashboardLayout SaaS persistente**
-- Migrar `/dashboard`, `/mensurar`, `/transformar`, `/educar`, `/governar` para um `DashboardLayout` com sidebar fixa + breadcrumb + user-menu.
-- Mantém `AppNavbar` apenas no público (landing, apresentações, evidências).
+### ✅ Sprint 11 — **DashboardLayout SaaS persistente** (concluído via *workspace rail*)
+- Abordagem não-invasiva premium: `AppSidebarRail` (trilho lateral fixo `w-14`) montado globalmente em `App.tsx` dentro do `AuthProvider`. Auto-detecta rotas SaaS (`/dashboard`, `/jornada`, `/diagnostico`, `/nr1*`, `/intervencoes`, `/academy*`, `/relatorios*`, `/matriz`, `/planos`, `/empresa*`, `/perfil`) e some no público (landing, apresentações, evidências, FIBia, auth).
+- Layout flutuante (backdrop-blur + border + glow) — não desloca conteúdo das páginas, preserva trabalho prévio e zero edição por página.
+- Itens organizados pelos 4 verbos (Mensurar / Transformar / Educar / Governar) + Dashboard, Jornada, Matriz e Planos. Tooltips on-hover, indicador de rota ativa com `layoutId` Framer Motion.
+- Trade-off consciente: o `AppNavbar` superior permanece em todas as páginas; o trilho é um **atalho de navegação cross-route**, não substitui o navbar. Migração para shell completo (com breadcrumb + user-menu integrado) fica como Sprint futura quando justificar custo de refator.
 
 ### Sprint 12 — **Pesquisa pública anônima (`/pesquisa?code=...`)**
 - Link compartilhável que o gestor envia aos colaboradores; responde COPSOQ II sem login.
