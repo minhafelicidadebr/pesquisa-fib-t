@@ -40,6 +40,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
+          <AppSidebarRail />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/apresentacoes" element={<Apresentacoes />} />
