@@ -62,6 +62,7 @@ const App = () => (
             <Route path="/nr1/avaliacao" element={<NR1Chat />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/planos" element={<Planos />} />
+            <Route path="/pesquisa" element={<Pesquisa />} />
             <Route
               path="/onboarding"
               element={
