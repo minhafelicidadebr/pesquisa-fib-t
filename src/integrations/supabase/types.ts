@@ -223,6 +223,47 @@ export type Database = {
         }
         Relationships: []
       }
+      public_survey_responses: {
+        Row: {
+          answers: Json
+          company_id: string
+          created_at: string
+          global_risk: string | null
+          global_score: number | null
+          id: string
+          sector: string | null
+          user_agent_hash: string | null
+        }
+        Insert: {
+          answers: Json
+          company_id: string
+          created_at?: string
+          global_risk?: string | null
+          global_score?: number | null
+          id?: string
+          sector?: string | null
+          user_agent_hash?: string | null
+        }
+        Update: {
+          answers?: Json
+          company_id?: string
+          created_at?: string
+          global_risk?: string | null
+          global_score?: number | null
+          id?: string
+          sector?: string | null
+          user_agent_hash?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_survey_responses_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -266,6 +307,26 @@ export type Database = {
           _code: string
           _role?: Database["public"]["Enums"]["app_role"]
           _sector?: string
+        }
+        Returns: string
+      }
+      lookup_company_by_invite: {
+        Args: { _code: string }
+        Returns: {
+          copsoq_version: Database["public"]["Enums"]["copsoq_version"]
+          id: string
+          legal_name: string
+          sectors: string[]
+        }[]
+      }
+      submit_public_survey: {
+        Args: {
+          _answers: Json
+          _code: string
+          _global_risk: string
+          _global_score: number
+          _sector: string
+          _ua_hash: string
         }
         Returns: string
       }
