@@ -93,10 +93,12 @@ Cada verbo = um espaço dedicado no app, com KPIs próprios, agentes IA e relat�
 - Itens organizados pelos 4 verbos (Mensurar / Transformar / Educar / Governar) + Dashboard, Jornada, Matriz e Planos. Tooltips on-hover, indicador de rota ativa com `layoutId` Framer Motion.
 - Trade-off consciente: o `AppNavbar` superior permanece em todas as páginas; o trilho é um **atalho de navegação cross-route**, não substitui o navbar. Migração para shell completo (com breadcrumb + user-menu integrado) fica como Sprint futura quando justificar custo de refator.
 
-### Sprint 12 — **Pesquisa pública anônima (`/pesquisa?code=...`)**
-- Link compartilhável que o gestor envia aos colaboradores; responde COPSOQ II sem login.
-- Vincula respostas a `companies.invite_code` com `k≥7` para anonimato.
-- **Inspirado em:** `SurveyPage.tsx` (rota pública sem auth).
+### ✅ Sprint 12 — **Pesquisa pública anônima (`/pesquisa?code=...`)** (concluído)
+- Rota pública **sem auth**: colaborador acessa via QR/link com `?code=INVITE`, valida via RPC `lookup_company_by_invite` (SECURITY DEFINER, exposta a anon/authenticated — devolve apenas nome legal + setores + versão COPSOQ).
+- Fluxo em 4 estágios (code → intro → survey → done): coleta opcional de setor, 41 itens COPSOQ II paginados em blocos de 6, validação por bloco, progress bar global.
+- Envio via RPC `submit_public_survey` (SECURITY DEFINER) que valida o invite_code server-side e grava em `public_survey_responses` com `global_score`/`global_risk` pré-computados + hash leve de user-agent (não-identificável).
+- RLS: tabela bloqueada para escrita direta; leitura apenas para `is_company_member`. Privacy-by-design: agregação k ≥ 7 reforçada na UI; sem coleta de IP/email/login.
+- **Arquivos:** `src/pages/Pesquisa.tsx`, migration `public_survey_responses` + 2 RPCs, rota em `src/App.tsx`.
 
 ---
 
