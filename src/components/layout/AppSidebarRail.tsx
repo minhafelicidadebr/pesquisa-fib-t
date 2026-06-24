@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Stethoscope, Activity, BookOpen, FileBarChart,
-  ShieldAlert, Layers, Sparkles, Crown, Compass,
+  ShieldAlert, Layers, Sparkles, Crown, Compass, QrCode,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +20,7 @@ const RAIL: RailItem[] = [
   { to: "/diagnostico", label: "Mensurar · FIB-T", icon: Stethoscope, verb: "mensurar", accent: "gold" },
   { to: "/nr1", label: "Mensurar · NR-1", icon: ShieldAlert, verb: "mensurar", accent: "magenta" },
   { to: "/intervencoes", label: "Transformar", icon: Activity, verb: "transformar", accent: "magenta" },
+  { to: "/empresa/convites", label: "Convites & QR", icon: QrCode, accent: "magenta" },
   { to: "/academy", label: "Educar · Academy", icon: BookOpen, verb: "educar", accent: "gold" },
   { to: "/relatorios", label: "Governar · Relatórios", icon: FileBarChart, verb: "governar", accent: "cyan" },
   { to: "/matriz", label: "Matriz NR-1", icon: Layers, accent: "cyan" },
