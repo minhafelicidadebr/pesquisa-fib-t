@@ -100,6 +100,14 @@ Cada verbo = um espaço dedicado no app, com KPIs próprios, agentes IA e relat�
 - RLS: tabela bloqueada para escrita direta; leitura apenas para `is_company_member`. Privacy-by-design: agregação k ≥ 7 reforçada na UI; sem coleta de IP/email/login.
 - **Arquivos:** `src/pages/Pesquisa.tsx`, migration `public_survey_responses` + 2 RPCs, rota em `src/App.tsx`.
 
+### ✅ Sprint 13 — **Gestão de Convites & QR Code (`/empresa/convites`)** (concluído)
+- Página premium para SST/gestor: QR code de alta resolução (lib `qrcode`, error correction H, 720px) gerado client-side para o link `/pesquisa?code=INVITE`, com download PNG, código copy/share, link público copy/share.
+- Stat strip ao vivo: respostas totais, últimas 24h, cobertura vs. headcount estimado, score médio.
+- Breakdown por setor com k-anonimato (k ≥ 7): setores abaixo do limiar mostram apenas n, sem score nem risco; acima exibem score médio e risco dominante (baixo/médio/alto/crítico colorido).
+- **Realtime**: subscription Supabase `postgres_changes` em `public_survey_responses` filtrada por `company_id` — novas respostas anônimas aparecem instantaneamente sem refresh. Migration ativa `supabase_realtime` + `REPLICA IDENTITY FULL`.
+- CTA cruzados para `/dashboard` (heatmap) e `/intervencoes` (ILI), botão de atalho em `/empresa/configurar`, item dedicado no `AppSidebarRail` (ícone QR, accent magenta).
+- Arquivos: `src/pages/EmpresaConvites.tsx`, rota protegida em `App.tsx`, atalho em `EmpresaConfigurar.tsx`, item em `AppSidebarRail.tsx`, migration realtime.
+
 ---
 
 ## 🔧 Decisões técnicas (não-negociáveis)

@@ -26,6 +26,7 @@ import Matriz from "./pages/Matriz.tsx";
 import Apresentacoes from "./pages/Apresentacoes.tsx";
 import EvidenciaCientifica from "./pages/EvidenciaCientifica.tsx";
 import EmpresaConfigurar from "./pages/EmpresaConfigurar.tsx";
+import EmpresaConvites from "./pages/EmpresaConvites.tsx";
 import Onboarding from "./pages/Onboarding.tsx";
 import Jornada from "./pages/Jornada.tsx";
 import Planos from "./pages/Planos.tsx";
@@ -76,6 +77,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Jornada />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/empresa/convites"
+              element={
+                <ProtectedRoute>
+                  <EmpresaConvites />
                 </ProtectedRoute>
               }
             />

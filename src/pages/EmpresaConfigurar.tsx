@@ -162,6 +162,11 @@ export default function EmpresaConfigurar() {
                   <Share2 className="w-4 h-4 mr-1.5" /> Link
                 </Button>
               </div>
+              <Link to="/empresa/convites" className="block mt-3">
+                <Button variant="default" size="sm" className="w-full font-heading bg-brand-magenta/90 hover:bg-brand-magenta text-white">
+                  Convites & QR Code da pesquisa →
+                </Button>
+              </Link>
               <p className="text-[11px] text-muted-foreground mt-4 leading-relaxed">
                 Compartilhe com sua equipe. Cada pessoa usa o código no cadastro para se vincular automaticamente.
               </p>
