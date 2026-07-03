@@ -6,6 +6,7 @@ import {
   BookOpen,
   ChevronDown,
   FileBarChart,
+  Flame,
   Layers,
   LayoutDashboard,
   Menu,
