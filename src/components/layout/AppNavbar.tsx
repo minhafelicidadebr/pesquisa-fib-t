@@ -34,6 +34,7 @@ const PRIMARY_NAV: NavItem[] = [
   { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard, description: "Painel pessoal e organizacional", accent: "cyan" },
   { label: "Diagnóstico", to: "/diagnostico", icon: Stethoscope, description: "Avaliação FIB-T conversacional", accent: "gold" },
   { label: "NR-1", to: "/nr1", icon: ShieldAlert, description: "COPSOQ II · Saúde mental no trabalho", accent: "magenta" },
+  { label: "NR-1 Brasil", to: "/nr1-brasil", icon: Flame, description: "Campanha nacional de conformidade", accent: "magenta" },
   { label: "Matriz", to: "/matriz", icon: Layers, description: "COPSOQ × Playbook 2.0 × NR-1", accent: "cyan" },
   { label: "Relatórios", to: "/relatorios", icon: FileBarChart, description: "DRPS PDF · ESG · NR-1", accent: "gold" },
 ];
