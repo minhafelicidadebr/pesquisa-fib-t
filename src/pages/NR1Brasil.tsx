@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { AppNavbar } from "@/components/layout/AppNavbar";
 import { InstitutionalFooter } from "@/components/deck/InstitutionalFooter";
+import { NR1Manifesto } from "@/components/nr1/NR1Manifesto";
 import { toast } from "sonner";
 
 /**
@@ -342,6 +343,9 @@ export default function NR1Brasil() {
             </div>
           </motion.div>
         </section>
+
+        {/* MANIFESTO NACIONAL */}
+        <NR1Manifesto />
 
         {/* CTA FINAL */}
         <section className="px-4 sm:px-6 max-w-4xl mx-auto mt-24 text-center">

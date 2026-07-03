@@ -187,6 +187,45 @@ export type Database = {
         }
         Relationships: []
       }
+      nr1_manifest_signatures: {
+        Row: {
+          commitment_level: string
+          company_name: string
+          created_at: string
+          email: string
+          full_name: string
+          headcount_range: string | null
+          id: string
+          role: string
+          state_uf: string | null
+          user_agent_hash: string | null
+        }
+        Insert: {
+          commitment_level?: string
+          company_name: string
+          created_at?: string
+          email: string
+          full_name: string
+          headcount_range?: string | null
+          id?: string
+          role: string
+          state_uf?: string | null
+          user_agent_hash?: string | null
+        }
+        Update: {
+          commitment_level?: string
+          company_name?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          headcount_range?: string | null
+          id?: string
+          role?: string
+          state_uf?: string | null
+          user_agent_hash?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -318,6 +357,19 @@ export type Database = {
           legal_name: string
           sectors: string[]
         }[]
+      }
+      nr1_manifest_stats: { Args: never; Returns: Json }
+      sign_nr1_manifest: {
+        Args: {
+          p_company_name: string
+          p_email: string
+          p_full_name: string
+          p_headcount_range: string
+          p_role: string
+          p_state_uf: string
+          p_ua_hash: string
+        }
+        Returns: Json
       }
       submit_public_survey: {
         Args: {
