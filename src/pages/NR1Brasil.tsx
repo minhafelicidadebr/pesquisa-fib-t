@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { AppNavbar } from "@/components/layout/AppNavbar";
 import { InstitutionalFooter } from "@/components/deck/InstitutionalFooter";
+import { NR1Manifesto } from "@/components/nr1/NR1Manifesto";
 import { toast } from "sonner";
 
 /**
