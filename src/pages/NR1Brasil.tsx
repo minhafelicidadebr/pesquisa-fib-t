@@ -344,6 +344,9 @@ export default function NR1Brasil() {
           </motion.div>
         </section>
 
+        {/* MANIFESTO NACIONAL */}
+        <NR1Manifesto />
+
         {/* CTA FINAL */}
         <section className="px-4 sm:px-6 max-w-4xl mx-auto mt-24 text-center">
           <h2 className="font-display text-3xl md:text-5xl font-bold text-foreground mb-4">
