@@ -12,6 +12,7 @@
 
 ## Memories
 - [Roadmap NR-1 Inspired](mem://features/roadmap-nr1-inspired) — 12 sprints com verbos Mensurar/Transformar/Educar/Governar, mapeamento ref→app
+- [Manifesto NR-1 Brasil](mem://features/nr1-manifesto) — Sprint 15: assinatura pública nacional em /nr1-brasil (tabela + 2 RPCs privacy-safe)
 - [Planos & Subscription Gate](mem://features/planos-subscription) — Sprint 7: /planos + SubscriptionGate + companies.plan
 - [Jornada do Colaborador](mem://features/jornada-colaborador) — Sprint 6: /jornada timeline 6 etapas, IFT Coin, progresso real
 - [Onboarding Wizard](mem://features/onboarding-wizard) — Sprint 5: /onboarding em 4 passos (persona → empresa → setor → 1ª missão)
