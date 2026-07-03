@@ -14,6 +14,7 @@ import Auth from "./pages/Auth.tsx";
 import Profile from "./pages/Profile.tsx";
 import Diagnostico from "./pages/Diagnostico.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
+import NR1Brasil from "./pages/NR1Brasil.tsx";
 import Academy from "./pages/Academy.tsx";
 import AcademyDriver from "./pages/AcademyDriver.tsx";
 import AcademyConstelacao from "./pages/AcademyConstelacao.tsx";
@@ -60,6 +61,7 @@ const App = () => (
             <Route path="/relatorios" element={<Relatorios />} />
             <Route path="/relatorios/pdf-intelligence" element={<PdfIntelligence />} />
             <Route path="/nr1" element={<NR1Hub />} />
+            <Route path="/nr1-brasil" element={<NR1Brasil />} />
             <Route path="/nr1/avaliacao" element={<NR1Chat />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/planos" element={<Planos />} />
