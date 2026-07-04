@@ -41,3 +41,4 @@
 - [Gamification Principles](mem://features/gamification-principles) — IFT Coin, privacy-first design, LGPD compliance, and personal progress focus
 - [PDF Intelligence](mem://features/pdf-intelligence) — Edge function + /relatorios/pdf-intelligence cruzando PDFs com COPSOQ × NR-1 via Lovable AI
 - [Selo Público NR-1](mem://features/nr1-selo-publico) — Página /selo/:id com certificado verificável, QR, share LinkedIn e embed code para signatários do Manifesto
+- [Diretório Nacional NR-1](mem://features/nr1-diretorio) — Página /nr1-brasil/signatarios com busca, filtros UF/porte e cards para cada Selo

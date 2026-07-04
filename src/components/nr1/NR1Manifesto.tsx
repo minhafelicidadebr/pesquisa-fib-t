@@ -283,6 +283,12 @@ export function NR1Manifesto() {
                   </li>
                 ))}
               </ul>
+              <a
+                href="/nr1-brasil/signatarios"
+                className="mt-4 inline-flex items-center gap-1.5 text-xs font-heading font-bold text-brand-magenta hover:text-brand-gold transition-colors"
+              >
+                Ver diretório nacional completo →
+              </a>
             </div>
           )}
         </motion.aside>
