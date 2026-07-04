@@ -127,14 +127,24 @@ export function NR1Manifesto() {
               </div>
               <h3 className="font-display text-2xl font-bold mb-2">Assinatura registrada</h3>
               <p className="text-muted-foreground max-w-md mb-6">
-                Sua empresa agora faz parte do Movimento NR-1 Brasil. Enviamos os próximos passos por e-mail e você pode ativar o ciclo COPSOQ II a qualquer momento.
+                Sua empresa agora faz parte do Movimento NR-1 Brasil. Já emitimos o <strong className="text-foreground">Selo Público Verificável</strong> — compartilhe no LinkedIn e no site institucional.
               </p>
-              <a
-                href="/auth"
-                className="inline-flex items-center gap-2 bg-brand-gold text-brand-charcoal font-heading font-bold px-6 py-3 rounded-xl hover:scale-[1.02] transition-transform"
-              >
-                Criar conta e começar o diagnóstico
-              </a>
+              <div className="flex flex-col sm:flex-row gap-3">
+                {sealId && (
+                  <a
+                    href={`/selo/${sealId}`}
+                    className="inline-flex items-center gap-2 bg-brand-gold text-brand-charcoal font-heading font-bold px-6 py-3 rounded-xl hover:scale-[1.02] transition-transform"
+                  >
+                    Ver meu Selo Público
+                  </a>
+                )}
+                <a
+                  href="/auth"
+                  className="inline-flex items-center gap-2 bg-white/5 border border-white/10 text-foreground font-heading font-bold px-6 py-3 rounded-xl hover:bg-white/10 transition-colors"
+                >
+                  Ativar diagnóstico COPSOQ II
+                </a>
+              </div>
             </div>
           ) : (
             <form onSubmit={submit} className="space-y-4">
