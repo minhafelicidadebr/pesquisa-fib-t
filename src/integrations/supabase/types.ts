@@ -330,6 +330,7 @@ export type Database = {
     }
     Functions: {
       generate_invite_code: { Args: never; Returns: string }
+      get_nr1_seal: { Args: { _id: string }; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
