@@ -350,6 +350,16 @@ export type Database = {
         }
         Returns: string
       }
+      list_nr1_signatories: {
+        Args: {
+          _headcount?: string
+          _limit?: number
+          _offset?: number
+          _search?: string
+          _uf?: string
+        }
+        Returns: Json
+      }
       lookup_company_by_invite: {
         Args: { _code: string }
         Returns: {
