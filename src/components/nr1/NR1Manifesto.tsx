@@ -37,6 +37,7 @@ export function NR1Manifesto() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [sealId, setSealId] = useState<string | null>(null);
   const [form, setForm] = useState({
     full_name: "",
     role: "",
@@ -73,16 +74,17 @@ export function NR1Manifesto() {
       p_ua_hash: ua,
     } as never);
     setLoading(false);
-    const res = data as { ok?: boolean; duplicate?: boolean; error?: string } | null;
+    const res = data as { ok?: boolean; duplicate?: boolean; error?: string; id?: string } | null;
     if (error || !res?.ok) {
       toast.error("Não conseguimos registrar sua assinatura. Tente novamente.");
       return;
     }
     if (res.duplicate) {
-      toast.success("Sua empresa já está no Manifesto NR-1. Obrigado!");
+      toast.success("Sua empresa já está no Manifesto NR-1.");
     } else {
       toast.success("Assinatura registrada. Bem-vindo(a) ao Movimento NR-1 Brasil.");
     }
+    if (res.id) setSealId(res.id);
     setDone(true);
     loadStats();
   }
