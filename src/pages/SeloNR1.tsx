@@ -120,9 +120,10 @@ export default function SeloNR1() {
   }
 
   function copyEmbed() {
-    const embed = `<a href="${publicUrl}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;background:#0a0a0f;color:#F5C842;font-family:system-ui;font-weight:700;text-decoration:none;border:1px solid #F5C84240">🛡 Signatária do Manifesto NR-1 Brasil</a>`;
+    const src = `${window.location.origin}/selo/${id}/embed`;
+    const embed = `<iframe src="${src}" title="Selo NR-1 Brasil" width="320" height="86" style="border:0;background:transparent;overflow:hidden" loading="lazy" scrolling="no"></iframe>`;
     navigator.clipboard.writeText(embed);
-    toast.success("Código embed copiado — cole no site da empresa.");
+    toast.success("Iframe embed copiado — cole no site da empresa.");
   }
 
   async function downloadPng() {
