@@ -108,6 +108,12 @@ Cada verbo = um espaço dedicado no app, com KPIs próprios, agentes IA e relat�
 - CTA cruzados para `/dashboard` (heatmap) e `/intervencoes` (ILI), botão de atalho em `/empresa/configurar`, item dedicado no `AppSidebarRail` (ícone QR, accent magenta).
 - Arquivos: `src/pages/EmpresaConvites.tsx`, rota protegida em `App.tsx`, atalho em `EmpresaConfigurar.tsx`, item em `AppSidebarRail.tsx`, migration realtime.
 
+### ✅ Sprint 18 — **Ranking Nacional NR-1 + SEO viral do Selo** (concluído)
+- Widget "Top 10 estados que mais aderiram" no topo de `/nr1-brasil/signatarios`: barras proporcionais por UF (gradient gold→magenta), badges clicáveis que filtram o diretório em 1 clique, counter total de empresas em destaque. Alimentado pela RPC `nr1_manifest_stats` já existente (zero custo de backend).
+- SEO dinâmico no `/selo/:id`: injeção runtime de `<title>`, `meta description`, Open Graph (`og:title/description/type`) e Twitter Card com o nome real da empresa signatária → link do selo agora renderiza preview rico ao ser colado em WhatsApp, LinkedIn, Slack, etc.
+- Title dedicado também no diretório para SEO orgânico ("Diretório Nacional NR-1 · Empresas Signatárias").
+- Arquivos: `src/pages/NR1Signatarios.tsx`, `src/pages/SeloNR1.tsx`.
+
 ---
 
 ## 🔧 Decisões técnicas (não-negociáveis)
