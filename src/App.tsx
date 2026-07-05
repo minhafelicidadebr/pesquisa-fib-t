@@ -33,6 +33,7 @@ import Jornada from "./pages/Jornada.tsx";
 import Planos from "./pages/Planos.tsx";
 import Pesquisa from "./pages/Pesquisa.tsx";
 import SeloNR1 from "./pages/SeloNR1.tsx";
+import SeloEmbed from "./pages/SeloEmbed.tsx";
 import NR1Signatarios from "./pages/NR1Signatarios.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
