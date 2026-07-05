@@ -46,6 +46,12 @@ interface Directory {
 
 const PAGE_SIZE = 24;
 
+interface Stats {
+  total: number;
+  companies: number;
+  states: { uf: string; n: number }[];
+}
+
 export default function NR1Signatarios() {
   const [dir, setDir] = useState<Directory | null>(null);
   const [loading, setLoading] = useState(true);
@@ -53,6 +59,15 @@ export default function NR1Signatarios() {
   const [uf, setUf] = useState<string>("");
   const [hc, setHc] = useState<string>("");
   const [page, setPage] = useState(0);
+  const [stats, setStats] = useState<Stats | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase.rpc("nr1_manifest_stats" as never);
+      if (data) setStats(data as unknown as Stats);
+    })();
+    document.title = "Diretório Nacional NR-1 · Empresas Signatárias | FIB Brasil";
+  }, []);
 
   useEffect(() => {
     let cancel = false;
@@ -81,6 +96,11 @@ export default function NR1Signatarios() {
   }, [search, uf, hc]);
 
   const totalPages = useMemo(() => (dir ? Math.max(1, Math.ceil(dir.total / PAGE_SIZE)) : 1), [dir]);
+  const topStates = useMemo(() => {
+    if (!stats?.states?.length) return [];
+    const max = Math.max(...stats.states.map((s) => s.n));
+    return stats.states.slice(0, 10).map((s) => ({ ...s, pct: max ? (s.n / max) * 100 : 0 }));
+  }, [stats]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -108,6 +128,76 @@ export default function NR1Signatarios() {
             Organizações que assumiram publicamente o compromisso com a saúde mental no trabalho e a NR-1.
           </p>
         </motion.div>
+
+        {/* Ranking Nacional por UF */}
+        {topStates.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.15 }}
+            className="mb-8 rounded-3xl border border-brand-gold/25 bg-gradient-to-br from-brand-gold/[0.06] via-card/60 to-brand-magenta/[0.05] backdrop-blur p-6 md:p-7"
+          >
+            <div className="flex items-end justify-between mb-5 flex-wrap gap-3">
+              <div>
+                <div className="text-[10px] font-heading font-bold uppercase tracking-widest text-brand-gold mb-1">
+                  Ranking Nacional
+                </div>
+                <h2 className="font-display text-xl md:text-2xl font-bold">
+                  Top 10 estados que mais aderiram
+                </h2>
+              </div>
+              <div className="text-right">
+                <div className="font-mono text-2xl font-bold text-brand-gold leading-none">
+                  {stats?.companies?.toLocaleString("pt-BR") ?? "—"}
+                </div>
+                <div className="text-[11px] text-muted-foreground uppercase tracking-wider">
+                  empresas signatárias
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-2.5">
+              {topStates.map((s, i) => {
+                const isActive = uf === s.uf;
+                return (
+                  <button
+                    key={s.uf}
+                    onClick={() => setUf(isActive ? "" : s.uf)}
+                    className={`group relative overflow-hidden rounded-xl border p-3 text-left transition-all ${
+                      isActive
+                        ? "border-brand-gold/60 bg-brand-gold/10"
+                        : "border-white/10 bg-background/40 hover:border-brand-gold/40"
+                    }`}
+                    aria-label={`Filtrar por ${s.uf} · ${s.n} empresas`}
+                  >
+                    <div
+                      className="absolute inset-y-0 left-0 bg-gradient-to-r from-brand-gold/25 to-brand-magenta/15 transition-all"
+                      style={{ width: `${s.pct}%` }}
+                    />
+                    <div className="relative flex items-baseline justify-between">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-[10px] font-mono text-muted-foreground">#{i + 1}</span>
+                        <span className="font-heading font-bold text-base text-foreground">
+                          {s.uf}
+                        </span>
+                      </div>
+                      <span className="font-mono text-sm font-bold text-brand-gold">
+                        {s.n}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+            {uf && (
+              <div className="mt-4 text-xs text-muted-foreground">
+                Filtrando por <span className="text-brand-gold font-heading font-bold">{uf}</span> —{" "}
+                <button onClick={() => setUf("")} className="underline hover:text-foreground">
+                  limpar
+                </button>
+              </div>
+            )}
+          </motion.div>
+        )}
 
         {/* Filtros */}
         <div className="rounded-2xl border border-white/10 bg-card/60 backdrop-blur p-4 md:p-5 mb-6 grid md:grid-cols-[1fr_auto_auto_auto] gap-3">
