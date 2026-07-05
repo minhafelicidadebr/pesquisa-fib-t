@@ -70,6 +70,30 @@ export default function SeloNR1() {
     }).then(setQr);
   }, [publicUrl]);
 
+  // SEO dinâmico para compartilhamento
+  useEffect(() => {
+    if (!seal) return;
+    const title = `${seal.company_name} · Selo NR-1 Brasil`;
+    const description = `${seal.company_name} assinou publicamente o Manifesto NR-1 Brasil, assumindo compromisso com saúde mental no trabalho e a Norma Regulamentadora nº 1.`;
+    document.title = title;
+    const setMeta = (name: string, content: string, attr: "name" | "property" = "name") => {
+      let tag = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null;
+      if (!tag) {
+        tag = document.createElement("meta");
+        tag.setAttribute(attr, name);
+        document.head.appendChild(tag);
+      }
+      tag.setAttribute("content", content);
+    };
+    setMeta("description", description);
+    setMeta("og:title", title, "property");
+    setMeta("og:description", description, "property");
+    setMeta("og:type", "website", "property");
+    setMeta("twitter:card", "summary_large_image");
+    setMeta("twitter:title", title);
+    setMeta("twitter:description", description);
+  }, [seal]);
+
   const issuedAt = seal ? new Date(seal.created_at) : null;
   const shortId = id?.slice(0, 8).toUpperCase();
 
