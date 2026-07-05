@@ -46,6 +46,12 @@ interface Directory {
 
 const PAGE_SIZE = 24;
 
+interface Stats {
+  total: number;
+  companies: number;
+  states: { uf: string; n: number }[];
+}
+
 export default function NR1Signatarios() {
   const [dir, setDir] = useState<Directory | null>(null);
   const [loading, setLoading] = useState(true);
@@ -53,6 +59,15 @@ export default function NR1Signatarios() {
   const [uf, setUf] = useState<string>("");
   const [hc, setHc] = useState<string>("");
   const [page, setPage] = useState(0);
+  const [stats, setStats] = useState<Stats | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase.rpc("nr1_manifest_stats" as never);
+      if (data) setStats(data as unknown as Stats);
+    })();
+    document.title = "Diretório Nacional NR-1 · Empresas Signatárias | FIB Brasil";
+  }, []);
 
   useEffect(() => {
     let cancel = false;
@@ -81,6 +96,11 @@ export default function NR1Signatarios() {
   }, [search, uf, hc]);
 
   const totalPages = useMemo(() => (dir ? Math.max(1, Math.ceil(dir.total / PAGE_SIZE)) : 1), [dir]);
+  const topStates = useMemo(() => {
+    if (!stats?.states?.length) return [];
+    const max = Math.max(...stats.states.map((s) => s.n));
+    return stats.states.slice(0, 10).map((s) => ({ ...s, pct: max ? (s.n / max) * 100 : 0 }));
+  }, [stats]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
