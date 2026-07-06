@@ -5,6 +5,7 @@ import QRCode from "qrcode";
 import { toast } from "sonner";
 import {
   ArrowLeft,
+  Award,
   Copy,
   Download,
   Linkedin,
