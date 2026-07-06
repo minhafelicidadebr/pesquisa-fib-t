@@ -40,6 +40,7 @@
 - [Financial Impact Calculator](mem://features/financial-impact-calculator) — Scientific calculator for Cost of Inaction and ROI of wellbeing
 - [Gamification Principles](mem://features/gamification-principles) — IFT Coin, privacy-first design, LGPD compliance, and personal progress focus
 - [Kit de Compartilhamento NR-1](mem://features/nr1-share-kit) — Modal "Post pronto" no /selo/:id: textos editáveis LinkedIn/WhatsApp + card social 1200x630 client-side
+- [Certificado Imprimível NR-1](mem://features/nr1-certificado) — Rota /selo/:id/certificado: layout A4 paisagem print-first via window.print (zero deps)
 - [NR-1 Ranking + SEO Selo](mem://features/nr1-ranking-seo) — Sprint 18: Top 10 UFs widget no diretório + metadados dinâmicos OG/Twitter no /selo/:id
 - [PDF Intelligence](mem://features/pdf-intelligence) — Edge function + /relatorios/pdf-intelligence cruzando PDFs com COPSOQ × NR-1 via Lovable AI
 - [Selo Público NR-1](mem://features/nr1-selo-publico) — Página /selo/:id com certificado verificável, QR, share LinkedIn e embed code para signatários do Manifesto
