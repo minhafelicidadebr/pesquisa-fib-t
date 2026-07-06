@@ -16,6 +16,7 @@ import {
   Users,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { SocialShareKit } from "@/components/nr1/SocialShareKit";
 
 interface Seal {
   id: string;
@@ -40,6 +41,7 @@ export default function SeloNR1() {
   const [seal, setSeal] = useState<Seal | null>(null);
   const [status, setStatus] = useState<"loading" | "ok" | "notfound">("loading");
   const [qr, setQr] = useState<string>("");
+  const [kitOpen, setKitOpen] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const publicUrl = useMemo(
@@ -274,10 +276,11 @@ export default function SeloNR1() {
                 Compartilhar o selo
               </div>
               <div className="grid grid-cols-2 gap-2">
+                <ActionBtn icon={<Sparkles className="w-4 h-4" />} label="Post pronto" onClick={() => setKitOpen(true)} highlight />
                 <ActionBtn icon={<Share2 className="w-4 h-4" />} label="Compartilhar" onClick={shareNative} />
                 <ActionBtn icon={<Linkedin className="w-4 h-4" />} label="LinkedIn" onClick={shareLinkedIn} />
                 <ActionBtn icon={<Copy className="w-4 h-4" />} label="Copiar link" onClick={copyLink} />
-                <ActionBtn icon={<Sparkles className="w-4 h-4" />} label="Copiar embed" onClick={copyEmbed} />
+                <ActionBtn icon={<Copy className="w-4 h-4" />} label="Copiar embed" onClick={copyEmbed} />
               </div>
               <div className="mt-3 text-[11px] text-muted-foreground break-all bg-black/20 rounded-lg p-2.5 border border-white/5">
                 {publicUrl}
@@ -298,6 +301,17 @@ export default function SeloNR1() {
           </motion.div>
         </div>
       </div>
+
+      <SocialShareKit
+        open={kitOpen}
+        onClose={() => setKitOpen(false)}
+        companyName={seal.company_name}
+        firstName={seal.first_name}
+        role={seal.role}
+        stateUf={seal.state_uf}
+        publicUrl={publicUrl}
+        shortId={shortId ?? ""}
+      />
     </div>
   );
 }
@@ -314,11 +328,25 @@ function Meta({ label, value, icon }: { label: string; value: string; icon?: Rea
   );
 }
 
-function ActionBtn({ icon, label, onClick }: { icon: React.ReactNode; label: string; onClick: () => void }) {
+function ActionBtn({
+  icon,
+  label,
+  onClick,
+  highlight,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+  highlight?: boolean;
+}) {
   return (
     <button
       onClick={onClick}
-      className="inline-flex items-center justify-center gap-2 text-sm font-heading font-bold text-foreground bg-white/5 hover:bg-brand-gold/10 hover:text-brand-gold border border-white/10 hover:border-brand-gold/40 rounded-xl py-2.5 transition-colors"
+      className={
+        highlight
+          ? "inline-flex items-center justify-center gap-2 text-sm font-heading font-bold text-brand-charcoal bg-brand-gold hover:bg-brand-gold/90 border border-brand-gold rounded-xl py-2.5 transition-colors"
+          : "inline-flex items-center justify-center gap-2 text-sm font-heading font-bold text-foreground bg-white/5 hover:bg-brand-gold/10 hover:text-brand-gold border border-white/10 hover:border-brand-gold/40 rounded-xl py-2.5 transition-colors"
+      }
     >
       {icon}
       {label}
