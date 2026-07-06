@@ -34,6 +34,7 @@ import Planos from "./pages/Planos.tsx";
 import Pesquisa from "./pages/Pesquisa.tsx";
 import SeloNR1 from "./pages/SeloNR1.tsx";
 import SeloEmbed from "./pages/SeloEmbed.tsx";
+import SeloCertificado from "./pages/SeloCertificado.tsx";
 import NR1Signatarios from "./pages/NR1Signatarios.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
@@ -71,6 +72,7 @@ const App = () => (
             <Route path="/pesquisa" element={<Pesquisa />} />
             <Route path="/selo/:id" element={<SeloNR1 />} />
             <Route path="/selo/:id/embed" element={<SeloEmbed />} />
+            <Route path="/selo/:id/certificado" element={<SeloCertificado />} />
             <Route path="/nr1-brasil/signatarios" element={<NR1Signatarios />} />
             <Route
               path="/onboarding"

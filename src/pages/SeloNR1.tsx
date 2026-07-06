@@ -5,6 +5,7 @@ import QRCode from "qrcode";
 import { toast } from "sonner";
 import {
   ArrowLeft,
+  Award,
   Copy,
   Download,
   Linkedin,
@@ -287,14 +288,20 @@ export default function SeloNR1() {
               </div>
             </div>
 
-            <div className="pt-4 border-t border-white/10">
+            <div className="pt-4 border-t border-white/10 space-y-2">
+              <Link
+                to={`/selo/${id}/certificado`}
+                className="w-full inline-flex items-center justify-center gap-2 text-sm font-heading font-bold text-foreground bg-white/5 hover:bg-brand-gold/10 hover:text-brand-gold border border-white/10 hover:border-brand-gold/40 rounded-xl py-2.5 transition-colors"
+              >
+                <Award className="w-4 h-4" /> Certificado imprimível (A4)
+              </Link>
               <Link
                 to="/nr1-brasil#manifesto"
                 className="block text-center bg-gradient-magenta text-white font-heading font-bold px-5 py-3 rounded-xl hover:scale-[1.02] transition-transform"
               >
                 Sua empresa também quer o selo
               </Link>
-              <p className="mt-2 text-[11px] text-muted-foreground text-center">
+              <p className="text-[11px] text-muted-foreground text-center">
                 Grátis. Sem exposição de dados sensíveis.
               </p>
             </div>
