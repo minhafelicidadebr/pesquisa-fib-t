@@ -46,3 +46,4 @@
 - [Selo Público NR-1](mem://features/nr1-selo-publico) — Página /selo/:id com certificado verificável, QR, share LinkedIn e embed code para signatários do Manifesto
 - [Diretório Nacional NR-1](mem://features/nr1-diretorio) — Página /nr1-brasil/signatarios com busca, filtros UF/porte e cards para cada Selo
 - [Mural Vivo NR-1](mem://features/nr1-mural-vivo) — Sprint 23: marquee realtime de signatários em /nr1-brasil com pulse ao inserir
+- [Cartograma Brasil NR-1](mem://features/nr1-cartograma) — Sprint 24: mapa 7×9 das 27 UFs com heatmap gold→magenta em /nr1-brasil/signatarios
