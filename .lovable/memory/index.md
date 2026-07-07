@@ -47,3 +47,4 @@
 - [Diretório Nacional NR-1](mem://features/nr1-diretorio) — Página /nr1-brasil/signatarios com busca, filtros UF/porte e cards para cada Selo
 - [Mural Vivo NR-1](mem://features/nr1-mural-vivo) — Sprint 23: marquee realtime de signatários em /nr1-brasil com pulse ao inserir
 - [Cartograma Brasil NR-1](mem://features/nr1-cartograma) — Sprint 24: mapa 7×9 das 27 UFs com heatmap gold→magenta em /nr1-brasil/signatarios
+- [Contador Embed NR-1](mem://features/nr1-contador-embed) — Sprint 25: widget /nr1-brasil/contador/embed com auto-refresh 30s para embed externo
