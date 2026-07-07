@@ -12,6 +12,7 @@ import {
   Users,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { BrazilCartogram } from "@/components/nr1/BrazilCartogram";
 
 const UF_LIST = [
   "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO",
@@ -128,6 +129,22 @@ export default function NR1Signatarios() {
             Organizações que assumiram publicamente o compromisso com a saúde mental no trabalho e a NR-1.
           </p>
         </motion.div>
+
+        {/* Cartograma Brasil */}
+        {stats?.states && stats.states.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="mb-6"
+          >
+            <BrazilCartogram
+              states={stats.states}
+              selected={uf}
+              onSelect={setUf}
+            />
+          </motion.div>
+        )}
 
         {/* Ranking Nacional por UF */}
         {topStates.length > 0 && (
