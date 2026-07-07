@@ -24,6 +24,7 @@ import {
 import { AppNavbar } from "@/components/layout/AppNavbar";
 import { InstitutionalFooter } from "@/components/deck/InstitutionalFooter";
 import { NR1Manifesto } from "@/components/nr1/NR1Manifesto";
+import { LiveSignatoryWall } from "@/components/nr1/LiveSignatoryWall";
 import { toast } from "sonner";
 
 /**
@@ -223,6 +224,9 @@ export default function NR1Brasil() {
             ))}
           </div>
         </section>
+
+        {/* MURAL VIVO DE SIGNATÁRIOS */}
+        <LiveSignatoryWall />
 
         {/* 6 PILARES */}
         <section className="px-4 sm:px-6 max-w-6xl mx-auto mt-24">
