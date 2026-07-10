@@ -37,6 +37,7 @@ import SeloEmbed from "./pages/SeloEmbed.tsx";
 import SeloCertificado from "./pages/SeloCertificado.tsx";
 import NR1Signatarios from "./pages/NR1Signatarios.tsx";
 import NR1Contador from "./pages/NR1Contador.tsx";
+import ConsultoriaDashboard from "./pages/ConsultoriaDashboard.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -76,6 +77,7 @@ const App = () => (
             <Route path="/selo/:id/certificado" element={<SeloCertificado />} />
             <Route path="/nr1-brasil/signatarios" element={<NR1Signatarios />} />
             <Route path="/nr1-brasil/contador/embed" element={<NR1Contador />} />
+            <Route path="/consultoria" element={<ConsultoriaDashboard />} />
             <Route
               path="/onboarding"
               element={

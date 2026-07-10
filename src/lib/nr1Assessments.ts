@@ -22,10 +22,23 @@ export async function saveNR1(payload: {
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return null;
   const { analysis } = payload;
+
+  // Try to associate with the user's company (owned or member) for portfolio views.
+  let companyId: string | null = null;
+  try {
+    const { data: owned } = await supabase.from("companies").select("id").eq("owner_id", auth.user.id).maybeSingle();
+    if (owned?.id) companyId = owned.id;
+    else {
+      const { data: mem } = await supabase.from("company_members").select("company_id").eq("user_id", auth.user.id).maybeSingle();
+      companyId = mem?.company_id ?? null;
+    }
+  } catch { /* silent */ }
+
   const { data, error } = await supabase
     .from("nr1_assessments")
     .insert([{
       user_id: auth.user.id,
+      company_id: companyId,
       global_risk: analysis.global_risk,
       global_score: analysis.global_score,
       subscales: analysis.subscales as any,
