@@ -188,28 +188,44 @@ export default function Pesquisa() {
               ))}
             </div>
 
-            {company.sectors && company.sectors.length > 0 && (
-              <div className="mb-6">
-                <Label className="text-sm mb-2 block">Seu setor (opcional, ajuda na agregação)</Label>
+            <div className="mb-6">
+              <Label className="text-sm mb-2 block">
+                Seu setor / área <span className="text-brand-magenta">*</span>
+              </Label>
+              {company.sectors && company.sectors.length > 0 ? (
                 <Select value={sector} onValueChange={setSector}>
-                  <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder="Selecione seu setor..." /></SelectTrigger>
                   <SelectContent>
                     {company.sectors.map((s) => (
                       <SelectItem key={s} value={s}>{s}</SelectItem>
                     ))}
+                    <SelectItem value="Não informado">Prefiro não informar</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-            )}
+              ) : (
+                <Input
+                  value={sector}
+                  onChange={(e) => setSector(e.target.value)}
+                  placeholder="Ex: Operações, RH, Comercial..."
+                  maxLength={60}
+                />
+              )}
+              <p className="text-xs text-muted-foreground mt-2">
+                Usamos o setor apenas para agregação estatística: resultados só aparecem quando há
+                pelo menos 7 respostas no mesmo setor (k ≥ 7). Sua resposta individual nunca é exibida.
+              </p>
+            </div>
 
             <Button
               size="lg"
-              className="w-full bg-gradient-to-r from-brand-cyan via-brand-gold to-brand-magenta text-background font-heading font-black"
+              disabled={!sector.trim()}
+              className="w-full bg-gradient-to-r from-brand-cyan via-brand-gold to-brand-magenta text-background font-heading font-black disabled:opacity-50"
               onClick={() => setStage("survey")}
             >
               Começar pesquisa
               <ArrowRight className="w-4 h-4 ml-1" />
             </Button>
+
           </Card>
         )}
 
