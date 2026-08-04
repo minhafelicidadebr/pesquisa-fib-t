@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { getMyCompany } from "@/lib/companies";
 import { fetchSurveyAggregate, K_ANON, type SurveyAggregate } from "@/lib/publicSurveyAnalytics";
 import { supabase } from "@/integrations/supabase/client";
+import { SectorAggregatesPanel } from "@/components/dashboard/SectorAggregatesPanel";
 
 const RISK_BG: Record<string, string> = {
   verde: "bg-emerald-500/15 text-emerald-300 border-emerald-400/30",
@@ -116,6 +117,8 @@ export function SurveyTab() {
           ))}
         </div>
       </div>
+
+      {companyId && <SectorAggregatesPanel companyId={companyId} />}
 
       {/* Heatmap sector × subscale */}
       {eligibleSectors.length > 0 ? (

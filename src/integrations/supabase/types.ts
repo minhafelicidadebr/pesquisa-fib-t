@@ -303,6 +303,65 @@ export type Database = {
           },
         ]
       }
+      survey_sector_aggregates: {
+        Row: {
+          company_id: string
+          computed_at: string
+          created_at: string
+          first_response_at: string | null
+          global_risk: string | null
+          global_score: number | null
+          green_count: number
+          id: string
+          last_response_at: string | null
+          red_count: number
+          response_count: number
+          sector: string
+          updated_at: string
+          yellow_count: number
+        }
+        Insert: {
+          company_id: string
+          computed_at?: string
+          created_at?: string
+          first_response_at?: string | null
+          global_risk?: string | null
+          global_score?: number | null
+          green_count?: number
+          id?: string
+          last_response_at?: string | null
+          red_count?: number
+          response_count?: number
+          sector: string
+          updated_at?: string
+          yellow_count?: number
+        }
+        Update: {
+          company_id?: string
+          computed_at?: string
+          created_at?: string
+          first_response_at?: string | null
+          global_risk?: string | null
+          global_score?: number | null
+          green_count?: number
+          id?: string
+          last_response_at?: string | null
+          red_count?: number
+          response_count?: number
+          sector?: string
+          updated_at?: string
+          yellow_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "survey_sector_aggregates_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -331,6 +390,20 @@ export type Database = {
     Functions: {
       generate_invite_code: { Args: never; Returns: string }
       get_nr1_seal: { Args: { _id: string }; Returns: Json }
+      get_sector_aggregates: {
+        Args: { _company_id: string }
+        Returns: {
+          computed_at: string
+          global_risk: string
+          global_score: number
+          green_count: number
+          last_response_at: string
+          red_count: number
+          response_count: number
+          sector: string
+          yellow_count: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -370,6 +443,10 @@ export type Database = {
         }[]
       }
       nr1_manifest_stats: { Args: never; Returns: Json }
+      refresh_sector_aggregates: {
+        Args: { _company_id: string }
+        Returns: number
+      }
       sign_nr1_manifest: {
         Args: {
           p_company_name: string
