@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { isCanonicalManifest, type FibtScoreManifest } from "@/domain/fibt";
 
 export interface AssessmentRecord {
   id: string;
@@ -14,6 +15,12 @@ export interface AssessmentRecord {
   created_at: string;
 }
 
+/**
+ * @deprecated Mantido apenas para leitura de registros históricos.
+ * O escore global agora vem do engine determinístico do servidor
+ * (`supabase/functions/_shared/fibt-engine.ts`). Nunca calcule no cliente para
+ * persistir.
+ */
 export function computeFibScore(
   domains: Record<string, { score: number; max: number }>
 ): number {
@@ -23,7 +30,18 @@ export function computeFibScore(
   return Number((avg * 100).toFixed(1));
 }
 
+export class NonCanonicalResultError extends Error {
+  constructor() {
+    super(
+      "Resultado não canônico: apenas escores calculados pelo servidor podem ser persistidos.",
+    );
+    this.name = "NonCanonicalResultError";
+  }
+}
+
 export async function saveAssessment(payload: {
+  globalScore: number;
+  manifest: FibtScoreManifest;
   domains: Record<string, { score: number; max: number; label: string }>;
   factors: Record<string, { score: number; label: string }>;
   strengths: string[];
@@ -34,16 +52,20 @@ export async function saveAssessment(payload: {
   encouragement: string;
   raw_answers: any;
 }): Promise<AssessmentRecord | null> {
+  // Guarda de integridade: pré-visualizações do cliente e resultados de versões
+  // antigas da matriz são recusados antes de tocar o banco.
+  if (!isCanonicalManifest(payload.manifest)) {
+    throw new NonCanonicalResultError();
+  }
+
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return null;
-
-  const fib_score = computeFibScore(payload.domains);
 
   const { data, error } = await supabase
     .from("fib_assessments")
     .insert({
       user_id: auth.user.id,
-      fib_score,
+      fib_score: payload.globalScore,
       domains: payload.domains,
       factors: payload.factors,
       strengths: payload.strengths,
@@ -63,6 +85,7 @@ export async function saveAssessment(payload: {
   }
   return data as unknown as AssessmentRecord;
 }
+
 
 export async function listAssessments(): Promise<AssessmentRecord[]> {
   const { data: auth } = await supabase.auth.getUser();

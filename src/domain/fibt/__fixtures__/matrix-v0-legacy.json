@@ -1,0 +1,200 @@
+{
+  "instrumentId": "FIB-T",
+  "instrumentVersion": "1.0.0-legacy",
+  "frozenAt": "ONDA 1 baseline",
+  "note": "Snapshot congelado da matriz que vivia embutida em src/components/deck/FibiaChat.tsx. Preservado para rastreabilidade de registros historicos. NAO USAR PARA NOVOS CALCULOS.",
+  "items": [
+    {
+      "id": 1,
+      "text": "A casa em que moro é própria.",
+      "domain": "padrao_vida",
+      "factor": 1
+    },
+    {
+      "id": 2,
+      "text": "Nos últimos 12 meses experimentei realização pessoal.",
+      "domain": "cultura",
+      "factor": 1
+    },
+    {
+      "id": 3,
+      "text": "A organização valoriza a conduta ética de seus colaboradores.",
+      "domain": "governanca",
+      "factor": 3
+    },
+    {
+      "id": 4,
+      "text": "Confio nos gestores da organização.",
+      "domain": "governanca",
+      "factor": 3
+    },
+    {
+      "id": 5,
+      "text": "Considero que tenho uma rede de apoio social e afetivo caso enfrente um problema.",
+      "domain": "vitalidade",
+      "factor": 2
+    },
+    {
+      "id": 6,
+      "text": "Nos últimos 12 meses assisti a filmes e/ou documentários.",
+      "domain": "cultura",
+      "factor": 1
+    },
+    {
+      "id": 7,
+      "text": "Considero-me uma pessoa feliz.",
+      "domain": "bem_estar",
+      "factor": 2
+    },
+    {
+      "id": 8,
+      "text": "Consigo realizar projetos de longo prazo que envolvem algum investimento financeiro.",
+      "domain": "padrao_vida",
+      "factor": 1
+    },
+    {
+      "id": 9,
+      "text": "Em geral, minhas horas de sono são suficientes para meu repouso.",
+      "domain": "saude",
+      "factor": 2
+    },
+    {
+      "id": 10,
+      "text": "Em minha rotina atual, experimento mais emoções positivas que negativas.",
+      "domain": "bem_estar",
+      "factor": 2
+    },
+    {
+      "id": 11,
+      "text": "Considero que sei administrar meu tempo, mantendo uma rotina equilibrada.",
+      "domain": "uso_tempo",
+      "factor": 2
+    },
+    {
+      "id": 12,
+      "text": "Estou satisfeito com as oportunidades de treinamento oferecidas pela organização.",
+      "domain": "governanca",
+      "factor": 3
+    },
+    {
+      "id": 13,
+      "text": "Meu horário de trabalho é flexível caso enfrente situações emergenciais.",
+      "domain": "governanca",
+      "factor": 3
+    },
+    {
+      "id": 14,
+      "text": "Estou satisfeito com minha saúde emocional.",
+      "domain": "bem_estar",
+      "factor": 2
+    },
+    {
+      "id": 15,
+      "text": "Meu peso é considerado saudável.",
+      "domain": "saude",
+      "factor": 2
+    },
+    {
+      "id": 16,
+      "text": "Nos últimos 12 meses fiz ao menos uma viagem de lazer.",
+      "domain": "padrao_vida",
+      "factor": 1
+    },
+    {
+      "id": 17,
+      "text": "Meu rendimento atual me permite viver com dignidade.",
+      "domain": "padrao_vida",
+      "factor": 1
+    },
+    {
+      "id": 18,
+      "text": "Nos últimos 12 meses realizei atividades voluntárias de cunho social.",
+      "domain": "vitalidade",
+      "factor": 1
+    },
+    {
+      "id": 19,
+      "text": "Minha rotina prevê tempo para estar com os amigos.",
+      "domain": "uso_tempo",
+      "factor": 2
+    },
+    {
+      "id": 20,
+      "text": "Considero a comunicação interna da organização eficaz.",
+      "domain": "governanca",
+      "factor": 3
+    },
+    {
+      "id": 21,
+      "text": "Nos últimos 12 meses adquiri e/ou li livros.",
+      "domain": "educacao",
+      "factor": 1
+    },
+    {
+      "id": 22,
+      "text": "Tenho práticas diárias de responsabilidade ambiental.",
+      "domain": "meio_ambiente",
+      "factor": 2
+    },
+    {
+      "id": 23,
+      "text": "Nos últimos 12 meses desfrutei de festas populares, como Carnaval e São João.",
+      "domain": "cultura",
+      "factor": 1
+    },
+    {
+      "id": 24,
+      "text": "O estresse não compromete meu bem-estar.",
+      "domain": "saude",
+      "factor": 2
+    },
+    {
+      "id": 25,
+      "text": "Nos últimos 12 meses fui a exposições de arte.",
+      "domain": "cultura",
+      "factor": 1
+    },
+    {
+      "id": 26,
+      "text": "Os gestores da organização compartilham estratégias, metas e realizações.",
+      "domain": "governanca",
+      "factor": 3
+    },
+    {
+      "id": 27,
+      "text": "Nos últimos 12 meses participei de treinamento voltado ao meu desenvolvimento pessoal.",
+      "domain": "educacao",
+      "factor": 1
+    },
+    {
+      "id": 28,
+      "text": "Realizo exercícios físicos regularmente.",
+      "domain": "saude",
+      "factor": 2
+    },
+    {
+      "id": 29,
+      "text": "Tenho direito de liberdade de expressão e opinião na organização.",
+      "domain": "governanca",
+      "factor": 3
+    },
+    {
+      "id": 30,
+      "text": "Nos últimos 12 meses estive saudável.",
+      "domain": "saude",
+      "factor": 2
+    },
+    {
+      "id": 31,
+      "text": "Tenho um propósito maior em minha vida.",
+      "domain": "bem_estar",
+      "factor": 2
+    },
+    {
+      "id": 32,
+      "text": "Nos últimos 12 meses estive engajado em algum tipo de treinamento formal.",
+      "domain": "educacao",
+      "factor": 1
+    }
+  ]
+}

@@ -6,42 +6,23 @@ import { toast } from "sonner";
 import fibiaAvatar from "@/assets/fibia-avatar.png";
 import { FibiaDashboard } from "@/components/deck/FibiaDashboard";
 import { saveAssessment } from "@/lib/fibAssessments";
+import {
+  DOMAIN_LABELS,
+  FIBT_ITEMS,
+  INSTRUMENT_ID,
+  INSTRUMENT_VERSION,
+  isCanonicalManifest,
+  previewFibt,
+  rankDomains,
+  type FibtScoreManifest,
+  type ScoreCell,
+} from "@/domain/fibt";
 
-// FIB-T Questions (32 total)
-const questions = [
-  { id: 1, text: "A casa em que moro é própria.", domain: "padrao_vida", factor: 1 },
-  { id: 2, text: "Nos últimos 12 meses experimentei realização pessoal.", domain: "cultura", factor: 1 },
-  { id: 3, text: "A organização valoriza a conduta ética de seus colaboradores.", domain: "governanca", factor: 3 },
-  { id: 4, text: "Confio nos gestores da organização.", domain: "governanca", factor: 3 },
-  { id: 5, text: "Considero que tenho uma rede de apoio social e afetivo caso enfrente um problema.", domain: "vitalidade", factor: 2 },
-  { id: 6, text: "Nos últimos 12 meses assisti a filmes e/ou documentários.", domain: "cultura", factor: 1 },
-  { id: 7, text: "Considero-me uma pessoa feliz.", domain: "bem_estar", factor: 2 },
-  { id: 8, text: "Consigo realizar projetos de longo prazo que envolvem algum investimento financeiro.", domain: "padrao_vida", factor: 1 },
-  { id: 9, text: "Em geral, minhas horas de sono são suficientes para meu repouso.", domain: "saude", factor: 2 },
-  { id: 10, text: "Em minha rotina atual, experimento mais emoções positivas que negativas.", domain: "bem_estar", factor: 2 },
-  { id: 11, text: "Considero que sei administrar meu tempo, mantendo uma rotina equilibrada.", domain: "uso_tempo", factor: 2 },
-  { id: 12, text: "Estou satisfeito com as oportunidades de treinamento oferecidas pela organização.", domain: "governanca", factor: 3 },
-  { id: 13, text: "Meu horário de trabalho é flexível caso enfrente situações emergenciais.", domain: "governanca", factor: 3 },
-  { id: 14, text: "Estou satisfeito com minha saúde emocional.", domain: "bem_estar", factor: 2 },
-  { id: 15, text: "Meu peso é considerado saudável.", domain: "saude", factor: 2 },
-  { id: 16, text: "Nos últimos 12 meses fiz ao menos uma viagem de lazer.", domain: "padrao_vida", factor: 1 },
-  { id: 17, text: "Meu rendimento atual me permite viver com dignidade.", domain: "padrao_vida", factor: 1 },
-  { id: 18, text: "Nos últimos 12 meses realizei atividades voluntárias de cunho social.", domain: "vitalidade", factor: 1 },
-  { id: 19, text: "Minha rotina prevê tempo para estar com os amigos.", domain: "uso_tempo", factor: 2 },
-  { id: 20, text: "Considero a comunicação interna da organização eficaz.", domain: "governanca", factor: 3 },
-  { id: 21, text: "Nos últimos 12 meses adquiri e/ou li livros.", domain: "educacao", factor: 1 },
-  { id: 22, text: "Tenho práticas diárias de responsabilidade ambiental.", domain: "meio_ambiente", factor: 2 },
-  { id: 23, text: "Nos últimos 12 meses desfrutei de festas populares, como Carnaval e São João.", domain: "cultura", factor: 1 },
-  { id: 24, text: "O estresse não compromete meu bem-estar.", domain: "saude", factor: 2 },
-  { id: 25, text: "Nos últimos 12 meses fui a exposições de arte.", domain: "cultura", factor: 1 },
-  { id: 26, text: "Os gestores da organização compartilham estratégias, metas e realizações.", domain: "governanca", factor: 3 },
-  { id: 27, text: "Nos últimos 12 meses participei de treinamento voltado ao meu desenvolvimento pessoal.", domain: "educacao", factor: 1 },
-  { id: 28, text: "Realizo exercícios físicos regularmente.", domain: "saude", factor: 2 },
-  { id: 29, text: "Tenho direito de liberdade de expressão e opinião na organização.", domain: "governanca", factor: 3 },
-  { id: 30, text: "Nos últimos 12 meses estive saudável.", domain: "saude", factor: 2 },
-  { id: 31, text: "Tenho um propósito maior em minha vida.", domain: "bem_estar", factor: 2 },
-  { id: 32, text: "Nos últimos 12 meses estive engajado em algum tipo de treinamento formal.", domain: "educacao", factor: 1 },
-];
+/**
+ * As 32 perguntas vêm da FONTE CANÔNICA em `src/domain/fibt/instrument.ts`.
+ * Não redeclare a matriz aqui: domínio e fator são responsabilidade do domínio.
+ */
+const questions = FIBT_ITEMS;
 
 const likertOptions = [
   { value: 0, label: "Discordo totalmente", short: "DT", color: "bg-red-500/20 text-red-400 border-red-500/30" },
@@ -51,29 +32,22 @@ const likertOptions = [
   { value: 4, label: "Concordo totalmente", short: "CT", color: "bg-green-500/20 text-green-400 border-green-500/30" },
 ];
 
-const domainLabels: Record<string, string> = {
-  padrao_vida: "Padrão de Vida",
-  educacao: "Educação",
-  cultura: "Cultura",
-  bem_estar: "Bem-Estar Psicológico",
-  saude: "Saúde",
-  uso_tempo: "Uso do Tempo",
-  vitalidade: "Vitalidade Comunitária",
-  meio_ambiente: "Meio Ambiente",
-  governanca: "Governança",
-};
+const domainLabels = DOMAIN_LABELS;
 
 type Phase = "intro" | "survey" | "analyzing" | "dashboard";
 
 interface AnalysisResult {
   summary: string;
-  domains: Record<string, { score: number; max: number; label: string }>;
-  factors: Record<string, { score: number; label: string }>;
+  globalScore: number;
+  manifest: FibtScoreManifest;
+  domains: Record<string, ScoreCell>;
+  factors: Record<string, ScoreCell>;
   strengths: string[];
   vulnerabilities: string[];
   recommendations: Array<{ domain: string; action: string; timeframe: string; driver_category: string }>;
   learning_trails: Array<{ title: string; description: string; priority: string }>;
   encouragement: string;
+  limitations?: string;
 }
 
 export function FibiaChat() {
@@ -96,9 +70,19 @@ export function FibiaChat() {
 
   const canFinish = Object.keys(answers).length === questions.length;
 
+  /**
+   * Persiste apenas resultados canônicos (calculados pelo servidor).
+   * Pré-visualizações locais são exibidas, mas nunca gravadas.
+   */
   const persist = async (result: AnalysisResult) => {
+    if (!isCanonicalManifest(result.manifest)) {
+      console.warn("Resultado não canônico: persistência ignorada.");
+      return;
+    }
     try {
       await saveAssessment({
+        globalScore: result.globalScore,
+        manifest: result.manifest,
         domains: result.domains,
         factors: result.factors,
         strengths: result.strengths,
@@ -118,55 +102,68 @@ export function FibiaChat() {
     setPhase("analyzing");
     setAnalyzing(true);
     let result: AnalysisResult | null = null;
+
     try {
-      const formattedAnswers = questions.map((q) => ({
-        id: q.id,
-        text: q.text,
-        domain: q.domain,
-        factor: q.factor,
-        answer: answers[q.id] ?? 0,
-      }));
+      // Enviamos apenas id + resposta. O servidor é dono da matriz e do cálculo.
+      const payloadAnswers = questions.map((q) => ({ id: q.id, answer: answers[q.id] }));
 
       const { data, error } = await supabase.functions.invoke("fibia-chat", {
-        body: { answers: formattedAnswers },
+        body: {
+          answers: payloadAnswers,
+          instrumentId: INSTRUMENT_ID,
+          instrumentVersion: INSTRUMENT_VERSION,
+        },
       });
 
       if (error) throw error;
-
-      const content = data?.content || "";
-      const jsonMatch = content.match(/```json\s*([\s\S]*?)```/);
-      if (jsonMatch) {
-        result = JSON.parse(jsonMatch[1]);
-      } else {
-        try {
-          result = JSON.parse(content);
-        } catch {
-          const domainScores = calculateDomainScores();
-          result = {
-            summary: content || "Análise concluída com sucesso.",
-            domains: domainScores,
-            factors: calculateFactorScores(),
-            strengths: getTopDomains(domainScores, true),
-            vulnerabilities: getTopDomains(domainScores, false),
-            recommendations: [],
-            learning_trails: [],
-            encouragement: "Continue investindo no seu bem-estar! 🌟",
-          };
-        }
+      if (!data?.manifest || !data?.domains || typeof data?.globalScore !== "number") {
+        throw new Error("Resposta do servidor sem escores canônicos.");
       }
+
+      const narrative = data.narrative ?? {};
+      result = {
+        globalScore: data.globalScore,
+        manifest: data.manifest,
+        domains: data.domains,
+        factors: data.factors,
+        summary: narrative.summary || "Análise concluída.",
+        strengths: narrative.strengths?.length
+          ? narrative.strengths
+          : rankDomains(data.domains, "desc").slice(0, 3).map((d) => d.label),
+        vulnerabilities: narrative.vulnerabilities?.length
+          ? narrative.vulnerabilities
+          : rankDomains(data.domains, "asc").slice(0, 3).map((d) => d.label),
+        recommendations: narrative.recommendations ?? [],
+        learning_trails: narrative.learning_trails ?? [],
+        encouragement: narrative.encouragement || "Continue investindo no seu bem-estar. 🌻",
+        limitations: narrative.limitations,
+      };
     } catch (err) {
       console.error("Analysis error:", err);
-      toast.error("Análise local gerada (IA indisponível).");
-      const domainScores = calculateDomainScores();
+      // Pré-visualização local: mesmos números, mas marcada como não canônica
+      // e, por isso, não persistida.
+      const preview = previewFibt(answers);
+      if (!preview) {
+        toast.error("Não foi possível calcular: respostas incompletas ou inválidas.");
+        setPhase("survey");
+        setAnalyzing(false);
+        return;
+      }
+      toast.warning("Servidor indisponível: exibindo pré-visualização não registrada.");
       result = {
-        summary: "Sua Felicidade Interna Bruta foi calculada com base nas suas respostas.",
-        domains: domainScores,
-        factors: calculateFactorScores(),
-        strengths: getTopDomains(domainScores, true),
-        vulnerabilities: getTopDomains(domainScores, false),
+        globalScore: preview.globalScore,
+        manifest: preview.manifest,
+        domains: preview.domains,
+        factors: preview.factors,
+        summary:
+          "Esta é uma pré-visualização calculada no seu dispositivo porque o servidor não respondeu. Ela não foi registrada.",
+        strengths: rankDomains(preview.domains, "desc").slice(0, 3).map((d) => d.label),
+        vulnerabilities: rankDomains(preview.domains, "asc").slice(0, 3).map((d) => d.label),
         recommendations: [],
         learning_trails: [],
-        encouragement: "O autoconhecimento é o primeiro passo para a transformação. 🌟",
+        encouragement: "O autoconhecimento é o primeiro passo para a transformação. 🌻",
+        limitations:
+          "O FIB-T é instrumento de pesquisa e autoconhecimento. Não é diagnóstico nem avaliação clínica.",
       };
     } finally {
       if (result) {
@@ -178,39 +175,7 @@ export function FibiaChat() {
     }
   };
 
-  const calculateDomainScores = () => {
-    const domainItems: Record<string, number[]> = {};
-    questions.forEach((q) => {
-      if (!domainItems[q.domain]) domainItems[q.domain] = [];
-      domainItems[q.domain].push(answers[q.id] ?? 0);
-    });
-    const result: Record<string, { score: number; max: number; label: string }> = {};
-    Object.entries(domainItems).forEach(([domain, items]) => {
-      result[domain] = {
-        score: Number((items.reduce((a, b) => a + b, 0) / items.length).toFixed(2)),
-        max: 4,
-        label: domainLabels[domain] || domain,
-      };
-    });
-    return result;
-  };
 
-  const calculateFactorScores = () => {
-    const factorItems: Record<number, number[]> = { 1: [], 2: [], 3: [] };
-    questions.forEach((q) => {
-      factorItems[q.factor].push(answers[q.id] ?? 0);
-    });
-    return {
-      padrao_vida: { score: Number((factorItems[1].reduce((a, b) => a + b, 0) / factorItems[1].length).toFixed(2)), label: "Padrão de Vida" },
-      bem_estar: { score: Number((factorItems[2].reduce((a, b) => a + b, 0) / factorItems[2].length).toFixed(2)), label: "Bem-Estar" },
-      satisfacao: { score: Number((factorItems[3].reduce((a, b) => a + b, 0) / factorItems[3].length).toFixed(2)), label: "Satisfação Organizacional" },
-    };
-  };
-
-  const getTopDomains = (domains: Record<string, { score: number; max: number; label: string }>, top: boolean) => {
-    const sorted = Object.entries(domains).sort((a, b) => top ? b[1].score - a[1].score : a[1].score - b[1].score);
-    return sorted.slice(0, 3).map(([key]) => domainLabels[key] || key);
-  };
 
   const restart = () => {
     setPhase("intro");
