@@ -32,6 +32,8 @@ import Onboarding from "./pages/Onboarding.tsx";
 import Jornada from "./pages/Jornada.tsx";
 import Planos from "./pages/Planos.tsx";
 import Pesquisa from "./pages/Pesquisa.tsx";
+import SetoresAgregados from "./pages/SetoresAgregados.tsx";
+
 import SeloNR1 from "./pages/SeloNR1.tsx";
 import SeloEmbed from "./pages/SeloEmbed.tsx";
 import SeloCertificado from "./pages/SeloCertificado.tsx";
@@ -72,6 +74,8 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/planos" element={<Planos />} />
             <Route path="/pesquisa" element={<Pesquisa />} />
+            <Route path="/pesquisa/setores" element={<SetoresAgregados />} />
+
             <Route path="/selo/:id" element={<SeloNR1 />} />
             <Route path="/selo/:id/embed" element={<SeloEmbed />} />
             <Route path="/selo/:id/certificado" element={<SeloCertificado />} />
