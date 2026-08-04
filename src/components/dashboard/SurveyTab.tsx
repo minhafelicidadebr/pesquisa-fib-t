@@ -118,6 +118,8 @@ export function SurveyTab() {
         </div>
       </div>
 
+      {companyId && <SectorAggregatesPanel companyId={companyId} />}
+
       {/* Heatmap sector × subscale */}
       {eligibleSectors.length > 0 ? (
         <div className="glass-card-strong rounded-2xl p-6 overflow-x-auto">
