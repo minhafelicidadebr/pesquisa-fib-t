@@ -440,8 +440,10 @@ GRANT SELECT ON public.fibt_campaigns TO authenticated;
 GRANT SELECT ON public.fibt_campaign_sectors TO authenticated;
 
 -- Funções: revogar de anon/authenticated, depois conceder seletivamente
-REVOKE EXECUTE ON FUNCTION public.submit_fibt_organizational_response FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.purge_fibt_raw_answers FROM anon, authenticated;
+REVOKE ALL ON FUNCTION public.submit_fibt_organizational_response(uuid,text,text,text,text,jsonb,numeric,jsonb,jsonb,text,text) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.purge_fibt_raw_answers() FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.submit_fibt_organizational_response(uuid,text,text,text,text,jsonb,numeric,jsonb,jsonb,text,text) TO service_role;
+GRANT EXECUTE ON FUNCTION public.purge_fibt_raw_answers() TO service_role;
 
 -- get_fibt_organization_dashboard: apenas authenticated (guard interno via auth.uid())
 GRANT EXECUTE ON FUNCTION public.get_fibt_organization_dashboard TO authenticated;

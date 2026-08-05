@@ -48,7 +48,7 @@ SELECT is(
 
 -- Funções: anon não pode executar submit ou purge
 SELECT is(
-  has_function_privilege('anon', 'public.submit_fibt_organizational_response(uuid,text,text,text,text,jsonb,numeric,jsonb,jsonb)', 'EXECUTE'),
+  has_function_privilege('anon', 'public.submit_fibt_organizational_response(uuid,text,text,text,text,jsonb,numeric,jsonb,jsonb,text,text)', 'EXECUTE'),
   false, 'anon cannot EXECUTE submit_fibt_organizational_response');
 SELECT is(
   has_function_privilege('anon', 'public.purge_fibt_raw_answers()', 'EXECUTE'),

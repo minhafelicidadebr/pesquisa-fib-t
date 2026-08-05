@@ -86,7 +86,7 @@ SET LOCAL role TO 'authenticated';
 SET LOCAL request.jwt.claims TO '{"sub":"bbbbbbbb-1111-0000-0000-000000000001"}';
 
 -- Executar dashboard
-DO $$
+CREATE OR REPLACE FUNCTION pg_temp._run_privacy_tests() RETURNS SETOF text LANGUAGE plpgsql AS $$
 DECLARE
   v_result jsonb;
   v_sectors jsonb;
@@ -97,25 +97,26 @@ BEGIN
 
   -- Setor "Visível 8" (n=8): visible=true
   v_sector := (SELECT s FROM jsonb_array_elements(v_sectors) s WHERE s->>'sector_name' = 'Visível 8');
-  PERFORM is((v_sector->>'visible')::boolean, true, 'Setor n=8 is visible');
-  PERFORM is((v_sector->>'response_count')::integer, 8, 'Setor n=8 response_count=8');
+  RETURN NEXT is((v_sector->>'visible')::boolean, true, 'Setor n=8 is visible');
+  RETURN NEXT is((v_sector->>'response_count')::integer, 8, 'Setor n=8 response_count=8');
 
   -- Setor "Visível 7" (n=7): visible=true (threshold exact)
   v_sector := (SELECT s FROM jsonb_array_elements(v_sectors) s WHERE s->>'sector_name' = 'Visível 7');
-  PERFORM is((v_sector->>'visible')::boolean, true, 'Setor n=7 is visible');
-  PERFORM is((v_sector->>'response_count')::integer, 7, 'Setor n=7 response_count=7');
+  RETURN NEXT is((v_sector->>'visible')::boolean, true, 'Setor n=7 is visible');
+  RETURN NEXT is((v_sector->>'response_count')::integer, 7, 'Setor n=7 response_count=7');
 
   -- Setor "Suprimido 6" (n=6): visible=false
   v_sector := (SELECT s FROM jsonb_array_elements(v_sectors) s WHERE s->>'sector_name' = 'Suprimido 6');
-  PERFORM is((v_sector->>'visible')::boolean, false, 'Setor n=6 is suppressed');
-  PERFORM is(v_sector->>'response_count', NULL, 'Setor n=6 response_count is null');
-  PERFORM is(v_sector->>'suppression_reason', 'privacy_threshold', 'Setor n=6 has suppression_reason');
+  RETURN NEXT is((v_sector->>'visible')::boolean, false, 'Setor n=6 is suppressed');
+  RETURN NEXT is(v_sector->>'response_count', NULL, 'Setor n=6 response_count is null');
+  RETURN NEXT is(v_sector->>'suppression_reason', 'privacy_threshold', 'Setor n=6 has suppression_reason');
 
   -- Setor "Visível 12" (n=12): visible=true
   v_sector := (SELECT s FROM jsonb_array_elements(v_sectors) s WHERE s->>'sector_name' = 'Visível 12');
-  PERFORM is((v_sector->>'visible')::boolean, true, 'Setor n=12 is visible');
+  RETURN NEXT is((v_sector->>'visible')::boolean, true, 'Setor n=12 is visible');
 END;
 $$;
+SELECT * FROM pg_temp._run_privacy_tests();
 
 SELECT * FROM finish();
 ROLLBACK;

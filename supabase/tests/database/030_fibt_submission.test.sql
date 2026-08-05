@@ -178,8 +178,8 @@ SELECT is(
     '114b70bd9b5d495657704c04546110d390c5b267c4fb31d40901bed7b7b401ed',
     '{"1":2}'::jsonb, 50.0, '{}'::jsonb, '{}'::jsonb
   ))->>'error'),
-  'session_already_submitted',
-  'retry on submitted session is idempotent rejection');
+  'replay_conflict',
+  'retry with divergent payload returns replay_conflict');
 
 SELECT * FROM finish();
 ROLLBACK;
