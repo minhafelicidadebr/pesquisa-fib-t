@@ -12,26 +12,16 @@
  * │ raw_answers NUNCA são logados nem enviados a nenhum LLM.                │
  * └─────────────────────────────────────────────────────────────────────────┘
  *
- * TOKEN DE SESSÃO — Contrato de segurança:
- * - Criado SOMENTE pelo backend (RPC/Edge Function de emissão)
- * - Gerado com crypto.getRandomValues (>= 128 bits = 16 bytes)
- * - Codificado em hex (32 chars) para transmissão
- * - Devolvido em texto puro APENAS uma vez, na emissão
- * - Persistido no banco SOMENTE como SHA-256 do token
- * - O cliente NÃO pode escolher, informar ou alterar o token de emissão
- * - O token NÃO aparece em logs
- *
  * CORS:
- * - FIBT_ENV=local → wildcard permitido
+ * - FIBT_ENV=local → wildcard
  * - FIBT_ENV=staging|production → FIBT_ALLOWED_ORIGIN obrigatório
- *   - Variável ausente → resposta sem headers CORS (browser rejeita)
- *   - Origem desconhecida → resposta sem headers CORS
+ *   - Ausente → 403 antes de processar
+ *   - Origem desconhecida → 403 antes de processar
  *
  * RATE LIMITING:
  * ┌─────────────────────────────────────────────────────────────────────────┐
- * │ P0 DE PRODUÇÃO — NÃO IMPLEMENTADO NESTA EDGE FUNCTION                  │
- * │ Implementar via API Gateway ou Supabase Edge Rate Limiting antes de     │
- * │ expor publicamente em produção. Contrato: max 60 req/min por IP.        │
+ * │ P0 DE PRODUÇÃO — NÃO IMPLEMENTADO                                      │
+ * │ Implementar via API Gateway antes de exposição pública em produção.     │
  * └─────────────────────────────────────────────────────────────────────────┘
  */
 
@@ -44,8 +34,14 @@ import {
     SCORING_ENGINE_VERSION,
     scoreFibt,
 } from "../_shared/fibt-engine.ts";
+import { hashSessionToken, validateSessionTokenFormat } from "../_shared/fibt-session-token.ts";
+import {
+    computeCanonicalPayloadHash,
+    validateIdempotencyKey,
+    CanonicalHashError,
+} from "../_shared/fibt-canonical-hash.ts";
 
-// ── CORS Policy ──
+// ── CORS ──
 const FIBT_ENV = Deno.env.get("FIBT_ENV") || "local";
 const FIBT_ALLOWED_ORIGIN = Deno.env.get("FIBT_ALLOWED_ORIGIN");
 
@@ -59,17 +55,9 @@ function buildCorsHeaders(requestOrigin: string | null): Record<string, string> 
             "Access-Control-Max-Age": "86400",
         };
     }
-
-    // Staging/production: fail-closed
-    if (!FIBT_ALLOWED_ORIGIN) {
-        return null; // Configuração ausente → sem CORS → browser rejeita
-    }
-
-    const allowedOrigins = FIBT_ALLOWED_ORIGIN.split(",").map((o) => o.trim());
-    if (!requestOrigin || !allowedOrigins.includes(requestOrigin)) {
-        return null; // Origem não autorizada
-    }
-
+    if (!FIBT_ALLOWED_ORIGIN) return null;
+    const allowed = FIBT_ALLOWED_ORIGIN.split(",").map((o) => o.trim());
+    if (!requestOrigin || !allowed.includes(requestOrigin)) return null;
     return {
         "Access-Control-Allow-Origin": requestOrigin,
         "Access-Control-Allow-Methods": "POST, OPTIONS",
@@ -80,43 +68,14 @@ function buildCorsHeaders(requestOrigin: string | null): Record<string, string> 
     };
 }
 
-function jsonResponse(
-    body: unknown,
-    status: number,
-    cors: Record<string, string> | null,
-) {
-    const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-        ...(cors || {}),
-    };
-    return new Response(JSON.stringify(body), { status, headers });
+function jsonResponse(body: unknown, status: number, cors: Record<string, string> | null) {
+    return new Response(JSON.stringify(body), {
+        status,
+        headers: { "Content-Type": "application/json", ...(cors || {}) },
+    });
 }
 
 const MAX_BODY_BYTES = 8192;
-
-async function sha256Hex(input: string): Promise<string> {
-    const buf = await crypto.subtle.digest(
-        "SHA-256",
-        new TextEncoder().encode(input),
-    );
-    return Array.from(new Uint8Array(buf))
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("");
-}
-
-/**
- * Geração de token de sessão criptograficamente seguro.
- * 128 bits (16 bytes) de entropia via crypto.getRandomValues.
- * Codificado como hex (32 caracteres).
- * Usado APENAS pela função de emissão de sessão (não por esta função).
- */
-export function generateSessionToken(): string {
-    const bytes = new Uint8Array(16);
-    crypto.getRandomValues(bytes);
-    return Array.from(bytes)
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("");
-}
 
 serve(async (req) => {
     const requestOrigin = req.headers.get("origin");
@@ -124,15 +83,21 @@ serve(async (req) => {
 
     // ── OPTIONS ──
     if (req.method === "OPTIONS") {
-        if (!cors) {
-            return new Response(null, { status: 204 });
-        }
+        if (!cors) return new Response(null, { status: 403 });
         return new Response(null, { status: 204, headers: cors });
     }
 
     // ── Somente POST ──
     if (req.method !== "POST") {
         return jsonResponse({ error: "method_not_allowed" }, 405, cors);
+    }
+
+    // ── CORS fail-closed em staging/production ──
+    if (FIBT_ENV !== "local" && !cors) {
+        return new Response(JSON.stringify({ error: "origin_not_allowed" }), {
+            status: 403,
+            headers: { "Content-Type": "application/json" },
+        });
     }
 
     // ── Rejeição antecipada por Content-Length ──
@@ -146,7 +111,6 @@ serve(async (req) => {
     try {
         const reader = req.body?.getReader();
         if (!reader) return jsonResponse({ error: "empty_body" }, 400, cors);
-
         const chunks: Uint8Array[] = [];
         let totalBytes = 0;
         while (true) {
@@ -161,10 +125,7 @@ serve(async (req) => {
         }
         const merged = new Uint8Array(totalBytes);
         let offset = 0;
-        for (const chunk of chunks) {
-            merged.set(chunk, offset);
-            offset += chunk.byteLength;
-        }
+        for (const chunk of chunks) { merged.set(chunk, offset); offset += chunk.byteLength; }
         rawBody = new TextDecoder().decode(merged);
     } catch {
         return jsonResponse({ error: "invalid_body" }, 400, cors);
@@ -187,19 +148,13 @@ serve(async (req) => {
 
     try {
         const { session_token, answers, idempotency_key } = body as {
-            session_token?: string;
+            session_token?: unknown;
             answers?: unknown[];
-            idempotency_key?: string;
+            idempotency_key?: unknown;
         };
 
-        // ── Validação de entrada ──
-        if (!session_token || typeof session_token !== "string") {
-            return jsonResponse({ error: "session_token_required" }, 400, cors);
-        }
-
-        // Token deve ser hex de 128+ bits (32+ hex chars)
-        // Rejeita tokens curtos ou não-hex (indica token fabricado pelo cliente)
-        if (session_token.length < 32 || !/^[0-9a-f]+$/i.test(session_token)) {
+        // ── Validar session_token ──
+        if (!validateSessionTokenFormat(session_token)) {
             return jsonResponse({ error: "invalid_session" }, 403, cors);
         }
 
@@ -207,8 +162,39 @@ serve(async (req) => {
             return jsonResponse({ error: "answers_required" }, 400, cors);
         }
 
-        // ── Hash do token (nunca armazena em texto puro, nunca loga) ──
-        const tokenHash = await sha256Hex(session_token);
+        // ── Validar e calcular idempotency_key ──
+        let idempotencyKeyHash: string | null = null;
+        if (idempotency_key !== undefined && idempotency_key !== null) {
+            try {
+                const validKey = validateIdempotencyKey(idempotency_key);
+                const buf = await crypto.subtle.digest(
+                    "SHA-256",
+                    new TextEncoder().encode(validKey),
+                );
+                idempotencyKeyHash = Array.from(new Uint8Array(buf))
+                    .map((b) => b.toString(16).padStart(2, "0"))
+                    .join("");
+            } catch (e) {
+                if (e instanceof CanonicalHashError) {
+                    return jsonResponse({ error: "invalid_idempotency_key" }, 400, cors);
+                }
+                throw e;
+            }
+        }
+
+        // ── Hash do token ──
+        const tokenHash = await hashSessionToken(session_token);
+
+        // ── Calcular canonical payload hash ──
+        let requestPayloadHash: string;
+        try {
+            requestPayloadHash = await computeCanonicalPayloadHash(answers);
+        } catch (e) {
+            if (e instanceof CanonicalHashError) {
+                return jsonResponse({ error: "invalid_answers", detail: e.message }, 422, cors);
+            }
+            throw e;
+        }
 
         // ── Validar e calcular com engine canônico ──
         let result;
@@ -231,7 +217,6 @@ serve(async (req) => {
         // ── Supabase client (service_role) ──
         const supabaseUrl = Deno.env.get("SUPABASE_URL");
         const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-
         if (!supabaseUrl || !serviceRoleKey) {
             return jsonResponse({ error: "server_configuration_error" }, 500, cors);
         }
@@ -240,7 +225,7 @@ serve(async (req) => {
             auth: { autoRefreshToken: false, persistSession: false },
         });
 
-        // ── Lookup session by token_hash ──
+        // ── Lookup session ──
         const { data: session, error: sessionError } = await supabase
             .from("fibt_public_sessions")
             .select("id")
@@ -251,26 +236,17 @@ serve(async (req) => {
             return jsonResponse({ error: "invalid_session" }, 403, cors);
         }
 
-        // ── Hashes de idempotência ──
-        let idempotencyKeyHash: string | null = null;
-        if (idempotency_key && typeof idempotency_key === "string") {
-            idempotencyKeyHash = await sha256Hex(idempotency_key);
-        }
-
-        const requestPayloadHash = await sha256Hex(JSON.stringify(answers));
-
         // ── Preparar scores ──
         const factorScores: Record<string, number> = {};
         for (const [key, cell] of Object.entries(result.factors)) {
             factorScores[key] = cell.score;
         }
-
         const domainScores: Record<string, number> = {};
         for (const [key, cell] of Object.entries(result.domains)) {
             domainScores[key] = cell.score;
         }
 
-        // ── Invocar RPC privada (service_role) ──
+        // ── RPC (service_role) ──
         const { data: rpcResult, error: rpcError } = await supabase.rpc(
             "submit_fibt_organizational_response",
             {
@@ -293,46 +269,32 @@ serve(async (req) => {
         }
 
         const rpcData = rpcResult as {
-            ok: boolean;
-            error?: string;
-            idempotent?: boolean;
-            response_id?: string;
+            ok: boolean; error?: string; idempotent?: boolean; response_id?: string;
         };
 
         if (!rpcData.ok) {
             const errorMap: Record<string, number> = {
-                session_not_found: 403,
-                session_already_submitted: 409,
-                replay_conflict: 409,
-                session_expired: 410,
-                session_revoked: 403,
-                campaign_not_found: 404,
-                campaign_not_open: 409,
-                company_mismatch: 403,
-                sector_invalid: 422,
-                sector_not_in_campaign: 422,
-                instrument_version_mismatch: 422,
-                manifest_hash_mismatch: 422,
+                session_not_found: 403, replay_conflict: 409,
+                session_already_submitted: 409, session_expired: 410,
+                session_revoked: 403, campaign_not_found: 404,
+                campaign_not_open: 409, company_mismatch: 403,
+                sector_invalid: 422, sector_not_in_campaign: 422,
+                instrument_version_mismatch: 422, manifest_hash_mismatch: 422,
             };
-            const status = errorMap[rpcData.error || ""] || 400;
-            return jsonResponse({ error: rpcData.error }, status, cors);
+            return jsonResponse({ error: rpcData.error }, errorMap[rpcData.error || ""] || 400, cors);
         }
 
-        // ── Resultado individual (nunca retorna raw_answers) ──
-        return jsonResponse(
-            {
-                ok: true,
-                idempotent: rpcData.idempotent || false,
-                result: {
-                    globalScore: result.globalScore,
-                    factors: result.factors,
-                    domains: result.domains,
-                    manifest: result.manifest,
-                },
+        // ── Resultado (nunca retorna raw_answers) ──
+        return jsonResponse({
+            ok: true,
+            idempotent: rpcData.idempotent || false,
+            result: {
+                globalScore: result.globalScore,
+                factors: result.factors,
+                domains: result.domains,
+                manifest: result.manifest,
             },
-            200,
-            cors,
-        );
+        }, 200, cors);
     } catch {
         return jsonResponse({ error: "internal_error" }, 500, cors);
     }
