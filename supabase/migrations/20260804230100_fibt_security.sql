@@ -439,6 +439,23 @@ GRANT SELECT ON public.fibt_campaigns TO authenticated;
 -- fibt_campaign_sectors: SELECT para authenticated (RLS filtra)
 GRANT SELECT ON public.fibt_campaign_sectors TO authenticated;
 
+-- ── service_role: acesso DML mínimo para Edge Functions via PostgREST ──
+-- Call graph:
+--   create-fibt-session: SELECT companies, fibt_campaigns, fibt_campaign_sectors,
+--                        company_sectors; INSERT fibt_public_sessions
+--   submit-fibt-response: SELECT fibt_public_sessions (lookup por token_hash)
+--                         → depois chama RPC SECURITY DEFINER (executa como postgres)
+--
+-- Nenhum UPDATE/DELETE é necessário: a RPC submit_fibt_organizational_response
+-- já executa como postgres (SECURITY DEFINER) e faz UPDATE/INSERT internamente.
+-- fibt_organizational_responses NÃO precisa de grant direto: acessada apenas via RPC.
+
+GRANT SELECT ON public.companies TO service_role;
+GRANT SELECT ON public.fibt_campaigns TO service_role;
+GRANT SELECT ON public.fibt_campaign_sectors TO service_role;
+GRANT SELECT ON public.company_sectors TO service_role;
+GRANT SELECT, INSERT ON public.fibt_public_sessions TO service_role;
+
 -- Funções: revogar de anon/authenticated, depois conceder seletivamente
 REVOKE ALL ON FUNCTION public.submit_fibt_organizational_response(uuid,text,text,text,text,jsonb,numeric,jsonb,jsonb,text,text) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION public.purge_fibt_raw_answers() FROM PUBLIC, anon, authenticated;
