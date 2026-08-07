@@ -1,44 +1,58 @@
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 import { FileDown, Loader2, Table2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { trackIsg } from "@/config/isg";
+import { FIBT_SCALE_MAX, trackIsg } from "@/config/isg";
 import { formatIsgDate, type IsgResult } from "@/lib/isgResult";
-import { IsgLogo, IsgPilotBadge } from "./IsgBrand";
+import { IsgCitation, IsgLogo, IsgPilotBadge } from "./IsgBrand";
+import {
+  IsgDomainRadar,
+  IsgMeterRow,
+  IsgReveal,
+  IsgScoreGauge,
+} from "./viz/IsgCharts";
 
 const IsgAnswersTable = lazy(() =>
   import("./IsgAnswersTable").then((m) => ({ default: m.IsgAnswersTable })),
 );
-
-function ScoreBar({ label, score, max }: { label: string; score: number; max: number }) {
-  const pct = Math.round((score / max) * 100);
-  return (
-    <li className="py-3">
-      <div className="flex items-baseline justify-between gap-3">
-        <span className="text-sm text-foreground">{label}</span>
-        <span className="text-xs font-medium text-muted-foreground">
-          {score.toFixed(2)} <span className="opacity-60">/ {max}</span>
-        </span>
-      </div>
-      <div
-        className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted"
-        role="img"
-        aria-label={`${label}: ${score.toFixed(2)} de ${max}`}
-      >
-        <div className="h-full rounded-full bg-primary" style={{ width: `${pct}%` }} />
-      </div>
-    </li>
-  );
-}
 
 interface Props {
   result: IsgResult;
   answers: Record<number, number>;
 }
 
+function Panel({
+  title,
+  description,
+  children,
+  className = "",
+}: {
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <section className={`rounded-2xl border border-border bg-card p-6 sm:p-7 ${className}`}>
+      <h2 className="font-heading text-base font-semibold text-foreground">{title}</h2>
+      {description && (
+        <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{description}</p>
+      )}
+      <div className="mt-6">{children}</div>
+    </section>
+  );
+}
+
 export function IsgResultDashboard({ result, answers }: Props) {
   const [showTable, setShowTable] = useState(false);
   const [pdfBusy, setPdfBusy] = useState(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
+
+  const factors = useMemo(() => Object.values(result.factors ?? {}), [result.factors]);
+  const domains = useMemo(() => Object.values(result.domains ?? {}), [result.domains]);
+  const radarData = useMemo(
+    () => domains.map((d) => ({ label: d.label, value: d.score })),
+    [domains],
+  );
 
   const downloadPdf = async () => {
     if (pdfBusy) return;
@@ -56,11 +70,11 @@ export function IsgResultDashboard({ result, answers }: Props) {
   };
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-10">
+    <main className="mx-auto w-full max-w-5xl px-4 py-10">
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <IsgLogo className="h-8" />
-          <h1 className="mt-4 font-heading text-2xl font-semibold tracking-tight text-foreground">
+          <h1 className="mt-4 font-heading text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
             Pesquisa FIB-T · Resultado Individual
           </h1>
           <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
@@ -73,80 +87,138 @@ export function IsgResultDashboard({ result, answers }: Props) {
         <IsgPilotBadge />
       </header>
 
-      <section className="mt-8 rounded-2xl border border-border bg-card p-6">
-        <p className="text-xs uppercase tracking-wide text-muted-foreground">Resultado global</p>
-        <p className="mt-1 font-heading text-5xl font-semibold text-foreground">
-          {result.globalScore.toFixed(1)}
-          <span className="ml-2 align-middle text-sm font-normal text-muted-foreground">de 100</span>
-        </p>
-        {result.summary && (
-          <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{result.summary}</p>
-        )}
-      </section>
-
-      <div className="mt-6 grid gap-6 sm:grid-cols-2">
-        <section aria-labelledby="isg-factors" className="rounded-2xl border border-border bg-card p-5">
-          <h2 id="isg-factors" className="font-heading text-base font-semibold text-foreground">
-            Fatores
-          </h2>
-          <ul className="mt-2 divide-y divide-border">
-            {Object.entries(result.factors).map(([key, cell]) => (
-              <ScoreBar key={key} label={cell.label} score={cell.score} max={cell.max} />
-            ))}
-          </ul>
+      {/* HERO — medidor global + fatores */}
+      <IsgReveal className="mt-8">
+        <section className="grid gap-8 rounded-2xl border border-border bg-card p-6 sm:p-8 lg:grid-cols-[minmax(0,300px)_1fr]">
+          <div className="flex flex-col items-center justify-center border-border lg:border-r lg:pr-8">
+            <IsgScoreGauge
+              value={result.globalScore}
+              max={100}
+              label="Resultado global"
+              caption="Leitura descritiva de autopercepção em um momento no tempo."
+            />
+          </div>
+          <div className="flex flex-col justify-center gap-6">
+            <div>
+              <h2 className="font-heading text-base font-semibold text-foreground">
+                Fatores FIB-T
+              </h2>
+              <p className="mt-1.5 text-xs text-muted-foreground">
+                Escala {0} a {FIBT_SCALE_MAX} · Padrão de Vida, Bem-Estar e Satisfação
+                Organizacional.
+              </p>
+            </div>
+            <div className="space-y-5">
+              {factors.map((f, i) => (
+                <IsgMeterRow
+                  key={f.label}
+                  label={f.label}
+                  value={f.score}
+                  max={f.max}
+                  delay={0.1 + i * 0.12}
+                />
+              ))}
+            </div>
+            {result.summary && (
+              <p className="border-t border-border pt-5 text-sm leading-relaxed text-muted-foreground">
+                {result.summary}
+              </p>
+            )}
+          </div>
         </section>
+      </IsgReveal>
 
-        <section aria-labelledby="isg-domains" className="rounded-2xl border border-border bg-card p-5">
-          <h2 id="isg-domains" className="font-heading text-base font-semibold text-foreground">
-            Domínios
-          </h2>
-          <ul className="mt-2 divide-y divide-border">
-            {Object.entries(result.domains).map(([key, cell]) => (
-              <ScoreBar key={key} label={cell.label} score={cell.score} max={cell.max} />
-            ))}
-          </ul>
-        </section>
+      {/* DOMÍNIOS — radar + medidores */}
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <IsgReveal delay={0.05}>
+          <Panel
+            title="Domínios FIB"
+            description={`Os 9 Domínios FIB agrupados nos 3 Fatores da Escala FIB-T. Escala 0 a ${FIBT_SCALE_MAX}.`}
+            className="h-full"
+          >
+            <IsgDomainRadar data={radarData} />
+          </Panel>
+        </IsgReveal>
+        <IsgReveal delay={0.12}>
+          <Panel title="Leitura por domínio" className="h-full">
+            <div className="space-y-5">
+              {domains.map((d, i) => (
+                <IsgMeterRow
+                  key={d.label}
+                  label={d.label}
+                  value={d.score}
+                  max={d.max}
+                  delay={i * 0.06}
+                />
+              ))}
+            </div>
+          </Panel>
+        </IsgReveal>
       </div>
 
       {(result.strengths.length > 0 || result.vulnerabilities.length > 0) && (
         <div className="mt-6 grid gap-6 sm:grid-cols-2">
           {result.strengths.length > 0 && (
-            <section className="rounded-2xl border border-border bg-card p-5">
-              <h2 className="font-heading text-base font-semibold text-foreground">
-                Dimensões mais favoráveis
-              </h2>
-              <ul className="mt-3 space-y-1.5 text-sm text-muted-foreground">
-                {result.strengths.map((s) => <li key={s}>{s}</li>)}
-              </ul>
-            </section>
+            <IsgReveal>
+              <Panel title="Dimensões mais favoráveis" className="h-full">
+                <ul className="space-y-2 text-sm leading-relaxed text-muted-foreground">
+                  {result.strengths.map((s) => (
+                    <li key={s} className="flex gap-2.5">
+                      <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                      {s}
+                    </li>
+                  ))}
+                </ul>
+              </Panel>
+            </IsgReveal>
           )}
           {result.vulnerabilities.length > 0 && (
-            <section className="rounded-2xl border border-border bg-card p-5">
-              <h2 className="font-heading text-base font-semibold text-foreground">
-                Pontos de atenção
-              </h2>
-              <ul className="mt-3 space-y-1.5 text-sm text-muted-foreground">
-                {result.vulnerabilities.map((s) => <li key={s}>{s}</li>)}
-              </ul>
-            </section>
+            <IsgReveal delay={0.08}>
+              <Panel title="Pontos de atenção" className="h-full">
+                <ul className="space-y-2 text-sm leading-relaxed text-muted-foreground">
+                  {result.vulnerabilities.map((s) => (
+                    <li key={s} className="flex gap-2.5">
+                      <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                      {s}
+                    </li>
+                  ))}
+                </ul>
+              </Panel>
+            </IsgReveal>
           )}
         </div>
       )}
 
       {result.recommendations.length > 0 && (
-        <section className="mt-6 rounded-2xl border border-border bg-card p-5">
-          <h2 className="font-heading text-base font-semibold text-foreground">Recomendações</h2>
-          <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-            {result.recommendations.map((r, i) => (
-              <li key={i}>{[r.domain, r.action].filter(Boolean).join(" — ")}</li>
-            ))}
-          </ul>
-        </section>
+        <IsgReveal className="mt-6">
+          <Panel title="Caminhos de reflexão">
+            <ol className="grid gap-3 sm:grid-cols-2">
+              {result.recommendations.map((r, i) => (
+                <li
+                  key={i}
+                  className="rounded-xl border border-border bg-background p-4 text-sm leading-relaxed text-muted-foreground"
+                >
+                  {r.domain && (
+                    <span className="mb-1 block text-xs font-medium uppercase tracking-wide text-foreground">
+                      {r.domain}
+                    </span>
+                  )}
+                  {r.action}
+                </li>
+              ))}
+            </ol>
+          </Panel>
+        </IsgReveal>
       )}
 
       <div className="mt-8 flex flex-wrap gap-3">
-        <Button variant="outline" className="h-11" onClick={() => setShowTable((v) => !v)}
-          aria-expanded={showTable} aria-controls="isg-answers-panel">
+        <Button
+          variant="outline"
+          className="h-11"
+          onClick={() => setShowTable((v) => !v)}
+          aria-expanded={showTable}
+          aria-controls="isg-answers-panel"
+        >
           <Table2 className="mr-2 h-4 w-4" aria-hidden="true" />
           {showTable ? "Ocultar minhas respostas" : "Ver minhas respostas"}
         </Button>
@@ -173,10 +245,13 @@ export function IsgResultDashboard({ result, answers }: Props) {
         )}
       </div>
 
-      <p className="mt-10 text-xs leading-relaxed text-muted-foreground">
-        {result.limitations ??
-          "Resultado de autopercepção em um único momento no tempo. Instrumento de pesquisa e autoconhecimento: não é diagnóstico clínico nem avaliação de desempenho."}
-      </p>
+      <div className="mt-10 space-y-3 border-t border-border pt-6">
+        <p className="text-xs leading-relaxed text-muted-foreground">
+          {result.limitations ??
+            "Resultado de autopercepção em um único momento no tempo. Instrumento de pesquisa e autoconhecimento: não é diagnóstico clínico nem avaliação de desempenho."}
+        </p>
+        <IsgCitation />
+      </div>
     </main>
   );
 }
