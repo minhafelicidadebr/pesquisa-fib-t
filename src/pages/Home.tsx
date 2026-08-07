@@ -18,7 +18,7 @@ import { Label } from "@/components/ui/label";
 import { resolveSurveyAccess } from "@/lib/surveyAccess";
 
 const brand = hubData.brand;
-const contact = hubData.brand.contact ?? hubData.contact;
+const contact = hubData.brand.contact;
 
 const NAV = [
   { href: "#o-que-e", label: "O que é a FIB-T" },
