@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ISG_PILOT_ENABLED, trackIsg } from "@/config/isg";
 import { submitIsgAnswers, type IsgResult } from "@/lib/isgResult";
+import { hasSurveyAccessGrant } from "@/lib/surveyAccess";
 import { IsgAccessGate } from "@/components/isg/IsgAccessGate";
 import { IsgIntro } from "@/components/isg/IsgIntro";
 import { IsgSurvey } from "@/components/isg/IsgSurvey";
@@ -13,7 +14,10 @@ import { IsgFooter } from "@/components/isg/IsgBrand";
 type Stage = "ACCESS" | "INTRO" | "ANSWERING" | "REVIEW" | "SUBMITTING" | "RESULT" | "ERROR";
 
 export default function ISG() {
-  const [stage, setStage] = useState<Stage>("ACCESS");
+  /** Se o portal já autorizou no servidor nesta sessão, não pedimos o código de novo. */
+  const [stage, setStage] = useState<Stage>(() =>
+    hasSurveyAccessGrant("/isg") ? "INTRO" : "ACCESS",
+  );
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [result, setResult] = useState<IsgResult | null>(null);
   /** Guard de double-submit no cliente, independente de idempotência no servidor. */

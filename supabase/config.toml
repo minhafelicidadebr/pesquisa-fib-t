@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.isg-results]
 verify_jwt = false
+
+[functions.resolve-survey-access]
+verify_jwt = false
