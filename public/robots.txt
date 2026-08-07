@@ -4,6 +4,6 @@ Disallow: /auth
 Disallow: /perfil
 Disallow: /onboarding
 Disallow: /empresa/
-
-Sitemap: https://fib-cop-nr1.lovable.app/sitemap.xml
 Disallow: /isg/resultados
+
+Sitemap: https://pesquisadefelicidade.com.br/sitemap.xml
