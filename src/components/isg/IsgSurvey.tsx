@@ -5,6 +5,15 @@ import { Progress } from "@/components/ui/progress";
 import { FIBT_ITEMS } from "@/domain/fibt";
 import { LIKERT_LABELS } from "@/lib/isgCsv";
 import { IsgLogo, IsgPilotBadge } from "./IsgBrand";
+import {
+  blockIndexOf,
+  ISG_BLOCK_COUNT,
+  ISG_BLOCK_SIZE,
+  ISG_BLOCKS,
+  IsgBlockTrail,
+  IsgFibiaCompanion,
+} from "./IsgFibiaCompanion";
+
 
 const OPTIONS = [0, 1, 2, 3, 4] as const;
 
