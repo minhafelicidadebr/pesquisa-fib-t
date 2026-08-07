@@ -118,9 +118,9 @@ export async function generateIsgAggregatePdf(agg: IsgAggregate): Promise<void> 
   const radarCy = y + 118;
   drawRadar(
     doc,
-    L.M + half / 2,
+    L.M + half / 2 - 16,
     radarCy,
-    88,
+    74,
     (agg.domains ?? []).map((d) => ({ label: d.label, value: d.mean })),
   );
   let yRight = y + 8;
@@ -142,7 +142,7 @@ export async function generateIsgAggregatePdf(agg: IsgAggregate): Promise<void> 
         doc,
         L,
         y,
-        `Entre os fatores observados, ${ef.highest.label} apresentou a maior média do grupo (${ef.highest.mean}) e ${ef.lowest.label} a menor média observada (${ef.lowest.mean}).`,
+        `Entre os fatores observados, ${ef.highest.label} apresentou a maior média do grupo (${ef.highest.mean.toFixed(2)}) e ${ef.lowest.label} a menor média observada (${ef.lowest.mean.toFixed(2)}).`,
       ) + 8;
   }
   if (ed) {
@@ -151,7 +151,7 @@ export async function generateIsgAggregatePdf(agg: IsgAggregate): Promise<void> 
         doc,
         L,
         y,
-        `Entre os domínios, ${ed.highest.label} apresentou a maior média observada (${ed.highest.mean}) e ${ed.lowest.label} a menor média observada (${ed.lowest.mean}).`,
+        `Entre os domínios, ${ed.highest.label} apresentou a maior média observada (${ed.highest.mean.toFixed(2)}) e ${ed.lowest.label} a menor média observada (${ed.lowest.mean.toFixed(2)}).`,
       ) + 8;
   }
   drawParagraph(

@@ -15,7 +15,6 @@ import {
   drawParagraph,
   drawRadar,
   drawSectionTitle,
-  formatLongDate,
   GRAY,
   GUTTER,
   layoutOf,
@@ -95,13 +94,13 @@ export async function generateIsgPdf(result: IsgResult): Promise<void> {
   y += 14;
   y = drawSectionTitle(doc, L, y, "Domínios FIB", "9 domínios agrupados nos 3 fatores");
 
-  const radarCx = L.M + half / 2;
+  const radarCx = L.M + half / 2 - 16;
   const radarCy = y + 118;
   drawRadar(
     doc,
     radarCx,
     radarCy,
-    88,
+    74,
     domains.map((d) => ({ label: d.label, value: d.score })),
     domains[0]?.max ?? 4,
   );

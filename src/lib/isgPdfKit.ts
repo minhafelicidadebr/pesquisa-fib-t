@@ -228,10 +228,10 @@ export function drawRadar(
     const v = vertices[i];
     doc.setFillColor(...NAVY);
     doc.circle(v.x, v.y, 1.8, "F");
-    const lp = polar(cx, cy, r + 16, angleAt(i));
+    const lp = polar(cx, cy, r + 13, angleAt(i));
     doc.setTextColor(...GRAY);
     const align = Math.abs(lp.x - cx) < 6 ? "center" : lp.x > cx ? "left" : "right";
-    const lines = doc.splitTextToSize(p.label, 78) as string[];
+    const lines = doc.splitTextToSize(p.label, 62) as string[];
     lines.forEach((line, k) =>
       doc.text(line, lp.x, lp.y + k * 8.5, { align: align as "left" | "right" | "center" }),
     );
