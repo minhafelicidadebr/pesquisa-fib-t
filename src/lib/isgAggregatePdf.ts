@@ -6,189 +6,226 @@
  * Nenhuma resposta individual entra no documento.
  */
 
-import { ISG_CONTACT, ISG_LOGO_FALLBACK } from "@/config/isg";
+import { FIBT_CITATION, ISG_CONTACT } from "@/config/isg";
 import {
   buildQuestionRows,
   extremes,
   LIKERT_COLUMNS,
   type IsgAggregate,
 } from "@/lib/isgAggregate";
+import {
+  drawFooter,
+  drawGauge,
+  drawLikertLegend,
+  drawLikertStack,
+  drawMeterRow,
+  drawParagraph,
+  drawRadar,
+  drawSectionTitle,
+  formatLongDate,
+  GRAY,
+  GUTTER,
+  layoutOf,
+  loadIsgLogo,
+  NAVY,
+  RULE,
+} from "@/lib/isgPdfKit";
 
-const NAVY = [16, 42, 67] as const;
-const GRAY = [110, 120, 132] as const;
-
-async function loadLogo(): Promise<string | null> {
-  try {
-    const res = await fetch(ISG_LOGO_FALLBACK, { mode: "cors" });
-    if (!res.ok) return null;
-    const blob = await res.blob();
-    return await new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result));
-      reader.onerror = () => resolve(null);
-      reader.readAsDataURL(blob);
-    });
-  } catch {
-    return null;
-  }
-}
-
-function formatDate(iso?: string | null): string {
-  const d = iso ? new Date(iso) : new Date();
-  return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
-}
+const FOOTER_NOTE = "ISG — Brasília — DF · Documento agregado, sem dados individuais";
 
 export async function generateIsgAggregatePdf(agg: IsgAggregate): Promise<void> {
   const { default: JsPDF } = await import("jspdf");
   const doc = new JsPDF({ unit: "pt", format: "a4" });
-  const W = doc.internal.pageSize.getWidth();
-  const H = doc.internal.pageSize.getHeight();
-  const M = 56;
-  const logo = await loadLogo();
-  let y = M;
+  const L = layoutOf(doc);
+  const logo = await loadIsgLogo();
+  const half = (L.CW - GUTTER) / 2;
+  const rightX = L.M + half + GUTTER;
 
-  const footer = () => {
-    doc.setFontSize(8);
-    doc.setTextColor(...GRAY);
-    doc.text("ISG — Brasília — DF · Documento agregado, sem dados individuais", M, H - 32);
+  const newPage = () => {
+    drawFooter(doc, L, FOOTER_NOTE);
+    doc.addPage();
   };
 
-  const ensure = (needed: number) => {
-    if (y + needed > H - 64) {
-      footer();
-      doc.addPage();
-      y = M;
-    }
-  };
-
-  const heading = (text: string) => {
-    ensure(46);
-    doc.setTextColor(...NAVY);
-    doc.setFontSize(14);
-    doc.text(text, M, y);
-    y += 8;
-    doc.setDrawColor(220, 224, 230);
-    doc.line(M, y, W - M, y);
-    y += 18;
-  };
-
-  const body = (text: string, size = 10) => {
-    doc.setFontSize(size);
-    doc.setTextColor(...GRAY);
-    const lines = doc.splitTextToSize(text, W - M * 2) as string[];
-    for (const line of lines) {
-      ensure(16);
-      doc.text(line, M, y);
-      y += 14;
-    }
-    y += 6;
-  };
-
-  // ---------- Capa ----------
+  /* ───────────────────────────── Capa ───────────────────────────── */
   if (logo) {
     try {
-      doc.addImage(logo, "PNG", M, M, 150, 51);
+      doc.addImage(logo, "PNG", L.M, L.M, 150, 51);
     } catch { /* segue sem logo */ }
   }
+  doc.setDrawColor(...RULE);
+  doc.setLineWidth(0.8);
+  doc.line(L.M, L.M + 78, L.W - L.M, L.M + 78);
+
   doc.setTextColor(...NAVY);
   doc.setFontSize(28);
-  doc.text("Painel Executivo FIB-T", M, 230);
+  doc.text("Painel Executivo FIB-T", L.M, 248);
   doc.setFontSize(14);
   doc.setTextColor(...GRAY);
-  doc.text("Visão agregada do pré-teste organizacional ISG", M, 256);
-  doc.setFontSize(11);
-  doc.text(`Data de emissão: ${formatDate()}`, M, 292);
-  doc.text(`Status da coleta: ${agg.status}`, M, 310);
-  doc.text(`Última atualização: ${formatDate(agg.lastUpdatedAt)}`, M, 328);
-  footer();
-  doc.addPage();
-  y = M;
+  doc.text("Visão agregada do pré-teste organizacional ISG", L.M, 274);
 
-  // ---------- Panorama ----------
-  heading("Panorama");
-  body(`Participações consideradas: ${agg.n}`);
-  body(`Resultado global agregado: ${agg.globalScore} (escala 0 a 100)`);
-
-  // ---------- Fatores ----------
-  heading("Fatores FIB-T (escala 0 a 4)");
-  for (const f of agg.factors ?? []) {
-    ensure(16);
-    doc.setFontSize(10);
-    doc.setTextColor(...NAVY);
-    doc.text(f.label, M, y);
-    doc.text(String(f.mean), W - M, y, { align: "right" });
-    y += 15;
+  if (!agg.suppressed && typeof agg.globalScore === "number") {
+    drawGauge(
+      doc,
+      L.W - L.M - 90,
+      300,
+      74,
+      agg.globalScore / 100,
+      String(agg.globalScore),
+      "de 100",
+      "Resultado global agregado",
+    );
   }
-  y += 8;
 
-  // ---------- Domínios ----------
-  heading("Domínios FIB-T (escala 0 a 4)");
-  for (const d of agg.domains ?? []) {
-    ensure(16);
-    doc.setFontSize(10);
-    doc.setTextColor(...NAVY);
-    doc.text(d.label, M, y);
-    doc.text(String(d.mean), W - M, y, { align: "right" });
-    y += 15;
+  let y = 340;
+  doc.setFontSize(10);
+  doc.setTextColor(...GRAY);
+  [
+    `Data de emissão: ${formatLongDate()}`,
+    `Status da coleta: ${agg.status}`,
+    `Última atualização: ${formatLongDate(agg.lastUpdatedAt)}`,
+    agg.suppressed
+      ? `Participações registradas: ${agg.nLabel ?? "—"}`
+      : `Participações consideradas: ${agg.n}`,
+  ].forEach((line) => {
+    doc.text(line, L.M, y);
+    y += 16;
+  });
+  newPage();
+
+  /* ───────────────── Amostra insuficiente: encerra aqui ───────────────── */
+  if (agg.suppressed) {
+    y = drawSectionTitle(doc, L, L.M + 6, "Amostra insuficiente");
+    drawParagraph(
+      doc,
+      L,
+      y,
+      `Para proteger a privacidade dos participantes, médias, distribuições, fatores e domínios ` +
+        `só são apresentados a partir de ${agg.threshold} participações.`,
+    );
+    drawFooter(doc, L, FOOTER_NOTE);
+    doc.save("painel-executivo-fibt-isg.pdf");
+    return;
   }
-  y += 8;
 
-  // ---------- Leituras do grupo ----------
-  heading("Leituras do grupo");
+  /* ──────────────── Página 2 — Fatores, Domínios, Radar ──────────────── */
+  y = drawSectionTitle(doc, L, L.M + 6, "Fatores FIB-T", "Médias agregadas · escala 0 a 4");
+  (agg.factors ?? []).forEach((f) => {
+    y = drawMeterRow(doc, L.M, y, L.CW, f.label, f.mean, 4, 2);
+  });
+
+  y += 14;
+  y = drawSectionTitle(doc, L, y, "Domínios FIB", "9 domínios agrupados nos 3 fatores");
+  const radarCy = y + 118;
+  drawRadar(
+    doc,
+    L.M + half / 2,
+    radarCy,
+    88,
+    (agg.domains ?? []).map((d) => ({ label: d.label, value: d.mean })),
+  );
+  let yRight = y + 8;
+  (agg.domains ?? []).forEach((d) => {
+    yRight = drawMeterRow(doc, rightX, yRight, half, d.label, d.mean, 4, 2);
+  });
+  y = Math.max(radarCy + 118, yRight) + 16;
+
+  if (y > L.H - 190) {
+    newPage();
+    y = L.M + 6;
+  }
+  y = drawSectionTitle(doc, L, y, "Leituras do grupo");
   const ef = extremes(agg.factors);
   const ed = extremes(agg.domains);
   if (ef) {
-    body(
-      `Entre os fatores observados, ${ef.highest.label} apresentou a maior média do grupo (${ef.highest.mean}) e ${ef.lowest.label} a menor média observada (${ef.lowest.mean}).`,
-    );
+    y =
+      drawParagraph(
+        doc,
+        L,
+        y,
+        `Entre os fatores observados, ${ef.highest.label} apresentou a maior média do grupo (${ef.highest.mean}) e ${ef.lowest.label} a menor média observada (${ef.lowest.mean}).`,
+      ) + 8;
   }
   if (ed) {
-    body(
-      `Entre os domínios, ${ed.highest.label} apresentou a maior média observada (${ed.highest.mean}) e ${ed.lowest.label} a menor média observada (${ed.lowest.mean}).`,
-    );
+    y =
+      drawParagraph(
+        doc,
+        L,
+        y,
+        `Entre os domínios, ${ed.highest.label} apresentou a maior média observada (${ed.highest.mean}) e ${ed.lowest.label} a menor média observada (${ed.lowest.mean}).`,
+      ) + 8;
   }
+  drawParagraph(
+    doc,
+    L,
+    y,
+    `A amostra apresentou resultado global agregado de ${agg.globalScore} na escala 0 a 100, com ${agg.n} participações.`,
+  );
+  newPage();
 
-  // ---------- Questões ----------
-  heading("Resultados por questão (média agregada)");
+  /* ───────────────── Página 3+ — Questões com distribuição ───────────────── */
+  y = drawSectionTitle(doc, L, L.M + 6, "Resultados por questão", "Média agregada e distribuição");
+  drawLikertLegend(doc, L.M, y, LIKERT_COLUMNS);
+  y += 22;
+
   const rows = buildQuestionRows(agg.questions ?? []);
-  doc.setFontSize(8);
-  for (const r of rows) {
-    ensure(26);
+  rows.forEach((r) => {
+    if (y > L.H - 110) {
+      newPage();
+      y = drawSectionTitle(doc, L, L.M + 6, "Resultados por questão", "continuação");
+    }
+    doc.setFontSize(8.5);
     doc.setTextColor(...NAVY);
-    const label = doc.splitTextToSize(`${r.number}. ${r.text}`, W - M * 2 - 60) as string[];
-    doc.text(label, M, y);
-    doc.text(r.mean === null ? "—" : String(r.mean), W - M, y, { align: "right" });
-    y += label.length * 10;
-    doc.setTextColor(...GRAY);
-    doc.text(
-      LIKERT_COLUMNS.map((l, i) => `${l}: ${r.percentages[i]}%`).join("  ·  "),
-      M,
-      y,
-    );
-    y += 16;
+    const label = doc.splitTextToSize(`${r.number}. ${r.text}`, L.CW - 56) as string[];
+    label.forEach((line, i) => doc.text(line, L.M, y + i * 11));
+    doc.setFontSize(9);
+    doc.text(r.mean === null ? "—" : r.mean.toFixed(2), L.W - L.M, y, { align: "right" });
+    y += label.length * 11 + 4;
+    drawLikertStack(doc, L.M, y, L.CW, r.percentages);
+    y += 18;
+  });
+
+  /* ───────────────────────────── Notas ───────────────────────────── */
+  if (y > L.H - 200) {
+    newPage();
+    y = L.M + 6;
+  } else {
+    y += 10;
   }
-  y += 10;
+  y = drawSectionTitle(doc, L, y, "Nota metodológica");
+  y =
+    drawParagraph(
+      doc,
+      L,
+      y,
+      "O FIB-T é instrumento de pesquisa e autoconhecimento. Não é diagnóstico, laudo ou avaliação clínica. " +
+        "Os valores apresentados são médias descritivas de autopercepção em um único momento no tempo e não " +
+        "sustentam conclusão causal. Uma questão isolada não deve ser interpretada como diagnóstico.",
+    ) + 10;
+  y = drawParagraph(doc, L, y, FIBT_CITATION, { size: 8.5 }) + 20;
 
-  // ---------- Notas ----------
-  heading("Nota metodológica");
-  body(
-    "O FIB-T é instrumento de pesquisa e autoconhecimento, referência FURTADO, C. A. (2020). " +
-      "Não é diagnóstico, laudo ou avaliação clínica. Os valores apresentados são médias descritivas " +
-      "de autopercepção em um único momento no tempo e não sustentam conclusão causal. " +
-      "Uma questão isolada não deve ser interpretada como diagnóstico.",
-  );
+  if (y > L.H - 170) {
+    newPage();
+    y = L.M + 6;
+  }
+  y = drawSectionTitle(doc, L, y, "Nota de privacidade");
+  y =
+    drawParagraph(
+      doc,
+      L,
+      y,
+      `Este relatório apresenta exclusivamente resultados agregados. Nenhum dado pessoal é coletado ou ` +
+        `armazenado e nenhuma resposta individual pode ser recuperada. Resultados só são apresentados ` +
+        `quando a amostra atinge o limiar mínimo de ${agg.threshold} participações.`,
+    ) + 20;
 
-  heading("Nota de privacidade");
-  body(
-    `Este relatório apresenta exclusivamente resultados agregados. Nenhum dado pessoal é coletado ou ` +
-      `armazenado e nenhuma resposta individual pode ser recuperada. Resultados só são apresentados ` +
-      `quando a amostra atinge o limiar mínimo de ${agg.threshold} participações.`,
-  );
+  if (y > L.H - 140) {
+    newPage();
+    y = L.M + 6;
+  }
+  y = drawSectionTitle(doc, L, y, "Contatos ISG");
+  y = drawParagraph(doc, L, y, `${ISG_CONTACT.phone} · ${ISG_CONTACT.email}`);
+  drawParagraph(doc, L, y + 6, ISG_CONTACT.addressLines.join(" · "));
 
-  heading("Contatos ISG");
-  body(`${ISG_CONTACT.phone} · ${ISG_CONTACT.email}`);
-  body(ISG_CONTACT.addressLines.join(" · "));
-
-  footer();
+  drawFooter(doc, L, FOOTER_NOTE);
   doc.save("painel-executivo-fibt-isg.pdf");
 }
