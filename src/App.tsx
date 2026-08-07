@@ -45,6 +45,8 @@ import NotFound from "./pages/NotFound.tsx";
 
 /** Piloto ISG isolado e carregado sob demanda: não afeta o bundle da home. */
 const ISG = lazy(() => import("./pages/ISG.tsx"));
+/** Painel administrativo agregado: lazy para não pesar na home nem no /isg. */
+const IsgResults = lazy(() => import("./pages/IsgResults.tsx"));
 
 const queryClient = new QueryClient();
 
@@ -87,6 +89,15 @@ const App = () => (
                 </Suspense>
               }
             />
+            <Route
+              path="/isg/resultados"
+              element={
+                <Suspense fallback={<div className="min-h-dvh bg-background" />}>
+                  <IsgResults />
+                </Suspense>
+              }
+            />
+
 
             <Route path="/pesquisa/setores" element={<SetoresAgregados />} />
 

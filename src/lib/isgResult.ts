@@ -37,6 +37,8 @@ export async function submitIsgAnswers(
       answers: payloadAnswers,
       instrumentId: INSTRUMENT_ID,
       instrumentVersion: INSTRUMENT_VERSION,
+      // Marcador estrutural da coorte do piloto — base do painel agregado.
+      cohort: "isg",
     },
   });
 
