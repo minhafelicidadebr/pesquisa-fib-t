@@ -254,7 +254,7 @@ export function FibiaChat() {
                 Começar minha jornada
                 <ArrowRight className="w-5 h-5" />
               </button>
-              <p className="text-xs text-muted-foreground mt-6">🔒 Anônimo e confidencial • Referência: FURTADO, C. A. (2020)</p>
+              <p className="text-xs text-muted-foreground mt-6">🔒 Sem coleta de dados pessoais na pesquisa • Referência: FURTADO, C. A. (2020)</p>
             </motion.div>
           )}
 
