@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -41,6 +42,9 @@ import NR1Signatarios from "./pages/NR1Signatarios.tsx";
 import NR1Contador from "./pages/NR1Contador.tsx";
 import ConsultoriaDashboard from "./pages/ConsultoriaDashboard.tsx";
 import NotFound from "./pages/NotFound.tsx";
+
+/** Piloto ISG isolado e carregado sob demanda: não afeta o bundle da home. */
+const ISG = lazy(() => import("./pages/ISG.tsx"));
 
 const queryClient = new QueryClient();
 
