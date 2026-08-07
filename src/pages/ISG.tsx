@@ -52,6 +52,7 @@ export default function ISG() {
       const r = await submitIsgAnswers(answers);
       setResult(r);
       setStage("RESULT");
+      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
       trackIsg("isg_survey_completed");
     } catch {
       setStage("ERROR");
