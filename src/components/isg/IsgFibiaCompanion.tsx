@@ -5,12 +5,17 @@ import fibiaAvatar from "@/assets/fibia-avatar.png";
 export const ISG_BLOCK_SIZE = 8;
 export const ISG_BLOCK_COUNT = 4;
 
+/**
+ * Rótulos neutros de percurso: os itens do FIB-T não são agrupados por tema
+ * nos blocos, então nomear temas aqui seria falso. Blocos servem só de ritmo.
+ */
 export const ISG_BLOCKS = [
-  { label: "Como você se sente hoje", opening: "Vamos começar com calma. Não existe resposta certa aqui — só a sua." },
-  { label: "Seu dia de trabalho", opening: "Agora sobre o seu dia a dia. Responda pensando nas últimas semanas." },
-  { label: "Suas relações e apoio", opening: "Este bloco fala de convivência e apoio. Siga no seu ritmo." },
-  { label: "Sentido e propósito", opening: "Último bloco. Obrigado por chegar até aqui com atenção." },
+  { label: "Primeira parte", opening: "Vamos começar com calma. Não existe resposta certa aqui — só a sua." },
+  { label: "Segunda parte", opening: "Seguimos. Responda pensando em como as coisas têm estado para você." },
+  { label: "Terceira parte", opening: "Você já passou da metade. Siga no seu ritmo, sem pressa." },
+  { label: "Última parte", opening: "Última parte. Obrigado por chegar até aqui com atenção." },
 ] as const;
+
 
 export function blockIndexOf(questionIndex: number): number {
   return Math.min(ISG_BLOCK_COUNT - 1, Math.floor(questionIndex / ISG_BLOCK_SIZE));
