@@ -69,9 +69,11 @@ export function IsgFooter() {
           </address>
         </div>
       </div>
-      <p className="mx-auto mt-8 max-w-5xl px-4 pb-8 text-xs">
-        ISG — Brasília — DF
-      </p>
+      <div className="mx-auto mt-8 max-w-5xl space-y-1.5 px-4 pb-8">
+        <p className="text-xs">ISG — Brasília — DF</p>
+        <IsgCitation />
+      </div>
+
     </footer>
   );
 }
