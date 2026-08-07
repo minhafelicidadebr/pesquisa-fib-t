@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -42,6 +43,9 @@ import NR1Contador from "./pages/NR1Contador.tsx";
 import ConsultoriaDashboard from "./pages/ConsultoriaDashboard.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
+/** Piloto ISG isolado e carregado sob demanda: não afeta o bundle da home. */
+const ISG = lazy(() => import("./pages/ISG.tsx"));
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -75,6 +79,15 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/planos" element={<Planos />} />
             <Route path="/pesquisa" element={<Pesquisa />} />
+            <Route
+              path="/isg"
+              element={
+                <Suspense fallback={<div className="min-h-dvh bg-background" />}>
+                  <ISG />
+                </Suspense>
+              }
+            />
+
             <Route path="/pesquisa/setores" element={<SetoresAgregados />} />
 
             <Route path="/selo/:id" element={<SeloNR1 />} />

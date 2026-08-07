@@ -226,3 +226,42 @@
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(222 15% 35%);
 }
+
+/* =============================================================
+   Tema ISG — escopo EXCLUSIVO da rota /isg.
+   Sobrescreve apenas tokens semânticos dentro de `.isg-theme`,
+   sem tocar :root nem o tema das demais páginas.
+   ============================================================= */
+@layer base {
+  .isg-theme {
+    --background: 210 20% 99%;
+    --foreground: 213 44% 16%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 213 44% 16%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 213 44% 16%;
+
+    --primary: 210 78% 30%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 25% 94%;
+    --secondary-foreground: 213 44% 16%;
+
+    --muted: 210 25% 95%;
+    --muted-foreground: 214 12% 42%;
+
+    --accent: 195 62% 40%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 65% 42%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 20% 88%;
+    --input: 214 20% 88%;
+    --ring: 210 78% 30%;
+
+    --radius: 0.75rem;
+  }
+}
