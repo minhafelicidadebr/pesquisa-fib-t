@@ -53,7 +53,8 @@ const App = () => (
         <AuthProvider>
           <AppSidebarRail />
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<FibiaDemo />} />
+            <Route path="/institucional" element={<Index />} />
             <Route path="/apresentacoes" element={<Apresentacoes />} />
             <Route path="/apresentacoes/:segment" element={<SegmentDeck />} />
             <Route path="/matriz" element={<Matriz />} />
