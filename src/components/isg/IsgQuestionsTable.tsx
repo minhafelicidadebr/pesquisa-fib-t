@@ -1,11 +1,13 @@
 import { useMemo, useState } from "react";
 import { ArrowUpDown, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { IsgLikertLegend, IsgLikertStack } from "@/components/isg/viz/IsgCharts";
 import {
   buildQuestionRows,
   LIKERT_COLUMNS,
   type AggregateQuestion,
 } from "@/lib/isgAggregate";
+
 
 type SortKey = "number" | "mean";
 

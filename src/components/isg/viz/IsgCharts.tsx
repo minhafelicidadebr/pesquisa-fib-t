@@ -280,20 +280,27 @@ export const LIKERT_TONES = [
 export function IsgLikertStack({
   percentages,
   labels,
+  counts,
   height = 10,
 }: {
   percentages: number[];
   labels: readonly string[];
+  counts?: number[];
   height?: number;
 }) {
   const reduce = useReducedMotion();
+  const describe = labels
+    .map((l, i) => `${l}: ${percentages[i] ?? 0}%${counts ? ` (${counts[i] ?? 0})` : ""}`)
+    .join(", ");
   return (
     <div
       className="flex w-full overflow-hidden rounded-full bg-muted"
       style={{ height }}
       role="img"
-      aria-label={labels.map((l, i) => `${l}: ${percentages[i] ?? 0}%`).join(", ")}
+      title={describe}
+      aria-label={describe}
     >
+
       {percentages.map((p, i) => (
         <motion.span
           key={i}
