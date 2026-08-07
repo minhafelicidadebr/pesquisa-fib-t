@@ -36,6 +36,17 @@ export const ISG_CONTACT = {
   ],
 } as const;
 
+/**
+ * Referência obrigatória do instrumento. Deve aparecer na pesquisa, nos
+ * dashboards e em todos os PDFs gerados.
+ */
+export const FIBT_CITATION =
+  "REFERÊNCIA PARA CITAÇÃO: FURTADO, C. A. (2020)" as const;
+
+/** Escala Likert oficial do instrumento (0 a 4), conforme documento-fonte. */
+export const FIBT_SCALE_MAX = 4 as const;
+
+
 /** Eventos de analytics permitidos — sempre sem payload sensível. */
 export type IsgAnalyticsEvent =
   | "isg_pilot_opened"
