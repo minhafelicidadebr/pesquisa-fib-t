@@ -5,6 +5,15 @@ import { Progress } from "@/components/ui/progress";
 import { FIBT_ITEMS } from "@/domain/fibt";
 import { LIKERT_LABELS } from "@/lib/isgCsv";
 import { IsgLogo, IsgPilotBadge } from "./IsgBrand";
+import {
+  blockIndexOf,
+  ISG_BLOCK_COUNT,
+  ISG_BLOCK_SIZE,
+  ISG_BLOCKS,
+  IsgBlockTrail,
+  IsgFibiaCompanion,
+} from "./IsgFibiaCompanion";
+
 
 const OPTIONS = [0, 1, 2, 3, 4] as const;
 
@@ -26,6 +35,11 @@ export function IsgSurvey({ answers, onAnswer, onComplete }: Props) {
   const item = FIBT_ITEMS[index];
   const answered = Object.keys(answers).length;
   const current = answers[item.id];
+  const block = blockIndexOf(index);
+  const blockStart = block * ISG_BLOCK_SIZE;
+  const answeredInBlock = FIBT_ITEMS.slice(blockStart, blockStart + ISG_BLOCK_SIZE).filter(
+    (q) => answers[q.id] !== undefined,
+  ).length;
 
   useEffect(() => {
     headingRef.current?.focus();
@@ -43,17 +57,27 @@ export function IsgSurvey({ answers, onAnswer, onComplete }: Props) {
         <IsgPilotBadge />
       </div>
 
-      <div className="mb-2 flex items-baseline justify-between">
+      <div className="mb-3 flex items-baseline justify-between gap-3">
         <p className="text-sm font-medium text-foreground">
-          Questão {index + 1} de {total}
+          Bloco {block + 1} de {ISG_BLOCK_COUNT} · {ISG_BLOCKS[block].label}
         </p>
-        <p className="text-xs text-muted-foreground">{answered} respondidas</p>
+        <p className="text-xs text-muted-foreground">
+          Questão {index + 1} de {total} · {answered} respondidas
+        </p>
       </div>
+
+      <IsgBlockTrail questionIndex={index} />
+
       <Progress
         value={(answered / total) * 100}
         aria-label={`Progresso: ${answered} de ${total} questões respondidas`}
-        className="h-1.5"
+        className="mt-4 h-1.5"
       />
+
+      <div className="mt-5">
+        <IsgFibiaCompanion questionIndex={index} answeredInBlock={answeredInBlock} />
+      </div>
+
 
       <fieldset className="mt-8 rounded-2xl border border-border bg-card p-5 sm:p-7">
         <legend className="sr-only">
