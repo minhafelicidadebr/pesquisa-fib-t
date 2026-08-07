@@ -101,7 +101,7 @@ export default function Home() {
       {/* FIBia protagonista */}
       <main id="fibia" className="relative">
         <h2 className="sr-only">Pesquisa FIB-T com a FIBia</h2>
-        <FibiaChat />
+        <FibiaChat embedded />
       </main>
 
       {/* Área restrita — leva ao pré-teste e ao painel; nenhum código no cliente */}
