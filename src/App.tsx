@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AppSidebarRail } from "@/components/layout/AppSidebarRail";
+import Home from "./pages/Home.tsx";
 import Index from "./pages/Index.tsx";
 import SegmentDeck from "./pages/SegmentDeck.tsx";
 import FibiaDemo from "./pages/FibiaDemo.tsx";
