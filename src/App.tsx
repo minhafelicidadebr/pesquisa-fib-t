@@ -79,6 +79,15 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/planos" element={<Planos />} />
             <Route path="/pesquisa" element={<Pesquisa />} />
+            <Route
+              path="/isg"
+              element={
+                <Suspense fallback={<div className="min-h-dvh bg-background" />}>
+                  <ISG />
+                </Suspense>
+              }
+            />
+
             <Route path="/pesquisa/setores" element={<SetoresAgregados />} />
 
             <Route path="/selo/:id" element={<SeloNR1 />} />
