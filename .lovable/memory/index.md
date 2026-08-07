@@ -50,3 +50,4 @@
 - [Contador Embed NR-1](mem://features/nr1-contador-embed) — Sprint 25: widget /nr1-brasil/contador/embed com auto-refresh 30s para embed externo
 - [Consultoria Dashboard](mem://features/consultoria-dashboard) — /consultoria: painel multi-empresa para consultorias, agrega risco, evolução e alertas NR-1
 - [Painel Executivo FIB-T ISG](mem://features/isg-painel-agregado) — /isg/resultados: gate admin server-side, agregados k=7, tabela das 32 questões, PDF/CSV
+- [Portal de Acesso FIB-T](mem://features/home-portal-acesso) — Home / de propósito único: código resolvido server-side, grant em sessionStorage, tema claro .ift-portal
