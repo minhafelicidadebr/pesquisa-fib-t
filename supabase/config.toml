@@ -2,3 +2,6 @@ project_id = "tsmwtniqrxpsmstcipky"
 
 [functions.isg-access]
 verify_jwt = false
+
+[functions.isg-results]
+verify_jwt = false

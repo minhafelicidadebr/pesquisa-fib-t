@@ -142,6 +142,45 @@ export type Database = {
         }
         Relationships: []
       }
+      isg_pilot_responses: {
+        Row: {
+          answers: Json
+          cohort: string
+          created_at: string
+          domains: Json
+          factors: Json
+          global_score: number
+          id: string
+          instrument_id: string
+          instrument_version: string
+          manifest: Json | null
+        }
+        Insert: {
+          answers: Json
+          cohort?: string
+          created_at?: string
+          domains: Json
+          factors: Json
+          global_score: number
+          id?: string
+          instrument_id: string
+          instrument_version: string
+          manifest?: Json | null
+        }
+        Update: {
+          answers?: Json
+          cohort?: string
+          created_at?: string
+          domains?: Json
+          factors?: Json
+          global_score?: number
+          id?: string
+          instrument_id?: string
+          instrument_version?: string
+          manifest?: Json | null
+        }
+        Relationships: []
+      }
       nr1_assessments: {
         Row: {
           company_id: string | null

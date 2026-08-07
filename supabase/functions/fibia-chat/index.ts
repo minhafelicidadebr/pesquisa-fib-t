@@ -203,6 +203,60 @@ function fallbackNarrative(result: FibtScoreResult) {
   };
 }
 
+/**
+ * Grava a participação do piloto ISG de forma anônima.
+ * `cohort` é o marcador ESTRUTURAL que distingue o piloto da pesquisa geral —
+ * nunca inferimos origem por horário, IP, navegador ou heurística.
+ * Falha de gravação nunca invalida o resultado individual da pessoa.
+ */
+async function persistIsgResponse(
+  answers: unknown,
+  result: FibtScoreResult,
+): Promise<void> {
+  const url = Deno.env.get("SUPABASE_URL");
+  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!url || !key) {
+    console.error("Persistência ISG indisponível: backend não configurado.");
+    return;
+  }
+  const normalized: Record<string, number> = {};
+  if (Array.isArray(answers)) {
+    for (const a of answers) {
+      if (typeof a?.id === "number" && typeof a?.answer === "number") {
+        normalized[String(a.id)] = a.answer;
+      }
+    }
+  } else if (answers && typeof answers === "object") {
+    for (const [k, v] of Object.entries(answers as Record<string, unknown>)) {
+      if (typeof v === "number") normalized[k] = v;
+    }
+  }
+  try {
+    const res = await fetch(`${url}/rest/v1/isg_pilot_responses`, {
+      method: "POST",
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify({
+        cohort: "isg",
+        instrument_id: INSTRUMENT_ID,
+        instrument_version: INSTRUMENT_VERSION,
+        answers: normalized,
+        global_score: result.globalScore,
+        factors: result.factors,
+        domains: result.domains,
+        manifest: result.manifest,
+      }),
+    });
+    if (!res.ok) console.error("Persistência ISG falhou:", res.status);
+  } catch (err) {
+    console.error("Persistência ISG falhou:", err);
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -210,7 +264,7 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { messages, answers, instrumentId, instrumentVersion } = body ?? {};
+    const { messages, answers, instrumentId, instrumentVersion, cohort } = body ?? {};
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       return jsonResponse({ error: "LOVABLE_API_KEY não configurada." }, 500);
@@ -341,6 +395,13 @@ serve(async (req) => {
       }
     } catch (aiErr) {
       console.error("Narrative generation failed, using deterministic fallback:", aiErr);
+    }
+
+    // ─── ETAPA 3: persistência anônima da coorte do piloto ───
+    // Somente agregáveis: respostas + scores do engine. Sem PII, sem IP,
+    // sem user-agent, sem identificador de participante.
+    if (cohort === "isg") {
+      await persistIsgResponse(answers, result);
     }
 
     // Os scores retornados são SEMPRE os do engine — nunca os do modelo.
