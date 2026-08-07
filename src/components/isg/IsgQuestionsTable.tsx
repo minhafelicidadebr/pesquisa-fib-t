@@ -1,11 +1,13 @@
 import { useMemo, useState } from "react";
 import { ArrowUpDown, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { IsgLikertLegend, IsgLikertStack } from "@/components/isg/viz/IsgCharts";
 import {
   buildQuestionRows,
   LIKERT_COLUMNS,
   type AggregateQuestion,
 } from "@/lib/isgAggregate";
+
 
 type SortKey = "number" | "mean";
 
@@ -81,6 +83,8 @@ export function IsgQuestionsTable({ questions }: { questions: AggregateQuestion[
         </button>
       </div>
 
+      <IsgLikertLegend labels={LIKERT_COLUMNS} />
+
       {/* Desktop */}
       <div className="hidden overflow-x-auto rounded-xl border border-border md:block">
         <table className="w-full border-collapse text-sm">
@@ -91,34 +95,32 @@ export function IsgQuestionsTable({ questions }: { questions: AggregateQuestion[
               <th scope="col" className="px-3 py-2.5 font-medium">Fator</th>
               <th scope="col" className="px-3 py-2.5 font-medium">Domínio</th>
               <th scope="col" className="px-3 py-2.5 text-right font-medium">Média</th>
-              {LIKERT_COLUMNS.map((c) => (
-                <th key={c} scope="col" className="px-3 py-2.5 text-right font-medium">
-                  {c}
-                </th>
-              ))}
+              <th scope="col" className="px-3 py-2.5 font-medium">Distribuição</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((r) => (
-              <tr key={r.id} className="border-t border-border align-top">
-                <td className="px-3 py-2.5 text-muted-foreground">{r.number}</td>
-                <td className="max-w-[24rem] px-3 py-2.5 text-foreground">{r.text}</td>
-                <td className="px-3 py-2.5 text-muted-foreground">{r.factor}</td>
-                <td className="px-3 py-2.5 text-muted-foreground">{r.domain}</td>
-                <td className="px-3 py-2.5 text-right font-medium text-foreground">
-                  {r.mean === null ? "—" : r.mean.toFixed(1)}
+              <tr key={r.id} className="border-t border-border align-top transition-colors hover:bg-muted/40">
+                <td className="px-3 py-3 text-muted-foreground tabular-nums">{r.number}</td>
+                <td className="max-w-[22rem] px-3 py-3 text-foreground">{r.text}</td>
+                <td className="px-3 py-3 text-muted-foreground">{r.factor}</td>
+                <td className="px-3 py-3 text-muted-foreground">{r.domain}</td>
+                <td className="px-3 py-3 text-right font-medium tabular-nums text-foreground">
+                  {r.mean === null ? "—" : r.mean.toFixed(2)}
                 </td>
-                {r.percentages.map((p, i) => (
-                  <td key={i} className="whitespace-nowrap px-3 py-2.5 text-right text-muted-foreground">
-                    {p}%
-                    <span className="ml-1 text-[11px] opacity-70">({r.counts[i]})</span>
-                  </td>
-                ))}
+                <td className="min-w-[15rem] px-3 py-3">
+                  <IsgLikertStack
+                    percentages={r.percentages}
+                    counts={r.counts}
+                    labels={LIKERT_COLUMNS}
+                  />
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
 
       {/* Mobile — expansão por questão */}
       <ul className="space-y-2 md:hidden">

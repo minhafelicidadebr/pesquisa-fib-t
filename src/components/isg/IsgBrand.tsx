@@ -1,5 +1,21 @@
 import { useState } from "react";
-import { ISG_CONTACT, ISG_LOGO_FALLBACK, ISG_LOGO_SVG, ISG_PILOT_MODE } from "@/config/isg";
+import {
+  FIBT_CITATION,
+  ISG_CONTACT,
+  ISG_LOGO_FALLBACK,
+  ISG_LOGO_SVG,
+  ISG_PILOT_MODE,
+} from "@/config/isg";
+
+/** Referência obrigatória de citação do instrumento FIB-T. */
+export function IsgCitation({ className = "" }: { className?: string }) {
+  return (
+    <p className={`text-[11px] uppercase tracking-[0.12em] text-muted-foreground ${className}`}>
+      {FIBT_CITATION}
+    </p>
+  );
+}
+
 
 /** Logo institucional com fallback e proporção preservada (object-contain). */
 export function IsgLogo({ className = "h-9" }: { className?: string }) {
@@ -53,9 +69,11 @@ export function IsgFooter() {
           </address>
         </div>
       </div>
-      <p className="mx-auto mt-8 max-w-5xl px-4 pb-8 text-xs">
-        ISG — Brasília — DF
-      </p>
+      <div className="mx-auto mt-8 max-w-5xl space-y-1.5 px-4 pb-8">
+        <p className="text-xs">ISG — Brasília — DF</p>
+        <IsgCitation />
+      </div>
+
     </footer>
   );
 }
