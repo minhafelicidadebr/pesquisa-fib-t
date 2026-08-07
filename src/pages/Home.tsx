@@ -138,11 +138,13 @@ export default function Home() {
               Pesquisa FIB-T
             </p>
             <h1 className="mt-4 font-display text-3xl font-semibold leading-[1.12] tracking-tight sm:text-4xl md:text-[2.9rem]">
-              Como está sua experiência de felicidade e bem-estar no trabalho?
+              Sua voz faz parte da construção de um ambiente de trabalho mais saudável e humano.
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-              A Pesquisa FIB-T reúne 32 questões para apoiar uma reflexão estruturada sobre
-              diferentes dimensões da experiência no trabalho.
+              Por meio de 32 questões, a Pesquisa FIB-T reúne informações sobre diferentes
+              dimensões da experiência no trabalho. Os resultados ajudam as organizações a
+              compreender o cenário coletivo e planejar ações voltadas ao bem-estar dos
+              colaboradores.
             </p>
             <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
               Se sua organização convidou você para participar, utilize o código de acesso recebido
