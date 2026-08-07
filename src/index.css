@@ -265,3 +265,46 @@
     --radius: 0.75rem;
   }
 }
+
+/* =============================================================
+   Tema do portal institucional (home /) — escopo `.ift-portal`.
+   Composição clara, institucional. Não toca :root.
+   ============================================================= */
+@layer base {
+  .ift-portal {
+    --background: 40 33% 98%;
+    --foreground: 222 22% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 22% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 22% 15%;
+
+    --primary: 32 68% 38%;
+    --primary-foreground: 40 33% 98%;
+
+    --secondary: 40 30% 95%;
+    --secondary-foreground: 222 22% 15%;
+
+    --muted: 40 25% 94%;
+    --muted-foreground: 222 12% 38%;
+
+    --accent: 181 62% 30%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 65% 40%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 38 20% 87%;
+    --input: 38 20% 84%;
+    --ring: 32 68% 38%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ift-portal * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
