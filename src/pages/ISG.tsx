@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ISG_PILOT_ENABLED, trackIsg } from "@/config/isg";
 import { submitIsgAnswers, type IsgResult } from "@/lib/isgResult";
+import { hasSurveyAccessGrant } from "@/lib/surveyAccess";
 import { IsgAccessGate } from "@/components/isg/IsgAccessGate";
 import { IsgIntro } from "@/components/isg/IsgIntro";
 import { IsgSurvey } from "@/components/isg/IsgSurvey";
