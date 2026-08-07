@@ -7,8 +7,9 @@ import type { IsgAggregate } from "@/lib/isgAggregate";
 import { FIBT_ITEMS } from "@/domain/fibt/instrument";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-(JsPDF as any).prototype.save = function (name: string) {
+(JsPDF as any).API.save = function (this: any, name: string) {
   fs.writeFileSync(`/tmp/pdfqa/${name}`, Buffer.from(this.output("arraybuffer")));
+  return this;
 };
 
 const domains = [
