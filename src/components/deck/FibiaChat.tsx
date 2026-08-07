@@ -185,34 +185,42 @@ export function FibiaChat() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-foreground/5">
-        {phase === "survey" && (
-          <div className="h-1 bg-muted">
-            <motion.div className="h-full gradient-gold" animate={{ width: `${progress}%` }} transition={{ duration: 0.3 }} />
-          </div>
-        )}
-        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src={fibiaAvatar} alt="FIBia" className="w-8 h-8 rounded-full border-2 border-brand-gold/30" />
-            <div>
-              <span className="font-heading font-bold text-sm text-foreground">FIBia</span>
-              <span className="text-xs text-muted-foreground ml-2">Assistente de Bem-Estar</span>
+    <div className={embedded ? "bg-background" : "min-h-screen bg-background"}>
+      {/* Header (oculto no modo embutido: a página hospedeira já tem o seu) */}
+      {!embedded && (
+        <div className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-foreground/5">
+          {phase === "survey" && (
+            <div className="h-1 bg-muted">
+              <motion.div className="h-full gradient-gold" animate={{ width: `${progress}%` }} transition={{ duration: 0.3 }} />
+            </div>
+          )}
+          <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <img src={fibiaAvatar} alt="FIBia" className="w-8 h-8 rounded-full border-2 border-brand-gold/30" />
+              <div>
+                <span className="font-heading font-bold text-sm text-foreground">FIBia</span>
+                <span className="text-xs text-muted-foreground ml-2">Assistente de Bem-Estar</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              {phase === "survey" && (
+                <span className="text-xs text-muted-foreground tabular-nums-data">{Object.keys(answers).length}/{questions.length}</span>
+              )}
+              <a href="/" className="text-muted-foreground hover:text-foreground p-1.5 transition-colors">
+                <Home className="w-4 h-4" />
+              </a>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            {phase === "survey" && (
-              <span className="text-xs text-muted-foreground tabular-nums-data">{Object.keys(answers).length}/{questions.length}</span>
-            )}
-            <a href="/" className="text-muted-foreground hover:text-foreground p-1.5 transition-colors">
-              <Home className="w-4 h-4" />
-            </a>
-          </div>
         </div>
-      </div>
+      )}
 
-      <main className="pt-20 pb-8 px-4 max-w-4xl mx-auto" ref={scrollRef}>
+      {embedded && phase === "survey" && (
+        <div className="sticky top-[57px] z-30 h-1 bg-muted">
+          <motion.div className="h-full gradient-gold" animate={{ width: `${progress}%` }} transition={{ duration: 0.3 }} />
+        </div>
+      )}
+
+      <main className={`${embedded ? "pt-2" : "pt-20"} pb-8 px-4 max-w-4xl mx-auto`} ref={scrollRef}>
         <AnimatePresence mode="wait">
           {/* INTRO */}
           {phase === "intro" && (
