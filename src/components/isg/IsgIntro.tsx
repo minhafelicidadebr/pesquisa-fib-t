@@ -1,7 +1,7 @@
 import { ArrowRight, ClipboardList, ShieldCheck, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FIBT_ITEMS } from "@/domain/fibt";
-import { IsgLogo, IsgPilotBadge } from "./IsgBrand";
+import { IsgCitation, IsgLogo, IsgPilotBadge } from "./IsgBrand";
 
 export function IsgIntro({ onStart }: { onStart: () => void }) {
   return (
@@ -15,6 +15,7 @@ export function IsgIntro({ onStart }: { onStart: () => void }) {
         Pesquisa FIB-T
       </h1>
       <p className="mt-1 text-sm font-medium text-primary">{FIBT_ITEMS.length} questões</p>
+      <IsgCitation className="mt-3" />
 
       <p className="mt-6 text-base leading-relaxed text-muted-foreground">
         Esta experiência foi preparada para apoiar a reflexão sobre fatores relacionados
