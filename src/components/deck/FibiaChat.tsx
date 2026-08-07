@@ -50,7 +50,7 @@ interface AnalysisResult {
   limitations?: string;
 }
 
-export function FibiaChat() {
+export function FibiaChat({ embedded = false }: { embedded?: boolean } = {}) {
   const [phase, setPhase] = useState<Phase>("intro");
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
