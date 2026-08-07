@@ -234,22 +234,58 @@ export function IsgDomainRadar({
     [data],
   );
 
+  /** Rótulo em até duas linhas — evita corte nas bordas do contêiner. */
+  const renderTick = ({
+    payload,
+    x,
+    y,
+    textAnchor,
+  }: {
+    payload: { value: string };
+    x: number;
+    y: number;
+    textAnchor: string;
+  }) => {
+    const words = String(payload.value).split(" ");
+    const lines: string[] = [];
+    let current = "";
+    for (const w of words) {
+      if ((current + " " + w).trim().length > 12 && current) {
+        lines.push(current);
+        current = w;
+      } else current = (current + " " + w).trim();
+    }
+    if (current) lines.push(current);
+    return (
+      <text
+        x={x}
+        y={y}
+        textAnchor={textAnchor}
+        fill="hsl(var(--muted-foreground))"
+        fontSize={10.5}
+      >
+        {lines.map((line, i) => (
+          <tspan key={line} x={x} dy={i === 0 ? 0 : 12}>
+            {line}
+          </tspan>
+        ))}
+      </text>
+    );
+  };
+
   return (
     <figure className="m-0" role="img" aria-label={ariaLabel}>
       <div style={{ height }}>
         <ResponsiveContainer width="100%" height="100%">
-          <RadarChart data={chartData} outerRadius="72%">
+          <RadarChart
+            data={chartData}
+            outerRadius="68%"
+            margin={{ top: 16, right: 24, bottom: 16, left: 24 }}
+          >
             <PolarGrid stroke="hsl(var(--border))" />
-            <PolarAngleAxis
-              dataKey="label"
-              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
-            />
-            <PolarRadiusAxis
-              domain={[0, 4]}
-              tickCount={5}
-              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
-              axisLine={false}
-            />
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            <PolarAngleAxis dataKey="label" tick={renderTick as any} />
+            <PolarRadiusAxis domain={[0, 4]} tickCount={5} tick={false} axisLine={false} />
             <Radar
               dataKey="value"
               stroke="hsl(var(--primary))"
@@ -262,9 +298,13 @@ export function IsgDomainRadar({
           </RadarChart>
         </ResponsiveContainer>
       </div>
+      <figcaption className="mt-2 text-center text-[11px] text-muted-foreground">
+        Escala 0 a 4 · anéis a cada 1 ponto
+      </figcaption>
     </figure>
   );
 }
+
 
 /* ───────────────────── distribuição Likert empilhada ───────────────────── */
 
