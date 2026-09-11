@@ -18,8 +18,8 @@ export function IsgIntro({ onStart }: { onStart: () => void }) {
       <IsgCitation className="mt-3" />
 
       <p className="mt-6 text-base leading-relaxed text-muted-foreground">
-        Esta experiência foi preparada para apoiar a reflexão sobre fatores relacionados
-        à felicidade e ao bem-estar no contexto de trabalho.
+        Esta pesquisa foi desenvolvida para apoiar um diagnóstico baseado em método científico
+        sobre os fatores de felicidade e bem-estar no trabalho.
       </p>
 
       <ul className="mt-8 grid gap-3 sm:grid-cols-3">
