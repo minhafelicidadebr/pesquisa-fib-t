@@ -27,7 +27,7 @@ export function usePresentationAccess(onClear: () => void) {
   }, []);
   const check = useCallback(async () => {
     const attempt = generation.current;
-    if (!readSession()) {
+    if (!readSession("ift")) {
       revoke();
       return false;
     }
@@ -57,7 +57,7 @@ export function usePresentationAccess(onClear: () => void) {
     let active = true;
     void check();
     const tick = window.setInterval(() => {
-      if (!readSession() || (expiry.current && expiry.current <= Date.now()))
+      if (!readSession("ift") || (expiry.current && expiry.current <= Date.now()))
         revoke();
     }, 1000);
     const recheck = window.setInterval(() => {
@@ -67,7 +67,11 @@ export function usePresentationAccess(onClear: () => void) {
       if (active) void check();
     };
     window.addEventListener("focus", focus);
-    window.addEventListener("isg-results-session-ended", revoke);
+    const handleSessionEnded = (event: Event) => {
+      if ((event as CustomEvent<{ role?: string }>).detail?.role === "ift")
+        revoke();
+    };
+    window.addEventListener("isg-results-session-ended", handleSessionEnded);
     const channel =
       typeof BroadcastChannel === "undefined"
         ? null
@@ -76,9 +80,10 @@ export function usePresentationAccess(onClear: () => void) {
       channel.onmessage = (e) => {
         if (
           e.data?.type === "session-ended" &&
-          Object.keys(e.data).length === 1
+          e.data?.role === "ift" &&
+          Object.keys(e.data).length === 2
         ) {
-          clearSession(false);
+          clearSession(false, "ift");
           revoke();
         }
       };
@@ -88,13 +93,13 @@ export function usePresentationAccess(onClear: () => void) {
       clearInterval(tick);
       clearInterval(recheck);
       window.removeEventListener("focus", focus);
-      window.removeEventListener("isg-results-session-ended", revoke);
+      window.removeEventListener("isg-results-session-ended", handleSessionEnded);
       channel?.close();
       clearRef.current();
     };
   }, [check, revoke, invalidate]);
   const logout = () => {
-    clearSession();
+    clearSession(true, "ift");
     revoke();
   };
   return { status, notice, check, logout };

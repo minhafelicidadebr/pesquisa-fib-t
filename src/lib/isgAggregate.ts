@@ -1,5 +1,5 @@
 /**
- * Painel Executivo FIB-T — acesso IFT e agregados do pré-teste ISG.
+ * Painel Executivo FIB-T — sessões separadas para resultados e apresentação.
  *
  * O cliente NUNCA conhece a senha administrativa. Ele envia o candidato para a
  * edge function `isg-results`, recebe um token de sessão curto assinado no
@@ -11,7 +11,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { DOMAIN_LABELS, FACTOR_LABELS, FIBT_ITEMS } from "@/domain/fibt";
 import { LIKERT_LABELS } from "@/lib/isgCsv";
 
-const SESSION_KEY = "isg_results_session";
+export type IsgAccessRole = "admin" | "ift";
+const SESSION_KEYS: Record<IsgAccessRole, string> = {
+  admin: "isg_results_session",
+  ift: "isg_presentation_session",
+};
 export const GENERIC_ERROR = "Não foi possível validar o acesso.";
 
 export interface AggregateCell {
@@ -44,21 +48,22 @@ export interface IsgAggregate {
 interface StoredSession {
   token: string;
   expiresAt: number;
-  role: "ift";
+  role: IsgAccessRole;
 }
 
-export function readSession(): StoredSession | null {
+export function readSession(role: IsgAccessRole = "admin"): StoredSession | null {
   try {
-    const raw = sessionStorage.getItem(SESSION_KEY);
+    const key = SESSION_KEYS[role];
+    const raw = sessionStorage.getItem(key);
     if (!raw) return null;
     const s = JSON.parse(raw) as StoredSession;
     if (
       !s?.token ||
-      s.role !== "ift" ||
+      s.role !== role ||
       typeof s.expiresAt !== "number" ||
       Date.now() >= s.expiresAt
     ) {
-      sessionStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem(key);
       return null;
     }
     return s;
@@ -67,27 +72,42 @@ export function readSession(): StoredSession | null {
   }
 }
 
-export function clearSession(notify = true) {
-  sessionStorage.removeItem(SESSION_KEY);
+export function clearSession(notify = true, role: IsgAccessRole = "admin") {
+  sessionStorage.removeItem(SESSION_KEYS[role]);
   if (notify) {
-    window.dispatchEvent(new Event("isg-results-session-ended"));
+    window.dispatchEvent(
+      new CustomEvent("isg-results-session-ended", { detail: { role } }),
+    );
     if (typeof BroadcastChannel !== "undefined") {
       const channel = new BroadcastChannel("isg-results-lifecycle");
-      channel.postMessage({ type: "session-ended" });
+      channel.postMessage({ type: "session-ended", role });
       channel.close();
     }
   }
 }
 
-/** Troca a senha por uma sessão administrativa temporária. */
+/** A credencial original continua vinculada apenas ao painel de resultados. */
 export async function loginResults(password: string): Promise<boolean> {
   const { data, error } = await supabase.functions.invoke("isg-results", {
-    body: { action: "login", password },
+    body: { action: "login", scope: "results", password },
+  });
+  if (error || !data?.ok || !data?.token || data.role !== "admin") return false;
+  sessionStorage.setItem(
+    SESSION_KEYS.admin,
+    JSON.stringify({ token: data.token, expiresAt: data.expiresAt, role: "admin" }),
+  );
+  return true;
+}
+
+/** A nova credencial IFT vale apenas para a apresentação institucional. */
+export async function loginPresentation(password: string): Promise<boolean> {
+  const { data, error } = await supabase.functions.invoke("isg-results", {
+    body: { action: "login", scope: "presentation", password },
   });
   if (error || !data?.ok || !data?.token || data.role !== "ift") return false;
   sessionStorage.setItem(
-    SESSION_KEY,
-    JSON.stringify({ token: data.token, expiresAt: data.expiresAt, role: data.role }),
+    SESSION_KEYS.ift,
+    JSON.stringify({ token: data.token, expiresAt: data.expiresAt, role: "ift" }),
   );
   return true;
 }
@@ -95,7 +115,7 @@ export async function loginResults(password: string): Promise<boolean> {
 export class IsgSessionExpired extends Error {}
 
 export async function fetchAggregates(): Promise<IsgAggregate> {
-  const session = readSession();
+  const session = readSession("admin");
   if (!session) throw new IsgSessionExpired(GENERIC_ERROR);
   const { data, error } = await supabase.functions.invoke("isg-results", {
     body: { action: "aggregates", token: session.token },

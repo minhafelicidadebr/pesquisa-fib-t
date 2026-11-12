@@ -10,7 +10,7 @@ import {
 export class PresentationUnavailable extends Error {}
 
 async function request(action: "validate-session" | "aggregates") {
-  const session = readSession();
+  const session = readSession("ift");
   if (!session) throw new IsgSessionExpired();
   const { data, error } = await supabase.functions.invoke("isg-results", {
     body: { action, token: session.token },
@@ -20,7 +20,7 @@ async function request(action: "validate-session" | "aggregates") {
       [401, 403].includes(error.context.status)) ||
     (!error && data?.ok === false && action === "aggregates")
   ) {
-    clearSession();
+    clearSession(true, "ift");
     throw new IsgSessionExpired();
   }
   if (error || !data?.ok)
@@ -28,7 +28,7 @@ async function request(action: "validate-session" | "aggregates") {
       "Não foi possível confirmar o acesso. Verifique a conexão e a implantação de validate-session.",
     );
   // Recusa respostas iniciadas antes de logout, substituição ou expiração.
-  if (readSession()?.token !== session.token) throw new IsgSessionExpired();
+  if (readSession("ift")?.token !== session.token) throw new IsgSessionExpired();
   return data;
 }
 export async function validatePresentationAccess() {
@@ -40,7 +40,7 @@ export async function validatePresentationAccess() {
     data.expiresAt <= Date.now()
   )
     throw new IsgSessionExpired();
-  return Math.min(data.expiresAt, readSession()!.expiresAt);
+  return Math.min(data.expiresAt, readSession("ift")!.expiresAt);
 }
 export async function fetchPresentationAggregate(): Promise<IsgAggregate> {
   return request("aggregates");

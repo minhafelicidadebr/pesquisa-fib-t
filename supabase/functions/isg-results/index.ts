@@ -3,8 +3,9 @@
  *
  * ┌─────────────────────────────────────────────────────────────────────────┐
  * │ SEGURANÇA                                                               │
- * │ 1. A credencial IFT vive APENAS no secret                                │
- * │    `ISG_RESULTS_IFT_PASSWORD`. Nunca é devolvida ao navegador.          │
+ * │ 1. As credenciais ficam apenas em secrets do servidor:                  │
+ * │    admin para /resultados e IFT para /apresentacao.                     │
+ * │    Nenhuma delas é devolvida ao navegador.                              │
  * │ 2. Login devolve um token de sessão curto assinado por HMAC-SHA256      │
  * │    com o próprio secret. A senha não é reenviada em cada requisição.    │
  * │ 3. Nenhuma linha individual, resposta crua ou identificador sai daqui.  │
@@ -14,7 +15,7 @@
  */
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { safeEqual, issueToken, sessionRole, verifyToken } from "./session.ts";
+import { safeEqual, issueToken, sessionRole, verifyToken, type IsgResultsRole } from "./session.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -26,6 +27,19 @@ const corsHeaders = {
 const K_THRESHOLD = 7;
 
 const GENERIC_DENY = { ok: false, error: "Não foi possível validar o acesso." };
+
+function secretForRole(role: IsgResultsRole | null): string | undefined {
+  if (role === "admin") return Deno.env.get("ISG_RESULTS_ADMIN_PASSWORD");
+  if (role !== "ift") return undefined;
+  const adminSecret = Deno.env.get("ISG_RESULTS_ADMIN_PASSWORD");
+  const iftSecret = Deno.env.get("ISG_RESULTS_IFT_PASSWORD");
+  if (
+    !adminSecret?.trim() ||
+    !iftSecret?.trim() ||
+    safeEqual(adminSecret.trim(), iftSecret.trim())
+  ) return undefined;
+  return iftSecret;
+}
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -125,12 +139,6 @@ export async function handleIsgResultsRequest(req: Request) {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (req.method !== "POST") return json(GENERIC_DENY, 405);
 
-  const secret = Deno.env.get("ISG_RESULTS_IFT_PASSWORD");
-  if (!secret) {
-    console.error("ISG_RESULTS_IFT_PASSWORD não configurado.");
-    return json(GENERIC_DENY, 200);
-  }
-
   let body: Record<string, unknown> = {};
   try {
     body = await req.json();
@@ -140,30 +148,39 @@ export async function handleIsgResultsRequest(req: Request) {
 
   // ─── Login administrativo ───
   if (body.action === "login") {
+    const role: IsgResultsRole | null =
+      body.scope === "results" ? "admin" :
+      body.scope === "presentation" ? "ift" : null;
+    const secret = secretForRole(role);
     const candidate = typeof body.password === "string" && body.password.length <= 256
       ? body.password
       : "";
     // Custo fixo: uniformiza latência e reduz utilidade de força bruta.
     // Ponto de extensão para rate limiting persistente.
     await new Promise((r) => setTimeout(r, 300));
-    if (!candidate || !safeEqual(candidate.trim(), secret.trim())) {
+    if (!role || !secret || !candidate || !safeEqual(candidate.trim(), secret.trim())) {
       return json(GENERIC_DENY, 200);
     }
-    const session = await issueToken(secret);
+    const session = await issueToken(secret, role);
     return json({ ok: true, ...session });
   }
 
   // Valida o acesso à apresentação histórica sem consultar respostas ou agregados.
   if (body.action === "validate-session") {
-    if (!(await verifyToken(body.token, secret))) return json(GENERIC_DENY, 401);
     const role = sessionRole(body.token);
+    const secret = role === "ift" ? secretForRole(role) : undefined;
+    if (!secret) return json(GENERIC_DENY, 401);
+    if (!(await verifyToken(body.token, secret))) return json(GENERIC_DENY, 401);
     const expiresAt = Number(String(body.token).split(".")[1]);
-    if (role !== "ift" || !Number.isFinite(expiresAt)) return json(GENERIC_DENY, 401);
+    if (!Number.isFinite(expiresAt)) return json(GENERIC_DENY, 401);
     return json({ ok: true, authorized: true, role, expiresAt });
   }
 
   // ─── Agregados (exige sessão válida) ───
   if (body.action === "aggregates") {
+    const role = sessionRole(body.token);
+    const secret = secretForRole(role);
+    if (!secret) return json(GENERIC_DENY, 401);
     if (!(await verifyToken(body.token, secret))) return json(GENERIC_DENY, 401);
 
     const url = Deno.env.get("SUPABASE_URL");

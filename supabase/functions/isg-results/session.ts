@@ -1,7 +1,6 @@
-/** Sessão HMAC administrativa; nenhuma consulta a dados ou persistência. */
+/** Sessões HMAC separadas por perfil; nenhuma consulta a dados ou persistência. */
 const SESSION_TTL_MS = 45 * 60 * 1000;
-export const ISG_RESULTS_SESSION_ROLE = "ift" as const;
-export type IsgResultsRole = typeof ISG_RESULTS_SESSION_ROLE;
+export type IsgResultsRole = "admin" | "ift";
 
 export function safeEqual(a: string, b: string): boolean {
   const enc = new TextEncoder();
@@ -33,9 +32,9 @@ async function hmac(payload: string, secret: string): Promise<string> {
 
 export async function issueToken(
   secret: string,
+  role: IsgResultsRole,
 ): Promise<{ token: string; expiresAt: number; role: IsgResultsRole }> {
   const expiresAt = Date.now() + SESSION_TTL_MS;
-  const role = ISG_RESULTS_SESSION_ROLE;
   const payload = `isg-results.v2.${role}.${expiresAt}`;
   return {
     token: `${role}.${expiresAt}.${await hmac(payload, secret)}`,
@@ -47,7 +46,7 @@ export async function issueToken(
 export function sessionRole(token: unknown): IsgResultsRole | null {
   if (typeof token !== "string" || token.length > 256) return null;
   const [role] = token.split(".");
-  return role === ISG_RESULTS_SESSION_ROLE ? role : null;
+  return role === "admin" || role === "ift" ? role : null;
 }
 
 export async function verifyToken(
@@ -58,7 +57,7 @@ export async function verifyToken(
   const parts = token.split(".");
   if (parts.length !== 3) return false;
   const [role, expStr, sig] = parts;
-  if (role !== ISG_RESULTS_SESSION_ROLE) return false;
+  if (role !== "admin" && role !== "ift") return false;
   const exp = Number(expStr);
   if (!Number.isFinite(exp) || !sig) return false;
   if (Date.now() >= exp) return false;

@@ -37,13 +37,14 @@ export function IsgResultsGate({ onAuthorized }: { onAuthorized: () => void }) {
           Painel Executivo FIB-T — IFT
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Área administrativa exclusiva do Instituto Felicidade para Todos. Informe a
-          credencial do IFT para visualizar a leitura agregada do pré-teste da ISG.
+          Área administrativa restrita à equipe do Instituto Felicidade para Todos.
+          Informe a credencial administrativa para visualizar a leitura agregada do
+          pré-teste da ISG.
         </p>
 
         <form onSubmit={submit} className="mt-6 space-y-3">
           <Label htmlFor="isg-admin" className="text-sm">
-            Credencial administrativa do IFT
+            Credencial administrativa
           </Label>
           <Input
             id="isg-admin"

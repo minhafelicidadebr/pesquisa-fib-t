@@ -13,7 +13,7 @@ import {
   Printer,
   Settings2,
 } from "lucide-react";
-import { IsgResultsGate } from "@/components/isg/IsgResultsGate";
+import { IftPresentationGate } from "./IftPresentationGate";
 import { IsgSessionExpired } from "@/lib/isgAggregate";
 import { SLIDES, getSlide } from "../content/slides";
 import { ACTIONS, type ActionKey } from "../content/explanations";
@@ -394,7 +394,7 @@ export function PresentationShell() {
   if (access.status === "denied")
     return (
       <div className="isg-theme isg-presentation">
-        <IsgResultsGate onAuthorized={() => void access.check()} />
+        <IftPresentationGate onAuthorized={() => void access.check()} />
       </div>
     );
   if (access.status === "unavailable")
