@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Evidências de teste são sempre sintéticas. Arquivos de entrada privados ficam fora do checkout.
+test-results/
+playwright-report/
+/private/
+*.isg-snapshot.json
+ISG_FIBT_Resultados_e_Caminhos_Institucionais*.pdf
+Superprompt_Codex_Apresentacao_Web_ISG_FIBT*.md

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Download, FileText, LogOut, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FIBT_SCALE_MAX } from "@/config/isg";
@@ -144,6 +145,7 @@ export function IsgAggregateDashboard({ onLogout }: { onLogout: () => void }) {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <IsgLogo className="h-9" />
           <div className="flex flex-wrap items-center gap-2">
+            <Button variant="outline" size="sm" asChild><Link to="/isg/apresentacao">Apresentar resultados</Link></Button>
             <Button variant="outline" size="sm" onClick={() => void load()}>
               <RefreshCw className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
               Atualizar
