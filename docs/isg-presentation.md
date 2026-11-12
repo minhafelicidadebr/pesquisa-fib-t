@@ -8,14 +8,14 @@ Requisitos: Node.js 22 ou superior e npm. O `package-lock.json` foi reconciliado
 
 ```bash
 npm ci
-read -rsp 'Escolha uma credencial somente para o ensaio local: ' ISG_RESULTS_ADMIN_PASSWORD
-export ISG_RESULTS_ADMIN_PASSWORD
+read -rsp 'Escolha uma credencial somente para o ensaio local: ' ISG_RESULTS_IFT_PASSWORD
+export ISG_RESULTS_IFT_PASSWORD
 npm run dev:isg-presentation
 ```
 
 Abra `http://127.0.0.1:8080/isg/apresentacao` e informe a credencial escolhida no terminal. O script executa o handler real da função `isg-results`, com sessões HMAC e vencimento, em loopback. Não grava nem imprime a credencial. O processo Vite recebe apenas uma chave pública fictícia e a URL local. Nenhuma URL ou chave de banco é disponibilizada ao handler local; consultar o agregado atual nesse modo retorna indisponibilidade.
 
-Para a instalação já configurada com Supabase, use `npm run dev`. A função hospedada `isg-results` precisa conter `validate-session` desta revisão. Não basta existir um token no navegador: a confirmação no servidor ocorre antes do conteúdo protegido, de cada importação e da consulta atual, além de revalidações periódicas. A implantação dessa função e a publicação do frontend não foram realizadas nesta entrega.
+Para a instalação já configurada com Supabase, use `npm run dev`. Configure `ISG_RESULTS_IFT_PASSWORD` no secret manager da Edge Function `isg-results`; nunca coloque a credencial no frontend, no repositório, no prompt ou em logs. Esta credencial gera sessões assinadas com papel `ift`; somente esse papel pode consultar agregados ou validar acesso à apresentação. Sessões antigas sem papel `ift` são invalidadas. A função hospedada `isg-results` precisa conter `validate-session` desta revisão, além de ler `ISG_RESULTS_IFT_PASSWORD`, antes de publicar o frontend. A mudança não altera aplicação de respostas, instrumento ou cálculo dos escores.
 
 ## Fonte histórica e confidencialidade
 

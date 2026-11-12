@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { Download, FileText, LogOut, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FIBT_SCALE_MAX } from "@/config/isg";
@@ -145,7 +144,6 @@ export function IsgAggregateDashboard({ onLogout }: { onLogout: () => void }) {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <IsgLogo className="h-9" />
           <div className="flex flex-wrap items-center gap-2">
-            <Button variant="outline" size="sm" asChild><Link to="/isg/apresentacao">Apresentar resultados</Link></Button>
             <Button variant="outline" size="sm" onClick={() => void load()}>
               <RefreshCw className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
               Atualizar
@@ -156,13 +154,13 @@ export function IsgAggregateDashboard({ onLogout }: { onLogout: () => void }) {
             </Button>
           </div>
         </div>
-        <IsgPilotBadge />
+        <IsgPilotBadge label="Acesso restrito à equipe do IFT" />
         <div>
           <h1 className="font-heading text-2xl font-semibold text-foreground sm:text-3xl">
             Painel Executivo FIB-T
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Visão agregada do pré-teste organizacional ISG
+            Leitura agregada do pré-teste organizacional ISG para a equipe do IFT
           </p>
         </div>
       </header>

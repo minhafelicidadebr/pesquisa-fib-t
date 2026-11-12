@@ -12,10 +12,10 @@ const project = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "..",
 );
-const secret = process.env.ISG_RESULTS_ADMIN_PASSWORD;
+const secret = process.env.ISG_RESULTS_IFT_PASSWORD;
 if (!secret?.trim()) {
   console.error(
-    "Defina ISG_RESULTS_ADMIN_PASSWORD apenas para este ensaio local. A credencial não será exibida nem gravada.",
+    "Defina ISG_RESULTS_IFT_PASSWORD apenas para este ensaio local. A credencial não será exibida nem gravada.",
   );
   process.exit(1);
 }
@@ -42,7 +42,7 @@ for (const file of ["session", "index"]) {
 }
 globalThis.Deno = {
   env: {
-    get: (key) => (key === "ISG_RESULTS_ADMIN_PASSWORD" ? secret : undefined),
+    get: (key) => (key === "ISG_RESULTS_IFT_PASSWORD" ? secret : undefined),
   },
 };
 const { handleIsgResultsRequest } = await import(
@@ -108,7 +108,7 @@ const child = backendOnly
         stdio: "inherit",
         env: {
           ...process.env,
-          ISG_RESULTS_ADMIN_PASSWORD: "",
+          ISG_RESULTS_IFT_PASSWORD: "",
           VITE_SUPABASE_URL: "http://127.0.0.1:54399",
           VITE_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_local_presentation",
         },

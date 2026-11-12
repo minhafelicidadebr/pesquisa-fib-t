@@ -32,12 +32,31 @@ export function IsgLogo({ className = "h-9" }: { className?: string }) {
   );
 }
 
-export function IsgPilotBadge() {
+/** Identifica a instituição responsável pelo acesso administrativo do painel. */
+export function IftLogo({ className = "h-9" }: { className?: string }) {
+  const [failed, setFailed] = useState(false);
+  return failed ? (
+    <strong className="font-heading text-lg text-foreground">Instituto Felicidade para Todos</strong>
+  ) : (
+    <img
+      src="/isg-presentation/ifpt.png"
+      width="223"
+      height="55"
+      alt="Instituto Felicidade para Todos"
+      onError={() => setFailed(true)}
+      className={`${className} w-auto object-contain`}
+      loading="lazy"
+      decoding="async"
+    />
+  );
+}
+
+export function IsgPilotBadge({ label = "Ambiente de pré-teste ISG" }: { label?: string } = {}) {
   if (!ISG_PILOT_MODE) return null;
   return (
     <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
       <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-primary" />
-      Ambiente de pré-teste ISG
+      {label}
     </span>
   );
 }

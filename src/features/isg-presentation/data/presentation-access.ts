@@ -35,6 +35,7 @@ export async function validatePresentationAccess() {
   const data = await request("validate-session");
   if (
     data.authorized !== true ||
+    data.role !== "ift" ||
     !Number.isFinite(data.expiresAt) ||
     data.expiresAt <= Date.now()
   )

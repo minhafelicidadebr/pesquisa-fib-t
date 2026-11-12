@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { IsgLogo, IsgPilotBadge } from "@/components/isg/IsgBrand";
+import { IftLogo, IsgPilotBadge } from "@/components/isg/IsgBrand";
 import { GENERIC_ERROR, loginResults } from "@/lib/isgAggregate";
 
 /**
@@ -29,21 +29,21 @@ export function IsgResultsGate({ onAuthorized }: { onAuthorized: () => void }) {
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-4">
       <div className="rounded-2xl border border-border bg-card p-7 shadow-sm">
-        <IsgLogo className="h-8" />
+        <IftLogo className="h-8" />
         <div className="mt-5">
-          <IsgPilotBadge />
+          <IsgPilotBadge label="Acesso restrito à equipe do IFT" />
         </div>
         <h1 className="mt-4 font-heading text-xl font-semibold text-foreground">
-          Painel Executivo FIB-T
+          Painel Executivo FIB-T — IFT
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Superfície administrativa restrita. Informe a credencial de gestão para
-          visualizar a leitura agregada do pré-teste.
+          Área administrativa exclusiva do Instituto Felicidade para Todos. Informe a
+          credencial do IFT para visualizar a leitura agregada do pré-teste da ISG.
         </p>
 
         <form onSubmit={submit} className="mt-6 space-y-3">
           <Label htmlFor="isg-admin" className="text-sm">
-            Credencial administrativa
+            Credencial administrativa do IFT
           </Label>
           <Input
             id="isg-admin"
