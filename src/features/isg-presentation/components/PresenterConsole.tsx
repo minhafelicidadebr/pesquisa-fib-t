@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { IsgResultsGate } from "@/components/isg/IsgResultsGate";
+import { IftPresentationGate } from "./IftPresentationGate";
 import { usePresentationAccess } from "../hooks/usePresentationAccess";
 import { usePresentationMetadata } from "../hooks/usePresentationMetadata";
 import {
@@ -151,7 +151,7 @@ export function PresenterConsole() {
   if (access.status === "denied")
     return (
       <div className="isg-theme isg-presentation">
-        <IsgResultsGate onAuthorized={() => void access.check()} />
+        <IftPresentationGate onAuthorized={() => void access.check()} />
       </div>
     );
   if (access.status === "unavailable")

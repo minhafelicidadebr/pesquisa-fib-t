@@ -9,7 +9,7 @@ import { readSession } from "@/lib/isgAggregate";
  * Superfície administrativa: não deve ser linkada na experiência do participante.
  */
 export default function IsgResults() {
-  const [authorized, setAuthorized] = useState(() => readSession() !== null);
+  const [authorized, setAuthorized] = useState(() => readSession("admin") !== null);
 
   useEffect(() => {
     document.title = "Painel Executivo FIB-T — IFT";

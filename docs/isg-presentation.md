@@ -8,14 +8,16 @@ Requisitos: Node.js 22 ou superior e npm. O `package-lock.json` foi reconciliado
 
 ```bash
 npm ci
-read -rsp 'Escolha uma credencial somente para o ensaio local: ' ISG_RESULTS_IFT_PASSWORD
+read -rsp 'Credencial local de resultados: ' ISG_RESULTS_ADMIN_PASSWORD
+export ISG_RESULTS_ADMIN_PASSWORD
+read -rsp 'Credencial local diferente para a apresentação: ' ISG_RESULTS_IFT_PASSWORD
 export ISG_RESULTS_IFT_PASSWORD
 npm run dev:isg-presentation
 ```
 
 Abra `http://127.0.0.1:8080/isg/apresentacao` e informe a credencial escolhida no terminal. O script executa o handler real da função `isg-results`, com sessões HMAC e vencimento, em loopback. Não grava nem imprime a credencial. O processo Vite recebe apenas uma chave pública fictícia e a URL local. Nenhuma URL ou chave de banco é disponibilizada ao handler local; consultar o agregado atual nesse modo retorna indisponibilidade.
 
-Para a instalação já configurada com Supabase, use `npm run dev`. Configure `ISG_RESULTS_IFT_PASSWORD` no secret manager da Edge Function `isg-results`; nunca coloque a credencial no frontend, no repositório, no prompt ou em logs. Esta credencial gera sessões assinadas com papel `ift`; somente esse papel pode consultar agregados ou validar acesso à apresentação. Sessões antigas sem papel `ift` são invalidadas. A função hospedada `isg-results` precisa conter `validate-session` desta revisão, além de ler `ISG_RESULTS_IFT_PASSWORD`, antes de publicar o frontend. A mudança não altera aplicação de respostas, instrumento ou cálculo dos escores.
+Para a instalação já configurada com Supabase, use `npm run dev`. Preserve a secret atual `ISG_RESULTS_ADMIN_PASSWORD` para `/isg/resultados`. Configure `ISG_RESULTS_IFT_PASSWORD` com um valor novo, diferente da secret administrativa e de qualquer código de acesso já usado no frontend; nunca coloque nenhuma das credenciais no frontend, no repositório, no prompt ou em logs. O backend aceita `scope: "results"` e emite sessão assinada com papel `admin`, ou `scope: "presentation"` e emite papel `ift`. As sessões têm chaves separadas no navegador. A operação `validate-session` aceita somente o papel `ift`; a operação de agregados valida a assinatura pela secret correspondente ao papel. Se as duas secrets tiverem valores iguais, o login de apresentação é recusado. A função hospedada `isg-results` precisa ser atualizada com este código, e ambas as secrets devem estar configuradas, antes de publicar o frontend correspondente. A mudança não altera aplicação de respostas, instrumento ou cálculo dos escores.
 
 ## Fonte histórica e confidencialidade
 
@@ -25,7 +27,7 @@ O contrato separa `historical_report`, `current_aggregate` e `synthetic_demo`. N
 
 As 32 questões e suas médias foram conferidas localmente contra o documento confidencial, sem incluir esses valores no código ou nos testes publicados. O painel já existente na raiz do repositório pertence a outro retrato e diverge do anexo usado nesta entrega. Nenhum desses documentos foi incorporado aos assets da apresentação. A imagem da capa é uma criação ilustrativa nova e não foi extraída do PDF; as marcas vieram das URLs institucionais públicas informadas.
 
-Resultados, arquivos, rascunhos e notas permanecem em memória. Nenhum armazenamento de resultados foi adicionado. A sessão administrativa reutiliza o `sessionStorage` que já existia no painel. Logout e expiração conhecida limpam o estado, revogam a URL local do PDF e avisam as outras janelas. O mecanismo HMAC existente não implementa revogação individual de tokens no servidor: o encerramento limpa o navegador e tokens emitidos vencem no prazo configurado. Não houve mudança de infraestrutura para adicionar revogação.
+Resultados, arquivos, rascunhos e notas permanecem em memória. Nenhum armazenamento de resultados foi adicionado. As sessões de resultados e apresentação usam chaves separadas no `sessionStorage`. Logout e expiração conhecida limpam apenas a sessão do perfil correspondente, revogam a URL local do PDF e avisam as outras janelas. O mecanismo HMAC existente não implementa revogação individual de tokens no servidor: o encerramento limpa o navegador e tokens emitidos vencem no prazo configurado. Não houve mudança de infraestrutura para adicionar revogação.
 
 O PDF institucional pode ser selecionado pela biblioteca e visto em iframe com URL `blob:` local. A seleção não envia seu conteúdo ao servidor. O documento original e a impressão da apresentação são operações distintas.
 

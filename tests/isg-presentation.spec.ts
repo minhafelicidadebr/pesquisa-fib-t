@@ -10,6 +10,7 @@ async function mockBackend(context: BrowserContext) {
     suppressed: false,
     ttl: 2700000,
     actions: [] as string[],
+    scopes: [] as unknown[],
   };
   await context.route("**/*", async (route) => {
     const url = new URL(route.request().url());
@@ -17,14 +18,23 @@ async function mockBackend(context: BrowserContext) {
       if (state.offline) return route.abort("failed");
       const body = route.request().postDataJSON();
       state.actions.push(body.action);
-      if (body.action === "login")
+      if (body.action === "login") {
+        state.scopes.push(body.scope);
+        const expectedPassword =
+          body.scope === "results"
+            ? "senha-admin-sintetica"
+            : "senha-ift-sintetica";
+        if (body.password !== expectedPassword)
+          return route.fulfill({ json: { ok: false } });
         return route.fulfill({
           json: {
             ok: true,
             token: "synthetic-session",
             expiresAt: Date.now() + state.ttl,
+            role: body.scope === "presentation" ? "ift" : "admin",
           },
         });
+      }
       if (!state.valid)
         return route.fulfill({ status: 401, json: { ok: false } });
       if (body.action === "validate-session")
@@ -32,6 +42,7 @@ async function mockBackend(context: BrowserContext) {
           json: {
             ok: true,
             authorized: true,
+            role: "ift",
             expiresAt: Date.now() + state.ttl,
           },
         });
@@ -59,9 +70,9 @@ async function mockBackend(context: BrowserContext) {
 async function login(page: Page) {
   await page.goto("/isg/apresentacao");
   await page
-    .getByLabel("Credencial administrativa")
-    .fill("senha-ficticia-de-teste");
-  await page.getByRole("button", { name: "Acessar painel" }).click();
+    .getByLabel("Credencial administrativa do IFT")
+    .fill("senha-ift-sintetica");
+  await page.getByRole("button", { name: "Acessar apresentação" }).click();
   await expect(
     page.getByRole("button", { name: "Usar dados fictícios" }),
   ).toBeVisible();
@@ -87,12 +98,50 @@ test("visitante anônimo não consulta agregados nem abre conteúdo protegido", 
 }) => {
   const backend = await mockBackend(context);
   await page.goto("/isg/apresentacao?slide=global");
-  await expect(page.getByLabel("Credencial administrativa")).toBeVisible();
+  await expect(page.getByLabel("Credencial administrativa do IFT")).toBeVisible();
   await expect(page.locator(".p-deck-region")).toHaveCount(0);
   expect(backend.actions).toEqual([]);
   expect(
     await page.locator('meta[name="robots"]').getAttribute("content"),
   ).toBe("noindex, nofollow");
+});
+
+test("mantém as credenciais e sessões do painel e da apresentação separadas", async ({
+  page,
+  context,
+}) => {
+  const backend = await mockBackend(context);
+  await page.goto("/isg/resultados");
+  await page.getByLabel("Credencial administrativa").fill("senha-admin-sintetica");
+  await page.getByRole("button", { name: "Acessar painel" }).click();
+  await expect(page.getByRole("heading", { name: "Painel Executivo FIB-T" })).toBeVisible();
+  expect(backend.scopes).toEqual(["results"]);
+  expect(
+    await page.evaluate(() =>
+      JSON.parse(sessionStorage.getItem("isg_results_session") ?? "null")?.role,
+    ),
+  ).toBe("admin");
+
+  await page.goto("/isg/apresentacao");
+  await expect(page.getByLabel("Credencial administrativa do IFT")).toBeVisible();
+  await page
+    .getByLabel("Credencial administrativa do IFT")
+    .fill("senha-admin-sintetica");
+  await page.getByRole("button", { name: "Acessar apresentação" }).click();
+  await expect(page.getByRole("alert")).toHaveText(
+    "Não foi possível validar o acesso.",
+  );
+  expect(backend.scopes).toEqual(["results", "presentation"]);
+  expect(await page.locator(".p-deck-region").count()).toBe(0);
+
+  await page.evaluate(() => sessionStorage.removeItem("isg_results_session"));
+  await page.goto("/isg/resultados");
+  await page.getByLabel("Credencial administrativa").fill("senha-ift-sintetica");
+  await page.getByRole("button", { name: "Acessar painel" }).click();
+  await expect(page.getByRole("alert")).toHaveText(
+    "Não foi possível validar o acesso.",
+  );
+  expect(backend.scopes).toEqual(["results", "presentation", "results"]);
 });
 
 test("uma sessão local inventada é recusada pelo servidor", async ({
@@ -103,12 +152,12 @@ test("uma sessão local inventada é recusada pelo servidor", async ({
   backend.valid = false;
   await page.addInitScript(() =>
     sessionStorage.setItem(
-      "isg_results_session",
-      JSON.stringify({ token: "inventado", expiresAt: Date.now() + 60000 }),
+      "isg_presentation_session",
+      JSON.stringify({ token: "inventado", expiresAt: Date.now() + 60000, role: "ift" }),
     ),
   );
   await page.goto("/isg/apresentacao");
-  await expect(page.getByLabel("Credencial administrativa")).toBeVisible();
+  await expect(page.getByLabel("Credencial administrativa do IFT")).toBeVisible();
   expect(backend.actions).toEqual(["validate-session"]);
 });
 
@@ -118,6 +167,7 @@ test("valida acesso sem ler a base e mantém histórico separado da API", async 
 }) => {
   const backend = await mockBackend(context);
   await login(page);
+  expect(backend.scopes).toEqual(["presentation"]);
   const historical = {
     ...createSyntheticDemo(),
     sourceKind: "historical_report",
@@ -299,9 +349,9 @@ test("console sincroniza navegação e é limpo quando a sessão é encerrada", 
   await page
     .getByRole("button", { name: "Encerrar sessão administrativa" })
     .click();
-  await expect(page.getByLabel("Credencial administrativa")).toBeVisible();
+  await expect(page.getByLabel("Credencial administrativa do IFT")).toBeVisible();
   await expect(
-    consolePage.getByLabel("Credencial administrativa"),
+    consolePage.getByLabel("Credencial administrativa do IFT"),
   ).toBeVisible();
   await expect(consolePage.locator(".p-speaker-notes")).toHaveCount(0);
 });
@@ -343,11 +393,11 @@ test("expiração conhecida limpa o retrato e exige nova autenticação", async 
   await mockBackend(context);
   await demo(page);
   await page.evaluate(() => {
-    const s = JSON.parse(sessionStorage.getItem("isg_results_session"));
+    const s = JSON.parse(sessionStorage.getItem("isg_presentation_session"));
     s.expiresAt = Date.now() - 1;
-    sessionStorage.setItem("isg_results_session", JSON.stringify(s));
+    sessionStorage.setItem("isg_presentation_session", JSON.stringify(s));
   });
-  await expect(page.getByLabel("Credencial administrativa")).toBeVisible();
+  await expect(page.getByLabel("Credencial administrativa do IFT")).toBeVisible();
   await expect(page.locator(".p-deck-region")).toHaveCount(0);
 });
 

@@ -12,10 +12,16 @@ const project = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "..",
 );
-const secret = process.env.ISG_RESULTS_IFT_PASSWORD;
-if (!secret?.trim()) {
+const backendPort = Number(process.env.ISG_PREVIEW_PORT ?? 54399);
+if (!Number.isInteger(backendPort) || backendPort < 1024 || backendPort > 65535) {
+  console.error("ISG_PREVIEW_PORT precisa estar entre 1024 e 65535.");
+  process.exit(1);
+}
+const adminSecret = process.env.ISG_RESULTS_ADMIN_PASSWORD;
+const iftSecret = process.env.ISG_RESULTS_IFT_PASSWORD;
+if (!adminSecret?.trim() || !iftSecret?.trim()) {
   console.error(
-    "Defina ISG_RESULTS_IFT_PASSWORD apenas para este ensaio local. A credencial não será exibida nem gravada.",
+    "Defina as credenciais locais ISG_RESULTS_ADMIN_PASSWORD e ISG_RESULTS_IFT_PASSWORD. Elas não serão exibidas nem gravadas.",
   );
   process.exit(1);
 }
@@ -42,7 +48,10 @@ for (const file of ["session", "index"]) {
 }
 globalThis.Deno = {
   env: {
-    get: (key) => (key === "ISG_RESULTS_IFT_PASSWORD" ? secret : undefined),
+    get: (key) => ({
+      ISG_RESULTS_ADMIN_PASSWORD: adminSecret,
+      ISG_RESULTS_IFT_PASSWORD: iftSecret,
+    })[key],
   },
 };
 const { handleIsgResultsRequest } = await import(
@@ -68,7 +77,7 @@ const server = createServer(async (request, response) => {
     }
     const method = request.method ?? "GET";
     const result = await handleIsgResultsRequest(
-      new Request("http://127.0.0.1:54399/functions/v1/isg-results", {
+      new Request(`http://127.0.0.1:${backendPort}/functions/v1/isg-results`, {
         method,
         headers: request.headers,
         ...(method === "GET" || method === "HEAD"
@@ -85,10 +94,10 @@ const server = createServer(async (request, response) => {
 });
 await new Promise((resolve, reject) => {
   server.once("error", reject);
-  server.listen(54399, "127.0.0.1", resolve);
+  server.listen(backendPort, "127.0.0.1", resolve);
 });
 console.log(
-  "Controle de acesso local ativo em 127.0.0.1:54399; consultas à base desabilitadas.",
+  `Controle de acesso local ativo em 127.0.0.1:${backendPort}; consultas à base desabilitadas.`,
 );
 const backendOnly = process.argv.includes("--backend-only");
 const child = backendOnly
@@ -108,8 +117,9 @@ const child = backendOnly
         stdio: "inherit",
         env: {
           ...process.env,
+          ISG_RESULTS_ADMIN_PASSWORD: "",
           ISG_RESULTS_IFT_PASSWORD: "",
-          VITE_SUPABASE_URL: "http://127.0.0.1:54399",
+          VITE_SUPABASE_URL: `http://127.0.0.1:${backendPort}`,
           VITE_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_local_presentation",
         },
       },
