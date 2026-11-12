@@ -24,3 +24,7 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## Apresentação institucional ISG
+
+Rotas, ensaio local com autorização de servidor, operação e evidências: [guia da apresentação](docs/isg-presentation.md). O histórico institucional deve permanecer fora do Git e ser selecionado localmente após autenticação.

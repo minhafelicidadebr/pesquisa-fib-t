@@ -48,6 +48,7 @@ import NotFound from "./pages/NotFound.tsx";
 const ISG = lazy(() => import("./pages/ISG.tsx"));
 /** Painel administrativo agregado: lazy para não pesar na home nem no /isg. */
 const IsgResults = lazy(() => import("./pages/IsgResults.tsx"));
+const IsgPresentation = lazy(() => import("./pages/IsgPresentation.tsx"));
 
 const queryClient = new QueryClient();
 
@@ -101,6 +102,8 @@ const App = () => (
 
 
             <Route path="/pesquisa/setores" element={<SetoresAgregados />} />
+            <Route path="/isg/apresentacao" element={<Suspense fallback={<div className="min-h-dvh" role="status">Carregando apresentação…</div>}><IsgPresentation /></Suspense>} />
+            <Route path="/isg/apresentacao/console" element={<Suspense fallback={<div className="min-h-dvh" role="status">Carregando console…</div>}><IsgPresentation /></Suspense>} />
 
             <Route path="/selo/:id" element={<SeloNR1 />} />
             <Route path="/selo/:id/embed" element={<SeloEmbed />} />

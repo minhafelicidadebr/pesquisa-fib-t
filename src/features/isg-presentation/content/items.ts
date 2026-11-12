@@ -1,0 +1,25 @@
+export const ITEM_LABELS: Record<number, string> = {
+  1: "Moradia própria",
+  3: "Conduta ética",
+  4: "Confiança nos gestores",
+  5: "Rede de apoio",
+  7: "Considerar-se feliz",
+  8: "Projetos com investimento",
+  9: "Sono e repouso",
+  12: "Oportunidades de treinamento",
+  13: "Flexibilidade em emergências",
+  17: "Rendimento e dignidade",
+  18: "Atividades voluntárias",
+  20: "Comunicação interna",
+  24: "Estresse e bem-estar",
+  25: "Exposições de arte",
+  26: "Estratégias e metas",
+  29: "Expressão e opinião",
+  31: "Propósito maior na vida",
+};
+export const ITEM_SETS: Record<string, number[]> = {
+  recursos: [31, 13, 3, 7, 4, 5],
+  recuperacao: [24, 9],
+  vida: [1, 8, 17, 25, 18],
+  comunicacao: [20, 26, 29, 12],
+};

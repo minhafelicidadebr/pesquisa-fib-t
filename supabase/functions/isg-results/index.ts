@@ -14,6 +14,7 @@
  */
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { safeEqual, issueToken, verifyToken } from "./session.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -23,53 +24,14 @@ const corsHeaders = {
 
 /** Limiar de privacidade único e explícito do piloto. */
 const K_THRESHOLD = 7;
-/** Duração da sessão administrativa. */
-const SESSION_TTL_MS = 45 * 60 * 1000;
 
 const GENERIC_DENY = { ok: false, error: "Não foi possível validar o acesso." };
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
+    headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store", "Pragma": "no-cache" },
   });
-}
-
-function safeEqual(a: string, b: string): boolean {
-  const enc = new TextEncoder();
-  const x = enc.encode(a);
-  const y = enc.encode(b);
-  const len = Math.max(x.length, y.length);
-  let diff = x.length ^ y.length;
-  for (let i = 0; i < len; i++) diff |= (x[i] ?? 0) ^ (y[i] ?? 0);
-  return diff === 0;
-}
-
-async function hmac(payload: string, secret: string): Promise<string> {
-  const key = await crypto.subtle.importKey(
-    "raw",
-    new TextEncoder().encode(secret),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign"],
-  );
-  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(payload));
-  return [...new Uint8Array(sig)].map((b) => b.toString(16).padStart(2, "0")).join("");
-}
-
-async function issueToken(secret: string): Promise<{ token: string; expiresAt: number }> {
-  const expiresAt = Date.now() + SESSION_TTL_MS;
-  const payload = `isg-results.${expiresAt}`;
-  return { token: `${expiresAt}.${await hmac(payload, secret)}`, expiresAt };
-}
-
-async function verifyToken(token: unknown, secret: string): Promise<boolean> {
-  if (typeof token !== "string" || token.length > 256) return false;
-  const [expStr, sig] = token.split(".");
-  const exp = Number(expStr);
-  if (!Number.isFinite(exp) || !sig) return false;
-  if (Date.now() > exp) return false;
-  return safeEqual(sig, await hmac(`isg-results.${exp}`, secret));
 }
 
 const round1 = (n: number) => Math.round(n * 10) / 10;
@@ -159,7 +121,7 @@ function aggregate(rows: Row[]) {
   };
 }
 
-serve(async (req) => {
+export async function handleIsgResultsRequest(req: Request) {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (req.method !== "POST") return json(GENERIC_DENY, 405);
 
@@ -189,6 +151,12 @@ serve(async (req) => {
     }
     const session = await issueToken(secret);
     return json({ ok: true, ...session });
+  }
+
+  // Valida o acesso à apresentação histórica sem consultar respostas ou agregados.
+  if (body.action === "validate-session") {
+    if (!(await verifyToken(body.token, secret))) return json(GENERIC_DENY, 401);
+    return json({ ok: true, authorized: true, expiresAt: Number(String(body.token).split(".")[0]) });
   }
 
   // ─── Agregados (exige sessão válida) ───
@@ -229,4 +197,6 @@ serve(async (req) => {
   }
 
   return json(GENERIC_DENY, 400);
-});
+}
+
+serve(handleIsgResultsRequest);

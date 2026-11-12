@@ -61,8 +61,16 @@ export function readSession(): StoredSession | null {
   }
 }
 
-export function clearSession() {
+export function clearSession(notify = true) {
   sessionStorage.removeItem(SESSION_KEY);
+  if (notify) {
+    window.dispatchEvent(new Event("isg-results-session-ended"));
+    if (typeof BroadcastChannel !== "undefined") {
+      const channel = new BroadcastChannel("isg-results-lifecycle");
+      channel.postMessage({ type: "session-ended" });
+      channel.close();
+    }
+  }
 }
 
 /** Troca a senha por uma sessão administrativa temporária. */
