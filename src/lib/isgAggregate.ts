@@ -1,5 +1,5 @@
 /**
- * Painel Executivo FIB-T — ISG: acesso e agregados.
+ * Painel Executivo FIB-T — acesso IFT e agregados do pré-teste ISG.
  *
  * O cliente NUNCA conhece a senha administrativa. Ele envia o candidato para a
  * edge function `isg-results`, recebe um token de sessão curto assinado no
@@ -44,6 +44,7 @@ export interface IsgAggregate {
 interface StoredSession {
   token: string;
   expiresAt: number;
+  role: "ift";
 }
 
 export function readSession(): StoredSession | null {
@@ -51,7 +52,12 @@ export function readSession(): StoredSession | null {
     const raw = sessionStorage.getItem(SESSION_KEY);
     if (!raw) return null;
     const s = JSON.parse(raw) as StoredSession;
-    if (!s?.token || typeof s.expiresAt !== "number" || Date.now() > s.expiresAt) {
+    if (
+      !s?.token ||
+      s.role !== "ift" ||
+      typeof s.expiresAt !== "number" ||
+      Date.now() >= s.expiresAt
+    ) {
       sessionStorage.removeItem(SESSION_KEY);
       return null;
     }
@@ -78,10 +84,10 @@ export async function loginResults(password: string): Promise<boolean> {
   const { data, error } = await supabase.functions.invoke("isg-results", {
     body: { action: "login", password },
   });
-  if (error || !data?.ok || !data?.token) return false;
+  if (error || !data?.ok || !data?.token || data.role !== "ift") return false;
   sessionStorage.setItem(
     SESSION_KEY,
-    JSON.stringify({ token: data.token, expiresAt: data.expiresAt }),
+    JSON.stringify({ token: data.token, expiresAt: data.expiresAt, role: data.role }),
   );
   return true;
 }

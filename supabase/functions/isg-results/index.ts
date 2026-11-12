@@ -3,8 +3,8 @@
  *
  * ┌─────────────────────────────────────────────────────────────────────────┐
  * │ SEGURANÇA                                                               │
- * │ 1. A senha administrativa vive APENAS no secret                          │
- * │    `ISG_RESULTS_ADMIN_PASSWORD`. Nunca é devolvida ao navegador.        │
+ * │ 1. A credencial IFT vive APENAS no secret                                │
+ * │    `ISG_RESULTS_IFT_PASSWORD`. Nunca é devolvida ao navegador.          │
  * │ 2. Login devolve um token de sessão curto assinado por HMAC-SHA256      │
  * │    com o próprio secret. A senha não é reenviada em cada requisição.    │
  * │ 3. Nenhuma linha individual, resposta crua ou identificador sai daqui.  │
@@ -14,7 +14,7 @@
  */
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { safeEqual, issueToken, verifyToken } from "./session.ts";
+import { safeEqual, issueToken, sessionRole, verifyToken } from "./session.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -125,9 +125,9 @@ export async function handleIsgResultsRequest(req: Request) {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (req.method !== "POST") return json(GENERIC_DENY, 405);
 
-  const secret = Deno.env.get("ISG_RESULTS_ADMIN_PASSWORD");
+  const secret = Deno.env.get("ISG_RESULTS_IFT_PASSWORD");
   if (!secret) {
-    console.error("ISG_RESULTS_ADMIN_PASSWORD não configurado.");
+    console.error("ISG_RESULTS_IFT_PASSWORD não configurado.");
     return json(GENERIC_DENY, 200);
   }
 
@@ -156,7 +156,10 @@ export async function handleIsgResultsRequest(req: Request) {
   // Valida o acesso à apresentação histórica sem consultar respostas ou agregados.
   if (body.action === "validate-session") {
     if (!(await verifyToken(body.token, secret))) return json(GENERIC_DENY, 401);
-    return json({ ok: true, authorized: true, expiresAt: Number(String(body.token).split(".")[0]) });
+    const role = sessionRole(body.token);
+    const expiresAt = Number(String(body.token).split(".")[1]);
+    if (role !== "ift" || !Number.isFinite(expiresAt)) return json(GENERIC_DENY, 401);
+    return json({ ok: true, authorized: true, role, expiresAt });
   }
 
   // ─── Agregados (exige sessão válida) ───

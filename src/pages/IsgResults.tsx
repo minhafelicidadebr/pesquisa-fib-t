@@ -12,7 +12,7 @@ export default function IsgResults() {
   const [authorized, setAuthorized] = useState(() => readSession() !== null);
 
   useEffect(() => {
-    document.title = "Painel Executivo FIB-T — ISG";
+    document.title = "Painel Executivo FIB-T — IFT";
     const meta = document.querySelector('meta[name="robots"]');
     const el = meta ?? document.createElement("meta");
     el.setAttribute("name", "robots");
