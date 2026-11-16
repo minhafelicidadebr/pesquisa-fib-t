@@ -1,4 +1,20 @@
 import { expect, test } from "@playwright/test";
+import { readFile } from "node:fs/promises";
+
+async function expectInstitutionalPdf(path: string) {
+  const bytes = await readFile(path);
+  const source = bytes.toString("latin1");
+  expect(source.startsWith("%PDF-")).toBe(true);
+  expect(source.match(/\/Type\s*\/Page\b/g)).toHaveLength(4);
+  for (const url of [
+    "https://felicidadeparatodos.com.br/",
+    "https://felicidadeparatodos.com.br/#contato",
+    "https://instagram.com/felicidadeparatodosbr",
+    "https://turmadobem.org.br/dentista-do-bem/",
+  ]) expect(source).toContain(`/URI (${url})`);
+  expect((source.match(/\/Subtype\s*\/Image\b/g) ?? []).length).toBeGreaterThanOrEqual(3);
+}
+
 
 for (const width of [320, 360, 390, 768, 1366]) {
   test(`landing and question have no horizontal overflow at ${width}px`, async ({ page }) => {
@@ -70,6 +86,11 @@ test("a rapid double click records only one answer and does not skip a question"
 test("mobile complete flow computes the result and PDF locally after explicit review", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   let scoringRequests = 0;
+  let externalBrandRequests = 0;
+  await page.route(/^https:\/\/(?:www\.)?(?:felicidadeparatodos\.com\.br|turmadobem\.org\.br)\//, async route => {
+    externalBrandRequests++;
+    await route.abort("failed");
+  });
   await page.route("**/functions/v1/fiba-student-score", async route => {
     scoringRequests++;
     await route.abort("failed");
@@ -102,6 +123,8 @@ test("mobile complete flow computes the result and PDF locally after explicit re
   await page.getByRole("button", { name: "Baixar meu PDF" }).click();
   const pdf = await download; expect(pdf.suggestedFilename()).toBe("relatorio-fib-a-turma-do-bem.pdf");
   await pdf.saveAs("/tmp/fiba-contract-result.pdf");
+  await expectInstitutionalPdf("/tmp/fiba-contract-result.pdf");
+  expect(externalBrandRequests).toBe(0);
   await page.screenshot({ path: "/tmp/fiba-result-mobile.png", fullPage: true });
   await page.getByRole("button", { name: "Encerrar e limpar minha sessão" }).click();
   await expect(page.getByRole("heading", { name: /Cuidar do outro/ })).toBeVisible();
@@ -124,5 +147,6 @@ test("preview PDF and QR are explicit, downloadable and route-specific", async (
   await page.getByRole("button", { name: "Baixar meu PDF" }).click();
   const file = await previewDownload; expect(file.suggestedFilename()).toContain("demonstracao");
   await file.saveAs("/tmp/fiba-demo.pdf");
+  await expectInstitutionalPdf("/tmp/fiba-demo.pdf");
   await page.screenshot({ path: "/tmp/fiba-result-desktop.png", fullPage: true });
 });
