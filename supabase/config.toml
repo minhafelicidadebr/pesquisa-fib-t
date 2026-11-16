@@ -8,3 +8,7 @@ verify_jwt = false
 
 [functions.resolve-survey-access]
 verify_jwt = false
+
+# Public, anonymous and stateless student scoring. No access to database or user sessions.
+[functions.fiba-student-score]
+verify_jwt = false

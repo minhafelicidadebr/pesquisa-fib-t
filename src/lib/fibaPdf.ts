@@ -1,0 +1,126 @@
+import { FIBA_VERSION, isCanonicalFiba, type FibaResult } from "@/domain/fiba";
+import { FIBA_FORMAT as fmt, FIBA_METHOD_NOTE } from "@/features/turma-do-bem/content";
+
+import sansRegular from "@/features/turma-do-bem/fonts/LiberationSans-Regular.ttf?url";
+import sansBold from "@/features/turma-do-bem/fonts/LiberationSans-Bold.ttf?url";
+import serifRegular from "@/features/turma-do-bem/fonts/LiberationSerif-Regular.ttf?url";
+import serifItalic from "@/features/turma-do-bem/fonts/LiberationSerif-Italic.ttf?url";
+
+const fontSpecs = [
+  [sansRegular, "sans-regular.ttf", "FibaSans", "normal"],
+  [sansBold, "sans-bold.ttf", "FibaSans", "bold"],
+  [serifRegular, "serif-regular.ttf", "FibaSerif", "normal"],
+  [serifItalic, "serif-italic.ttf", "FibaSerif", "italic"],
+] as const;
+let fontData: Promise<string[]> | null = null;
+function loadFonts() {
+  if (!fontData) fontData = Promise.all(fontSpecs.map(async ([url]) => {
+    const response = await fetch(url, { credentials: "omit" });
+    if (!response.ok) throw new Error("pdf_font_unavailable");
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    let binary = "";
+    for (let offset = 0; offset < bytes.length; offset += 8192) binary += String.fromCharCode(...bytes.subarray(offset, offset + 8192));
+    return btoa(binary);
+  })).catch(error => { fontData = null; throw error; });
+  return fontData;
+}
+
+/** Editorial, text-based PDF. Only renders the result object; never scores answers. */
+export async function buildFibaPdf(result: FibaResult, demo = false): Promise<Blob> {
+  if (!demo && !isCanonicalFiba(result)) throw new Error("canonical_result_required");
+  if (demo && result.manifest.calculated_by !== "client_preview") throw new Error("preview_result_required");
+  const { jsPDF } = await import("jspdf");
+  const doc = new jsPDF({ unit: "pt", format: "a4", compress: true });
+  const fonts = await loadFonts();
+  fontSpecs.forEach(([, file, family, style], i) => {
+    doc.addFileToVFS(file, fonts[i]); doc.addFont(file, family, style);
+  });
+  const W = 595.28, H = 841.89, M = 47, CW = W - M * 2;
+  const ink = "#183D30", green = "#32664B", muted = "#586650", rule = "#D9E0D3", paper = "#F7F7F0";
+  doc.setProperties({ title: `${demo ? "Demonstração" : "Relatório individual"} FIB-A | Turma do Bem`, subject: "Leitura descritiva de autopercepção estudantil", creator: "FIB-A · Turma do Bem" });
+  function text(value: string, x: number, y: number, size = 10, color = ink, font = "helvetica", style = "normal") {
+    doc.setFont(font === "times" ? "FibaSerif" : "FibaSans", style); doc.setFontSize(size); doc.setTextColor(color); doc.text(value, x, y);
+  }
+  function paragraph(value: string, x: number, y: number, width = CW, size = 10, color = muted, leading = 16) {
+    doc.setFont("FibaSans", "normal"); doc.setFontSize(size); doc.setTextColor(color);
+    const lines: string[] = doc.splitTextToSize(value, width);
+    for (const line of lines) { doc.text(line, x, y); y += leading; }
+    return y;
+  }
+  function line(y: number) { doc.setDrawColor(rule); doc.setLineWidth(.7); doc.line(M, y, W - M, y); }
+  function page(number: number, kicker: string) {
+    if (number > 1) doc.addPage();
+    doc.setFillColor(paper); doc.rect(0, 0, W, H, "F");
+    text("Turma do Bem", M, 49, 14, ink, "helvetica", "bold");
+    text("FIB-A / VIDA ESTUDANTIL", W - M - 144, 49, 8, muted);
+    line(68);
+    text(kicker, M, 102, 8, green, "helvetica", "bold");
+    line(H - 63);
+    text(demo ? "DEMONSTRAÇÃO · DADOS SINTÉTICOS" : "RELATÓRIO INDIVIDUAL DE AUTOPERCEPÇÃO", M, H - 43, 7, muted);
+    text(`${number} / 3`, W - M - 23, H - 43, 8, muted);
+    if (demo) {
+      doc.setFillColor("#EEE3C5"); doc.roundedRect(M, H - 106, CW, 26, 4, 4, "F");
+      text("Valores ilustrativos. Este relatório não representa um participante.", M + 12, H - 89, 8, "#654E22");
+    }
+  }
+  function bar(x: number, y: number, width: number, score: number, max: number, height = 5) {
+    doc.setFillColor("#E4EAD9"); doc.roundedRect(x, y, width, height, height / 2, height / 2, "F");
+    if (score > 0) { doc.setFillColor(green); doc.roundedRect(x, y, Math.max(height, width * score / max), height, height / 2, height / 2, "F"); }
+  }
+  page(1, demo ? "UMA PRÉVIA PARA CONHECER A EXPERIÊNCIA" : "UM OLHAR PARA O SEU MOMENTO");
+  text("Seu bem-estar,", M, 160, 37, ink, "times");
+  text("por novas perspectivas.", M, 201, 37, green, "times", "italic");
+  paragraph("Uma leitura das suas respostas para refletir sobre a vida, os estudos e aquilo que faz parte do seu bem-estar.", M, 239, 400, 11, muted, 18);
+  doc.setFillColor("#E8EEDB"); doc.roundedRect(M, 310, CW, 199, 11, 11, "F");
+  text("RESULTADO GLOBAL", M + 27, 345, 9, green, "helvetica", "bold");
+  text(fmt(result.globalScore, 1), M + 27, 416, 61, ink, "times");
+  text("de 100", M + 29, 442, 12, muted);
+  bar(M + 28, 471, CW - 56, result.globalScore, 100, 6);
+  paragraph("Leitura descritiva. Sem classificação clínica.", M + 235, 399, CW - 260, 10, green, 17);
+  const date = new Date(result.completedAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
+  text(`${demo ? "Data da demonstração" : "Data da conclusão"}: ${date}`, M, 549, 9, muted);
+  line(572);
+  text("29 perguntas. Nove domínios. Uma reflexão sua.", M, 609, 20, ink, "times");
+  paragraph("O formulário FIB-A para alunos é inspirado na FIB-T. Esta adaptação utiliza o método de cálculo do aplicativo, preservando a escala de resposta de 0 a 4 e o resultado global de 0 a 100.", M, 640, CW, 10, muted, 17);
+
+  page(2, "TRÊS FATORES · NOVE DOMÍNIOS");
+  text("O que suas respostas mostram.", M, 146, 28, ink, "times");
+  paragraph("Os valores a seguir são médias das suas respostas, na escala de 0 a 4. Não representam percentis, diagnósticos ou comparação com outras pessoas.", M, 177, CW, 9, muted, 15);
+  text("FATORES", M, 237, 8, green, "helvetica", "bold");
+  let y = 267;
+  for (const [id, cell] of Object.entries(result.factors)) {
+    text(`0${id}  ${cell.label}`, M, y, 10, ink);
+    text(`${fmt(cell.score)} de 4`, W - M - 62, y, 10, green, "helvetica", "bold");
+    text(`${cell.itemCount} perguntas`, M, y + 17, 8, muted);
+    bar(M + 95, y + 11, CW - 95, cell.score, 4);
+    y += 59;
+  }
+  line(433); text("DOMÍNIOS", M, 460, 8, green, "helvetica", "bold");
+  const gap = 27, col = (CW - gap) / 2;
+  Object.values(result.domains).forEach((cell, i) => {
+    const x = M + i % 2 * (col + gap), rowY = 491 + Math.floor(i / 2) * 44;
+    text(cell.label, x, rowY, 9, ink);
+    text(fmt(cell.score), x + col - 28, rowY, 10, green, "helvetica", "bold");
+    bar(x, rowY + 11, col, cell.score, 4, 4);
+  });
+  text("Escala: 0 a 4 em todos os fatores e domínios.", M, 721, 8, muted);
+
+  page(3, "PARA LER E LEVAR COM VOCÊ");
+  text("Perceber é um começo.", M, 150, 32, ink, "times");
+  let y3 = paragraph("O que já faz sentido na sua rotina? Sobre o que você gostaria de refletir com mais calma? Este relatório é um convite à reflexão sobre suas próprias respostas.", M, 185, CW, 10, muted, 17);
+  y3 += 23; line(y3); y3 += 29;
+  text("COMO O RESULTADO É CALCULADO", M, y3, 8, green, "helvetica", "bold"); y3 += 24;
+  y3 = paragraph("Cada domínio é a média de seus itens. Cada fator é a média de seus próprios itens (9, 15 e 5, respectivamente). Domínios e fatores são arredondados para duas casas decimais.", M, y3, CW, 9, muted, 16);
+  y3 += 12;
+  y3 = paragraph("O global usa a média dos nove domínios já arredondados, divididos por 4, multiplicada por 100, com uma casa decimal. Os nove domínios têm o mesmo peso. O global não é a média dos três fatores nem um percentual de felicidade.", M, y3, CW, 9, muted, 16);
+  y3 += 25;
+  text("MÉTODO E LIMITAÇÕES", M, y3, 8, green, "helvetica", "bold"); y3 += 24;
+  y3 = paragraph(FIBA_METHOD_NOTE, M, y3, CW, 9, muted, 16);
+  y3 += 12;
+  y3 = paragraph("Governança se refere à instituição de ensino, e não ao evento. As respostas não medem a eficácia de tratamentos odontológicos ou o impacto da Turma do Bem. O instrumento não calcula o PERMA.", M, y3, CW, 9, muted, 16);
+  y3 += 23;
+  text("FONTE E VERSÃO", M, y3, 8, green, "helvetica", "bold"); y3 += 23;
+  y3 = paragraph("Formulário fornecido: FIB - Alunos - Formulario Inspirado no FIB-T - 2026. A fonte disponibilizada não apresenta evidências de validação específicas desta adaptação.", M, y3, CW, 8, muted, 14);
+  paragraph(`FIB-A ${FIBA_VERSION} · Cálculo ${result.manifest.scoring_engine_version} · ${demo ? "Prévia local sintética" : "Cálculo no servidor"}. A versão identifica o software; não certifica validade psicométrica.`, M, y3 + 8, CW, 8, muted, 14);
+  return doc.output("blob");
+}
