@@ -1,0 +1,3 @@
+export const FIBA_ROUTE = "/turma-do-bem/fib-a";
+export const FIBA_METHOD_NOTE = "Este resultado usa as 29 perguntas do formulário FIB-A para alunos, inspirado na FIB-T, com a regra de cálculo da FIB-T implementada no aplicativo: médias dos domínios e fatores de 0 a 4 e resultado global pela média dos nove domínios normalizados, de 0 a 100. A adaptação é uma leitura descritiva das suas respostas. Não constitui diagnóstico clínico nem comprova equivalência psicométrica com a versão ocupacional da FIB-T.";
+export const FIBA_FORMAT = (value: number, decimals = 2) => value.toLocaleString("pt-BR", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });

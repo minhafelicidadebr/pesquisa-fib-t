@@ -50,6 +50,8 @@ const ISG = lazy(() => import("./pages/ISG.tsx"));
 const IsgResults = lazy(() => import("./pages/IsgResults.tsx"));
 const IsgPresentation = lazy(() => import("./pages/IsgPresentation.tsx"));
 
+const TurmaDoBem = lazy(() => import("./features/turma-do-bem/TurmaDoBem"));
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -83,6 +85,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/planos" element={<Planos />} />
             <Route path="/pesquisa" element={<Pesquisa />} />
+            <Route path="/turma-do-bem/fib-a" element={<Suspense fallback={<div className="min-h-dvh bg-[#f7f7f0]" role="status">Carregando FIB-A…</div>}><TurmaDoBem /></Suspense>} />
             <Route
               path="/isg"
               element={
