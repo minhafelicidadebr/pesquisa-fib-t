@@ -1,5 +1,6 @@
-import { FIBA_VERSION, isCanonicalFiba, type FibaResult } from "@/domain/fiba";
+import { FIBA_VERSION, isReportableFiba, type FibaResult } from "@/domain/fiba";
 import { FIBA_FORMAT as fmt, FIBA_METHOD_NOTE } from "@/features/turma-do-bem/content";
+import { buildFibaNarrative, fibaCalculationOriginLabel } from "@/features/turma-do-bem/narrative";
 
 import sansRegular from "@/features/turma-do-bem/fonts/LiberationSans-Regular.ttf?url";
 import sansBold from "@/features/turma-do-bem/fonts/LiberationSans-Bold.ttf?url";
@@ -27,8 +28,10 @@ function loadFonts() {
 
 /** Editorial, text-based PDF. Only renders the result object; never scores answers. */
 export async function buildFibaPdf(result: FibaResult, demo = false): Promise<Blob> {
-  if (!demo && !isCanonicalFiba(result)) throw new Error("canonical_result_required");
+  if (!demo && !isReportableFiba(result)) throw new Error("valid_result_required");
   if (demo && result.manifest.calculated_by !== "client_preview") throw new Error("preview_result_required");
+  const narrative = buildFibaNarrative(result);
+  const originLabel = fibaCalculationOriginLabel(result.manifest.calculated_by);
   const { jsPDF } = await import("jspdf");
   const doc = new jsPDF({ unit: "pt", format: "a4", compress: true });
   const fonts = await loadFonts();
@@ -76,12 +79,13 @@ export async function buildFibaPdf(result: FibaResult, demo = false): Promise<Bl
   text(fmt(result.globalScore, 1), M + 27, 416, 61, ink, "times");
   text("de 100", M + 29, 442, 12, muted);
   bar(M + 28, 471, CW - 56, result.globalScore, 100, 6);
-  paragraph("Leitura descritiva. Sem classificação clínica.", M + 235, 399, CW - 260, 10, green, 17);
+  paragraph("Uma visão do conjunto", M + 235, 377, CW - 260, 11, green, 17);
+  paragraph("Os nove domínios têm o mesmo peso no global. Esta leitura descreve suas respostas, sem classificação clínica.", M + 235, 408, CW - 260, 9, muted, 15);
   const date = new Date(result.completedAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
   text(`${demo ? "Data da demonstração" : "Data da conclusão"}: ${date}`, M, 549, 9, muted);
   line(572);
-  text("29 perguntas. Nove domínios. Uma reflexão sua.", M, 609, 20, ink, "times");
-  paragraph("O formulário FIB-A para alunos é inspirado na FIB-T. Esta adaptação utiliza o método de cálculo do aplicativo, preservando a escala de resposta de 0 a 4 e o resultado global de 0 a 100.", M, 640, CW, 10, muted, 17);
+  text("Sua leitura, em palavras.", M, 609, 23, ink, "times");
+  paragraph(narrative.domainPerspective, M, 640, CW, 10, muted, 17);
 
   page(2, "TRÊS FATORES · NOVE DOMÍNIOS");
   text("O que suas respostas mostram.", M, 146, 28, ink, "times");
@@ -107,20 +111,24 @@ export async function buildFibaPdf(result: FibaResult, demo = false): Promise<Bl
 
   page(3, "PARA LER E LEVAR COM VOCÊ");
   text("Perceber é um começo.", M, 150, 32, ink, "times");
-  let y3 = paragraph("O que já faz sentido na sua rotina? Sobre o que você gostaria de refletir com mais calma? Este relatório é um convite à reflexão sobre suas próprias respostas.", M, 185, CW, 10, muted, 17);
-  y3 += 23; line(y3); y3 += 29;
-  text("COMO O RESULTADO É CALCULADO", M, y3, 8, green, "helvetica", "bold"); y3 += 24;
-  y3 = paragraph("Cada domínio é a média de seus itens. Cada fator é a média de seus próprios itens (9, 15 e 5, respectivamente). Domínios e fatores são arredondados para duas casas decimais.", M, y3, CW, 9, muted, 16);
-  y3 += 12;
-  y3 = paragraph("O global usa a média dos nove domínios já arredondados, divididos por 4, multiplicada por 100, com uma casa decimal. Os nove domínios têm o mesmo peso. O global não é a média dos três fatores nem um percentual de felicidade.", M, y3, CW, 9, muted, 16);
+  let y3 = paragraph(narrative.summary, M, 185, CW, 10, muted, 17);
+  y3 += 15;
+  text("PERGUNTAS PARA SUA REFLEXÃO", M, y3, 8, green, "helvetica", "bold");
   y3 += 25;
-  text("MÉTODO E LIMITAÇÕES", M, y3, 8, green, "helvetica", "bold"); y3 += 24;
-  y3 = paragraph(FIBA_METHOD_NOTE, M, y3, CW, 9, muted, 16);
-  y3 += 12;
-  y3 = paragraph("Governança se refere à instituição de ensino, e não ao evento. As respostas não medem a eficácia de tratamentos odontológicos ou o impacto da Turma do Bem. O instrumento não calcula o PERMA.", M, y3, CW, 9, muted, 16);
-  y3 += 23;
-  text("FONTE E VERSÃO", M, y3, 8, green, "helvetica", "bold"); y3 += 23;
-  y3 = paragraph("Formulário fornecido: FIB - Alunos - Formulario Inspirado no FIB-T - 2026. A fonte disponibilizada não apresenta evidências de validação específicas desta adaptação.", M, y3, CW, 8, muted, 14);
-  paragraph(`FIB-A ${FIBA_VERSION} · Cálculo ${result.manifest.scoring_engine_version} · ${demo ? "Prévia local sintética" : "Cálculo no servidor"}. A versão identifica o software; não certifica validade psicométrica.`, M, y3 + 8, CW, 8, muted, 14);
+  narrative.reflectionQuestions.forEach((question, i) => {
+    text(`0${i + 1}`, M, y3, 9, green, "helvetica", "bold");
+    y3 = paragraph(question, M + 27, y3, CW - 27, 9.5, ink, 16) + 12;
+  });
+  line(y3 + 2); y3 += 29;
+  text("MÉTODO E LIMITAÇÕES", M, y3, 8, green, "helvetica", "bold"); y3 += 23;
+  y3 = paragraph(FIBA_METHOD_NOTE, M, y3, CW, 9, muted, 15);
+  y3 += 8;
+  y3 = paragraph("Cada fator usa a média de seus próprios itens (9, 15 e 5). Domínios e fatores são arredondados para duas casas; o global, para uma. O cálculo global usa as médias de domínio já arredondadas.", M, y3, CW, 9, muted, 15);
+  y3 += 8;
+  y3 = paragraph("Governança refere-se à instituição de ensino. As respostas não medem tratamentos odontológicos, impacto da Turma do Bem ou o PERMA.", M, y3, CW, 9, muted, 15);
+  y3 += 19;
+  text("FONTE E VERSÃO", M, y3, 8, green, "helvetica", "bold"); y3 += 21;
+  y3 = paragraph("Fonte: formulário FIB - Alunos - Formulario Inspirado no FIB-T - 2026. O documento fornecido não apresenta evidências de validação específicas desta adaptação.", M, y3, CW, 8, muted, 13);
+  paragraph(`FIB-A ${FIBA_VERSION} · Cálculo ${result.manifest.scoring_engine_version} · ${originLabel}. A versão identifica o software, sem certificar validade psicométrica.`, M, y3 + 7, CW, 8, muted, 13);
   return doc.output("blob");
 }

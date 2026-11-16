@@ -1,24 +1,23 @@
-import { FIBA_ID, FIBA_VERSION, isCanonicalFiba, type FibaResult } from "@/domain/fiba";
+import { FibaValidationError, isReportableFiba, scoreFiba, type FibaResult } from "@/domain/fiba";
 
-/** Direct, anonymous request: never forwards an existing ISG/IFT/user session. */
+/**
+ * Individual report calculated on this device, using the SAME shared FIB-A engine.
+ * No network, database, session, external AI or deployment dependency.
+ * Origin is client_local: never masquerades as a server result or a synthetic preview.
+ */
 export async function submitFibaAnswers(answers: Record<number, number>): Promise<FibaResult> {
-  const baseUrl = import.meta.env.VITE_SUPABASE_URL;
-  const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-  if (!baseUrl || !key) throw new Error("O serviço de resultados ainda não está configurado. Suas respostas continuam nesta página.");
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 20000);
   try {
-    const response = await fetch(`${baseUrl}/functions/v1/fiba-student-score`, {
-      method: "POST", cache: "no-store", credentials: "omit", signal: controller.signal,
-      headers: { "Content-Type": "application/json", apikey: key },
-      body: JSON.stringify({ instrumentId: FIBA_ID, instrumentVersion: FIBA_VERSION,
-        answers: Object.entries(answers).map(([id, answer]) => ({ id: Number(id), answer })) }),
-    });
-    if (!response.ok) throw new Error("service_unavailable");
-    const result: unknown = await response.json();
-    if (!isCanonicalFiba(result)) throw new Error("invalid_result");
+    const entries = Object.entries(answers).map(([id, answer]) => ({ id: Number(id), answer }));
+    const result: FibaResult = {
+      ...scoreFiba(entries, "client_local"),
+      completedAt: new Date().toISOString(),
+    };
+    if (!isReportableFiba(result)) throw new Error("invalid_local_result");
     return result;
-  } catch {
-    throw new Error("Não foi possível gerar seu resultado agora. Suas respostas continuam nesta página. Aguarde um momento e tente novamente.");
-  } finally { clearTimeout(timeout); }
+  } catch (error) {
+    if (error instanceof FibaValidationError) {
+      throw new Error("Confira as 29 respostas antes de concluir. Cada pergunta precisa de uma resposta de 0 a 4. Suas escolhas continuam nesta página.");
+    }
+    throw new Error("Não foi possível calcular o resultado nesta página. Suas respostas continuam disponíveis. Tente novamente.");
+  }
 }

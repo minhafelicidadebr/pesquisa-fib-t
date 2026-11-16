@@ -1,6 +1,6 @@
 # Superprompt de desenvolvimento — FIB-A no evento Turma do Bem
 
-> Versão revisada em 16/11/2026. Este prompt substitui a versão anterior deste arquivo.
+> Versão revisada em 16/11/2026, incluindo avanço automático e correção da geração do resultado. Este prompt substitui a versão anterior deste arquivo.
 > Diretriz do solicitante: usar as 29 perguntas do formulário de alunos e preservar o método de cálculo e as escalas da FIB-T implementada no app. A fórmula global sugerida no anexo é substituída por essa diretriz explícita.
 
 ## 1. Missão e escopo
@@ -59,7 +59,7 @@ Compare as opções por fidelidade das perguntas, fidelidade do cálculo, isolam
 | Implementar literalmente a soma das três médias indicada no anexo | Rejeitar: conflita com a orientação expressa de manter a metodologia computacional do app. |
 | Criar módulo FIB-A próprio com a matriz do anexo e a mesma regra de cálculo da FIB-T do app | Adotar: preserva as perguntas, as escalas e o método computacional solicitado, com rastreabilidade e isolamento. |
 
-Priorize um módulo independente no mesmo app e uma função própria no backend. Um domínio ou projeto Supabase separado é outra decisão de infraestrutura; não crie nem migre infraestrutura sem necessidade e autorização.
+Priorize um módulo independente no mesmo app, com cálculo individual no dispositivo pelo módulo puro compartilhado. O endpoint de cálculo é opcional e não deve bloquear o relatório individual. Um domínio ou projeto Supabase separado é outra decisão de infraestrutura; não crie nem migre infraestrutura sem necessidade e autorização.
 
 ## 4. Instrumento canônico FIB-A — 29 itens
 
@@ -167,11 +167,11 @@ Exiba o global como “Resultado global: 67,7 de 100”, quando esse for o valor
 
 - Exigir exatamente os 29 IDs, cada um uma única vez, com números inteiros finitos de 0 a 4. Rejeitar ausência, duplicidade, IDs desconhecidos, texto, booleanos, `null`, `NaN` ou valores fora da escala; não converter texto em resposta numérica silenciosamente.
 - Não imputar respostas, calcular instrumento parcial, transformar ausência em zero ou aceitar os itens 30–32. Identificar na interface o que precisa ser corrigido; permitir desistência sem resultado.
-- Validar instrumento, versão e matriz no servidor. O cliente envia respostas e metadados permitidos; nunca envia escores como fonte de verdade.
+- Validar instrumento, versão, matriz e todas as respostas no motor puro compartilhado antes do cálculo local. Não enviar respostas a um serviço de cálculo na jornada individual. Se existir fluxo de servidor separado, ele valida seus próprios inputs e não confia em escores enviados pelo cliente.
 - Criar identidade de instrumento própria `FIB-A` e versão própria, explicitamente de adaptação. Uma versão técnica inicial, como `0.1.0`, é controle de software e não validação científica.
-- Registrar no manifesto: instrumento, versão do instrumento, versão do cálculo, hash da matriz FIB-A, hash do conteúdo dos itens, escala, quantidade de itens, política de arredondamento, política de ausência e origem do cálculo (`server` ou `client_preview`).
+- Registrar no manifesto: instrumento, versão do instrumento, versão do cálculo, hash da matriz FIB-A, hash do conteúdo dos itens, escala, quantidade de itens, política de arredondamento, política de ausência e origem do cálculo (`client_local`, `server` ou `client_preview`). Resultado real calculado no dispositivo usa `client_local`; demonstração sintética usa somente `client_preview`.
 - Usar hashes calculados e conferidos; não copiar o hash ou a versão da matriz FIB-T. O hash da fonte anexada é metadado adicional, separado do hash da matriz.
-- UI e PDF consomem o mesmo objeto de resultado server-side, sem recálculo nos componentes ou no gerador de PDF. Não apresentar prévia calculada no navegador como resultado confirmado pelo servidor.
+- UI e PDF consomem o mesmo objeto de resultado validado, sem recálculo nos componentes ou no gerador de PDF. Informar a origem local quando o cálculo for realizado no dispositivo. Não apresentar resultado local ou prévia como confirmado pelo servidor; não usar demonstração sintética como relatório de participante.
 
 ## 6. Arquitetura e isolamento
 
@@ -184,7 +184,7 @@ src/domain/fiba/                    # instrumento, mapa, validação, cálculo e
 src/features/turma-do-bem/          # páginas, etapas, componentes e tema próprios
 src/lib/fibaResult.ts               # contrato e envio específicos
 src/lib/fibaPdf.ts                  # composição editorial própria
-supabase/functions/fiba-student-score/  # cálculo server-side sem IA ou persistência
+supabase/functions/fiba-student-score/  # endpoint opcional; o relatório individual não depende dele
 ```
 
 Prefira uma fonte compartilhável da matriz e das regras entre web/servidor. Se as limitações do runtime exigirem espelho, faça verificação automatizada de paridade de perguntas, mapa, validação, arredondamento e resultado. Não importe módulos React ou browser para a função de cálculo pura. Não refatore o motor FIB-T existente apenas para compartilhar código; reutilize somente primitivas neutras cuja extração preserve o comportamento comprovado.
@@ -193,7 +193,7 @@ Proponha a rota **`/turma-do-bem/fib-a`**, conferindo colisões e autorização 
 
 A experiência de evento deve ter seu próprio layout, sem barra do SaaS, menus de administração ou identidade da empresa ISG. Limite a alteração do roteador ao necessário para incluir a nova rota. Não use CSS global que afete as páginas existentes.
 
-Por padrão, o endpoint apenas valida, calcula e devolve o resultado. Não crie tabelas, cadastro, login de aluno, painel de organizador ou agregados sem escopo explícito. Não use `isg_pilot_responses`, `fibia-chat`, `isg-results`, coorte `isg`, credenciais ISG ou IFT para essa experiência. Não leia respostas ou agregados reais para desenvolver ou verificar.
+Por padrão, o próprio dispositivo valida e calcula o relatório individual pelo módulo puro compartilhado, sem envio de respostas. O endpoint opcional apenas valida, calcula e devolve resultados para usos de servidor que venham a ser necessários. Não crie tabelas, cadastro, login de aluno, painel de organizador ou agregados sem escopo explícito. Não use `isg_pilot_responses`, `fibia-chat`, `isg-results`, coorte `isg`, credenciais ISG ou IFT para essa experiência. Não leia respostas ou agregados reais para desenvolver ou verificar.
 
 Antes de implementar ou configurar recursos Supabase, confira a documentação atual e as instruções aplicáveis. Preserve os controles existentes; não exponha chaves secretas no cliente nem desative proteções de outras funções para viabilizar o endpoint. Documente a proteção adotada para um endpoint de evento acessível por QR, incluindo validação de payload, limite de tamanho, tratamento de abuso e CORS apropriado ao ambiente. Não invente dependências de infraestrutura ausentes.
 
@@ -203,7 +203,7 @@ Antes de implementar ou configurar recursos Supabase, confira a documentação a
 
 1. **Entrada:** identificação textual “Turma do Bem · FIB-A”, propósito, quantidade real de 29 perguntas, privacidade e CTA claro. Não prometa tempo de conclusão sem evidência; se estimar, identifique como estimativa a validar.
 2. **Participação:** informar finalidade, voluntariedade, tratamento de dados e opção de sair. Evitar promessa de anonimato absoluto sem conferir infraestrutura e logs. Participação não interfere em nota, benefício ou tratamento.
-3. **Resposta:** uma pergunta por tela em celular, mantendo a sequência 1–29 e contexto do fator/domínio. Mostrar “Pergunta X de 29”, cinco opções completas, “Voltar” e “Continuar”. Não avançar automaticamente ao selecionar nem usar cores para induzir respostas.
+3. **Resposta:** uma pergunta por tela em celular, mantendo a sequência 1–29 e contexto do fator/domínio. Mostrar “Pergunta X de 29”, cinco opções completas e “Voltar”, sem exigir CTA “Continuar”. Avançar automaticamente após toque/clique em uma alternativa, com breve feedback visual; manter “Voltar”, revisão final e confirmação explícita da conclusão. No teclado, preservar as setas para escolher e usar Enter/espaço para confirmar. Não usar cores para induzir respostas.
 4. **Revisão:** resumo das respostas e link para editar cada item, preservando o estado em memória. Exibir pendências e confirmar a conclusão.
 5. **Processamento:** uma única requisição ativa, botão protegido contra duplo clique, mensagem acessível e recuperação de erro com respostas preservadas na memória da página.
 6. **Resultado:** global de 0 a 100, três fatores e nove domínios de 0 a 4, metodologia e limitações, ações “Baixar meu PDF”, “Compartilhar PDF” quando disponível e “Encerrar”.
@@ -273,7 +273,7 @@ Na revisão, use apenas QR de prévia claramente identificado. Só entregue peç
 
 Por padrão, mantenha respostas e resultado apenas na memória necessária à sessão e ao PDF baixado pelo próprio participante. Não use `localStorage`, URL, analytics ou logs para armazenar respostas. Não solicite identificação, login ou cadastro.
 
-O servidor processa as respostas sem gravar respostas ou pontuações. Avalie também integrações globais do app para impedir exposição por captura de erros, logs, cache persistente, replay de sessão ou ferramentas de analytics. Evite cache de respostas do endpoint. Não registre corpo de requisição em erros e não envie respostas ou resultados a IA.
+O dispositivo processa as respostas sem transmiti-las ou gravar respostas/pontuações em banco. Avalie também integrações globais do app para impedir exposição por captura de erros, logs, cache persistente, replay de sessão ou ferramentas de analytics. Evite cache de respostas do endpoint. Não registre corpo de requisição em erros e não envie respostas ou resultados a IA.
 
 Informe a diferença entre não coletar identificadores no formulário e os registros operacionais que a infraestrutura pode manter. Não prometa anonimato absoluto ou ausência total de logs sem evidência. Configure minimização e retenção coerentes com o aviso de privacidade.
 
@@ -287,7 +287,7 @@ Painel coletivo, armazenamento ou relatório agregado do evento não fazem parte
 
 1. Confira estado do repositório e instruções; apresente arquitetura, branch, plano e decisão ToT antes de editar. Use uma branch de trabalho baseada na `main` vigente quando disponível, preservando alterações locais.
 2. Implemente a matriz FIB-A e os contratos próprios; confira fidelidade dos 29 textos e mapeamentos. Registre a substituição autorizada da fórmula global do anexo pelo método do app.
-3. Implemente cálculo e validação server-side próprios, isolados dos dados, endpoints e credenciais ISG. Inclua uma demonstração com dados sintéticos e identificada como tal; não preencha respostas sintéticas no formulário real.
+3. Implemente o cálculo local pelo módulo puro compartilhado, com manifesto `client_local` e validação completa, sem depender de endpoint externo. Preserve qualquer endpoint opcional separado e as credenciais/dados ISG. Inclua uma demonstração com dados sintéticos e identificada como tal; não preencha respostas sintéticas no formulário real.
 4. Desenvolva o fluxo mobile, revisão, estados de erro, encerramento e resultado.
 5. Implemente o PDF e o QR de prévia. Faça revisão visual com cenários sintéticos.
 6. Execute verificações proporcionais, build, validação de tipos e testes relevantes. Corrija os problemas introduzidos e diferencie falhas preexistentes. Não use produção ou participantes reais como massa de teste.
