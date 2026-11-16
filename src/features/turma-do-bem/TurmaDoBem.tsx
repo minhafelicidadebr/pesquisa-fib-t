@@ -4,6 +4,7 @@ import { ArrowDownToLine, ArrowRight, BookOpen, Check, ChevronLeft, Copy, Heart,
 import { FIBA_DOMAINS, FIBA_ITEMS, FIBA_LIKERT, FIBA_VERSION, scoreFiba, type FibaResult } from "@/domain/fiba";
 import { submitFibaAnswers } from "@/lib/fibaResult";
 import { FIBA_FORMAT as fmt, FIBA_METHOD_NOTE, FIBA_ROUTE } from "./content";
+import { buildFibaNarrative, fibaCalculationOriginLabel } from "./narrative";
 import "./turma-do-bem.css";
 
 type Step = "welcome" | "participation" | "question" | "review" | "result";
@@ -30,6 +31,7 @@ export default function TurmaDoBem() {
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [consent, setConsent] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [advancing, setAdvancing] = useState(false);
   const [result, setResult] = useState<FibaResult | null>(null);
   const [demo, setDemo] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -42,9 +44,12 @@ export default function TurmaDoBem() {
   const [qrError, setQrError] = useState("");
   const heading = useRef<HTMLHeadingElement>(null);
   const inFlight = useRef(false);
+  const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const arrowNavigation = useRef(false);
   const pdfCache = useRef<Blob | null>(null);
   const item = FIBA_ITEMS[index];
   const count = Object.keys(answers).length;
+  const narrative = result ? buildFibaNarrative(result) : null;
   const url = `${window.location.origin}${FIBA_ROUTE}`;
   const active = ["question", "review"].includes(step) && count > 0;
 
@@ -74,6 +79,10 @@ export default function TurmaDoBem() {
     }).catch(() => { if (!cancelled) setQrError("Não foi possível gerar o QR Code. Você pode copiar o link abaixo."); });
     return () => { cancelled = true; };
   }, [qrOpen, qr.png, url]);
+
+  useEffect(() => () => {
+    if (advanceTimer.current !== null) clearTimeout(advanceTimer.current);
+  }, []);
 
   function reset() {
     setAnswers({}); setConsent(false); setResult(null); setDemo(false); setIndex(0);
@@ -121,11 +130,25 @@ export default function TurmaDoBem() {
     } catch { setError("Não foi possível preparar o PDF. Seu resultado continua disponível nesta página. Tente novamente."); }
     finally { setPdfBusy(false); }
   }
-  function next() {
-    if (answers[item.id] === undefined) { setError("Escolha uma das cinco respostas para continuar."); return; }
-    if (editing || index === 28) { setEditing(false); setStep("review"); } else setIndex(index + 1);
+  function recordAnswer(value: number) {
+    setAnswers(prev => ({ ...prev, [item.id]: value }));
+    setError("");
   }
-  const endButton = <button className="tdb-text-button" disabled={busy || pdfBusy} onClick={() => active ? setExitOpen(true) : reset()}>{step === "result" ? "Encerrar" : "Sair"}<X size={16} /></button>;
+  function selectAndAdvance(value: number) {
+    if (advanceTimer.current !== null) return;
+    recordAnswer(value);
+    setAdvancing(true);
+    // Brief selected-state feedback; lock selection until the transition completes.
+    advanceTimer.current = setTimeout(() => {
+      advanceTimer.current = null;
+      setAdvancing(false);
+      if (editing || index === FIBA_ITEMS.length - 1) {
+        setEditing(false);
+        setStep("review");
+      } else setIndex(index + 1);
+    }, 200);
+  }
+  const endButton = <button className="tdb-text-button" disabled={busy || pdfBusy || advancing} onClick={() => active ? setExitOpen(true) : reset()}>{step === "result" ? "Encerrar" : "Sair"}<X size={16} /></button>;
 
   return <div className="tdb-root">
     <a className="tdb-skip" href="#tdb-content">Ir para o conteúdo</a>
@@ -168,7 +191,7 @@ export default function TurmaDoBem() {
         <p className="tdb-lead">Não existem respostas certas ou erradas. Escolha a alternativa que melhor representa sua realidade.</p>
         <div className="tdb-info-grid">
           <article><Heart size={22} /><h2>Sua escolha, sempre</h2><p>A participação é voluntária. Você pode sair a qualquer momento, sem relação com notas, benefícios ou tratamentos.</p></article>
-          <article><ShieldCheck size={22} /><h2>Sem identificação no formulário</h2><p>Não pedimos nome, e-mail ou matrícula. As respostas são processadas para gerar seu resultado, sem gravação no banco desta pesquisa. A infraestrutura pode manter registros técnicos de acesso.</p></article>
+          <article><ShieldCheck size={22} /><h2>Sem identificação no formulário</h2><p>Não pedimos nome, e-mail ou matrícula. As respostas são calculadas neste dispositivo para gerar seu resultado, sem envio a um serviço de cálculo ou gravação no banco desta pesquisa. A infraestrutura pode manter registros técnicos de acesso à página.</p></article>
           <article><BookOpen size={22} /><h2>Pense na sua instituição</h2><p>Quando uma pergunta mencionar “escola”, considere a instituição de ensino em que você estuda. Essas perguntas não avaliam o evento ou a Turma do Bem.</p></article>
           <article><Leaf size={22} /><h2>Uma leitura descritiva</h2><p>São 29 perguntas, com respostas de 0 a 4. Seu resultado global vai de 0 a 100 e serve à reflexão, sem diagnóstico ou classificação clínica.</p></article>
         </div>
@@ -177,23 +200,34 @@ export default function TurmaDoBem() {
         <div className="tdb-actions"><button className="tdb-text-button" onClick={() => setStep("welcome")}><ChevronLeft size={17} />Voltar</button><button className="tdb-button" disabled={!consent} onClick={() => { setIndex(0); setStep("question"); }}>Ir para as perguntas<ArrowRight size={18} /></button></div>
       </section>}
 
-      {step === "question" && <section className="tdb-flow tdb-question-card">
+      {step === "question" && <section className="tdb-flow tdb-question-card" aria-busy={advancing}>
         <div className="tdb-progress-meta"><span>Pergunta {index + 1} de 29</span><span>{count} respondida{count === 1 ? "" : "s"}</span></div>
         <div className="tdb-progress" role="progressbar" aria-valuemin={0} aria-valuemax={29} aria-valuenow={count} aria-label="Perguntas respondidas"><span style={{ width: `${count / 29 * 100}%` }} /></div>
         <p className="tdb-eyebrow">FATOR {item.factor} · {FIBA_DOMAINS[item.domain]}</p>
         <h1 ref={heading} tabIndex={-1} className="tdb-question-title">{item.text}</h1>
-        <fieldset className="tdb-options"><legend>Quanto você concorda com esta afirmação?</legend>
-          {FIBA_LIKERT.map((label, value) => <label key={`${item.id}-${value}`} className={`tdb-option ${answers[item.id] === value ? "tdb-selected" : ""}`}><input type="radio" name={`item-${item.id}`} value={value} checked={answers[item.id] === value} onChange={() => { setAnswers(prev => ({ ...prev, [item.id]: value })); setError(""); }} /><span className="tdb-option-value" aria-hidden="true">{value}</span><span>{label}</span><span className="tdb-option-check" aria-hidden="true">{answers[item.id] === value && <Check size={16} />}</span></label>)}
+        <p id="tdb-answer-help" className="tdb-small tdb-answer-help">Ao tocar em uma resposta, você avança automaticamente. Pelo teclado, use as setas para escolher e Enter ou espaço para confirmar.</p>
+        <fieldset className="tdb-options" aria-describedby="tdb-answer-help"><legend>Quanto você concorda com esta afirmação?</legend>
+          {FIBA_LIKERT.map((label, value) => <label key={`${item.id}-${value}`} className={`tdb-option ${answers[item.id] === value ? "tdb-selected" : ""}`}><input type="radio" name={`item-${item.id}`} value={value} checked={answers[item.id] === value} disabled={advancing}
+            onChange={() => { if (arrowNavigation.current) recordAnswer(value); }}
+            onPointerDown={() => { arrowNavigation.current = false; }}
+            onKeyDown={event => {
+              arrowNavigation.current = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key);
+              if (event.key === "Enter") { event.preventDefault(); selectAndAdvance(value); }
+            }}
+            onKeyUp={() => { arrowNavigation.current = false; }}
+            onClick={event => {
+              if (!arrowNavigation.current && event.detail <= 1) selectAndAdvance(value);
+            }} /><span className="tdb-option-value" aria-hidden="true">{value}</span><span>{label}</span><span className="tdb-option-check" aria-hidden="true">{answers[item.id] === value && <Check size={16} />}</span></label>)}
         </fieldset>
         {error && <p className="tdb-error" role="alert">{error}</p>}
-        <div className="tdb-actions"><button className="tdb-text-button" onClick={() => editing ? (setEditing(false), setStep("review")) : index ? setIndex(index - 1) : setStep("participation")}><ChevronLeft size={17} />{editing ? "Voltar à revisão" : "Voltar"}</button><button className="tdb-button" onClick={next}>{editing ? "Salvar resposta" : index === 28 ? "Revisar respostas" : "Continuar"}<ArrowRight size={18} /></button></div>
+        <div className="tdb-actions"><button className="tdb-text-button" disabled={advancing} onClick={() => editing ? (setEditing(false), setStep("review")) : index ? setIndex(index - 1) : setStep("participation")}><ChevronLeft size={17} />{editing ? "Voltar à revisão" : "Voltar"}</button><p className="tdb-small" role="status">{advancing ? "Resposta selecionada…" : editing ? "Escolha para voltar à revisão." : index === 28 ? "Depois desta resposta, você poderá revisar." : "Sua escolha leva à próxima pergunta."}</p></div>
       </section>}
 
       {step === "review" && <section className="tdb-flow tdb-review-card" aria-busy={busy}>
         <p className="tdb-eyebrow">QUASE LÁ · {count} DE 29 RESPONDIDAS</p><h1 ref={heading} tabIndex={-1}>Um último olhar.</h1><p className="tdb-lead">Confira suas respostas. Você pode ajustar qualquer uma antes de gerar seu resultado.</p>
         <div className="tdb-review-list">{FIBA_ITEMS.map((q, i) => <article key={q.id}><span className="tdb-review-n">{String(q.id).padStart(2, "0")}</span><div><p>{q.text}</p><strong>{answers[q.id] === undefined ? "Ainda não respondida" : `${answers[q.id]} · ${FIBA_LIKERT[answers[q.id]]}`}</strong></div><button disabled={busy} className="tdb-text-button" aria-label={`Editar resposta da pergunta ${q.id}`} onClick={() => { setIndex(i); setEditing(true); setStep("question"); }}>Editar</button></article>)}</div>
         {error && <p role="alert" className="tdb-error">{error}</p>}
-        <div className="tdb-review-submit"><p className="tdb-small">Ao concluir, as 29 respostas serão processadas para gerar seu relatório individual.</p><button className="tdb-button" disabled={count !== 29 || busy} onClick={submit}>{busy ? <><LoaderCircle className="tdb-spin" size={19} />Preparando seu resultado…</> : <>Confirmar e ver meu resultado<ArrowRight size={18} /></>}</button></div>
+        <div className="tdb-review-submit"><p className="tdb-small">Ao concluir, seu resultado e relatório serão preparados neste dispositivo, sem enviar suas respostas a um serviço de cálculo.</p><button className="tdb-button" disabled={count !== 29 || busy} onClick={submit}>{busy ? <><LoaderCircle className="tdb-spin" size={19} />Preparando seu resultado…</> : <>Confirmar e ver meu resultado<ArrowRight size={18} /></>}</button></div>
       </section>}
 
       {step === "result" && result && <section className="tdb-result-content">
@@ -201,10 +235,11 @@ export default function TurmaDoBem() {
         <div className="tdb-result-heading"><div><p className="tdb-eyebrow">FIB-A · SUA LEITURA INDIVIDUAL</p><h1 ref={heading} tabIndex={-1}>Um olhar para<br /><em>o seu momento.</em></h1><p>Uma fotografia das suas respostas, para refletir com calma.</p></div><div className="tdb-download-actions"><button className="tdb-button" disabled={pdfBusy} onClick={() => pdf()}>{pdfBusy ? <LoaderCircle size={18} className="tdb-spin" /> : <ArrowDownToLine size={18} />}Baixar meu PDF</button><button className="tdb-button tdb-button-secondary" disabled={pdfBusy} onClick={() => pdf(true)}><Share2 size={17} />Compartilhar PDF</button></div></div>
         <div aria-live="polite">{message && <p className="tdb-success">{message}</p>}</div>{error && <p role="alert" className="tdb-error">{error}</p>}
         <div className="tdb-result-overview"><div className="tdb-score-panel"><p className="tdb-label">RESULTADO GLOBAL</p><div className="tdb-score-ring"><svg viewBox="0 0 180 180" aria-hidden="true"><circle cx="90" cy="90" r="76" /><circle cx="90" cy="90" r="76" strokeDasharray={`${result.globalScore / 100 * 477.52} 477.52`} /></svg><div><strong>{fmt(result.globalScore, 1)}</strong><span>de 100</span></div></div><p>Leitura descritiva das suas respostas.<br />Sem classificação clínica.</p></div><div className="tdb-factors"><p className="tdb-eyebrow">TRÊS PERSPECTIVAS DA SUA EXPERIÊNCIA</p>{Object.entries(result.factors).map(([key, cell]) => <article key={key}><div><span>0{key} · {cell.itemCount} perguntas</span><h2>{cell.label}</h2></div><strong>{fmt(cell.score)}<small> de 4</small></strong><div className="tdb-meter" aria-hidden="true"><span style={{ width: `${cell.score / 4 * 100}%` }} /></div></article>)}</div></div>
+        {narrative && <section className="tdb-narrative" aria-labelledby="tdb-narrative-title"><p className="tdb-eyebrow">SUA LEITURA, EM PALAVRAS</p><h2 id="tdb-narrative-title">O que aparece nas suas respostas.</h2><p>{narrative.summary}</p><p>{narrative.domainPerspective}</p></section>}
         <div className="tdb-section-heading"><div><p className="tdb-eyebrow">SEU RESULTADO EM DETALHES</p><h2>Nove domínios.<br />Um olhar mais amplo.</h2></div><p>Cada valor é a média das respostas daquele domínio, na escala de 0 a 4.</p></div>
         <div className="tdb-domain-grid">{Object.entries(result.domains).map(([key, cell], i) => <article key={key}><span className="tdb-domain-n">{String(i + 1).padStart(2, "0")}</span><h3>{cell.label}</h3><strong>{fmt(cell.score)}<small> de 4</small></strong><div className="tdb-meter" aria-hidden="true"><span style={{ width: `${cell.score / 4 * 100}%` }} /></div><p>{cell.itemCount} perguntas · média das respostas</p></article>)}</div>
-        <div className="tdb-reflection"><Leaf size={28} /><div><p className="tdb-eyebrow">PARA LEVAR COM VOCÊ</p><h2>O que suas respostas<br />convidam você a perceber?</h2><p>O que já faz sentido na sua rotina? Sobre o que você gostaria de refletir com mais calma? Guarde seu relatório e volte a essas perguntas quando quiser.</p></div></div>
-        <details className="tdb-method-details"><summary>Como este resultado foi calculado</summary><p>{FIBA_METHOD_NOTE}</p><p>Os três fatores usam a média de seus próprios itens (9, 15 e 5). Os nove domínios têm o mesmo peso no global; suas médias são arredondadas para duas casas antes da normalização. O global é arredondado para uma casa. A governança se refere à instituição de ensino, e não ao evento.</p><p>Fonte: formulário “FIB - Alunos - Formulario Inspirado no FIB-T - 2026”. Instrumento FIB-A {FIBA_VERSION}. {demo ? "Prévia local com dados sintéticos." : `Concluído em ${new Date(result.completedAt).toLocaleDateString("pt-BR")}. Cálculo realizado no servidor.`}</p></details>
+        <div className="tdb-reflection"><Leaf size={28} /><div><p className="tdb-eyebrow">PARA LEVAR COM VOCÊ</p><h2>O que suas respostas<br />convidam você a perceber?</h2><ol className="tdb-reflection-questions">{narrative?.reflectionQuestions.map(question => <li key={question}>{question}</li>)}</ol></div></div>
+        <details className="tdb-method-details"><summary>Como este resultado foi calculado</summary><p>{FIBA_METHOD_NOTE}</p><p>Os três fatores usam a média de seus próprios itens (9, 15 e 5). Os nove domínios têm o mesmo peso no global; suas médias são arredondadas para duas casas antes da normalização. O global é arredondado para uma casa. A governança se refere à instituição de ensino, e não ao evento.</p><p>Fonte: formulário “FIB - Alunos - Formulario Inspirado no FIB-T - 2026”. Instrumento FIB-A {FIBA_VERSION}. {demo ? "Prévia local com dados sintéticos." : `Concluído em ${new Date(result.completedAt).toLocaleDateString("pt-BR")}. ${fibaCalculationOriginLabel(result.manifest.calculated_by)}.`}</p></details>
         <div className="tdb-result-end"><p>Seu resultado fica disponível apenas nesta sessão.<br />Baixe o PDF antes de encerrar.</p>{demo ? <button className="tdb-button" onClick={() => { reset(); setStep("participation"); }}>Responder o questionário<ArrowRight size={18} /></button> : <button className="tdb-button tdb-button-secondary" disabled={pdfBusy} onClick={reset}>Encerrar e limpar minha sessão<Check size={18} /></button>}</div>
       </section>}
     </main>

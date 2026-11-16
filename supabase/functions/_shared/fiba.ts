@@ -207,7 +207,7 @@ export interface FibaManifest {
   instrument_id: typeof FIBA_ID; instrument_version: string; scoring_engine_version: string;
   item_map_hash: string; item_content_hash: string; source_hash: string;
   item_count: 29; scale: "0-4"; missing_data_policy: "fail_closed"; rounding_policy: string;
-  calculated_by: "server" | "client_preview";
+  calculated_by: "server" | "client_local" | "client_preview";
 }
 export interface FibaResult {
   globalScore: number; factors: Record<string, FibaCell>; domains: Record<FibaDomain, FibaCell>;
@@ -250,14 +250,15 @@ export function scoreFiba(input: unknown, calculatedBy: FibaManifest["calculated
   };
   return { globalScore, domains, factors, manifest };
 }
-export function isCanonicalFiba(value: unknown): value is FibaResult {
+/** Valid participant result. A preview is never accepted as a participant report. */
+export function isReportableFiba(value: unknown): value is FibaResult {
   if (!value || typeof value !== "object") return false;
   const r = value as FibaResult;
   const m = r.manifest;
   if (!m || m.instrument_id !== FIBA_ID || m.instrument_version !== FIBA_VERSION ||
       m.scoring_engine_version !== FIBA_ENGINE_VERSION || m.item_map_hash !== FIBA_MAP_HASH ||
       m.item_content_hash !== FIBA_CONTENT_HASH || m.source_hash !== FIBA_SOURCE_HASH ||
-      m.calculated_by !== "server" || m.item_count !== 29 || m.scale !== "0-4" ||
+      !["server", "client_local"].includes(m.calculated_by) || m.item_count !== 29 || m.scale !== "0-4" ||
       m.missing_data_policy !== "fail_closed" || m.rounding_policy !== FIBA_ROUNDING ||
       !Number.isFinite(r.globalScore) || r.globalScore < 0 || r.globalScore > 100 ||
       typeof r.completedAt !== "string" || !Number.isFinite(Date.parse(r.completedAt))) return false;
@@ -268,4 +269,9 @@ export function isCanonicalFiba(value: unknown): value is FibaResult {
       return c && c.label === label && c.max === 4 && c.itemCount === count && Number.isFinite(c.score) && c.score >= 0 && c.score <= 4;
     });
   return !!validCells(r.domains, FIBA_DOMAINS, false) && !!validCells(r.factors, FIBA_FACTORS, true);
+}
+
+/** Server-only check retained for the optional stateless endpoint and its callers. */
+export function isCanonicalFiba(value: unknown): value is FibaResult {
+  return isReportableFiba(value) && value.manifest.calculated_by === "server";
 }

@@ -1,5 +1,4 @@
 import { expect, test } from "@playwright/test";
-import { scoreFiba } from "../supabase/functions/_shared/fiba";
 
 for (const width of [320, 360, 390, 768, 1366]) {
   test(`landing and question have no horizontal overflow at ${width}px`, async ({ page }) => {
@@ -12,27 +11,68 @@ for (const width of [320, 360, 390, 768, 1366]) {
     await page.getByRole("button", { name: "Ir para as perguntas" }).click();
     await expect(page.getByRole("radio")).toHaveCount(5);
     await expect(page.getByRole("radio", { checked: true })).toHaveCount(0);
-    await page.getByRole("button", { name: "Continuar", exact: true }).click();
-    await expect(page.getByRole("alert")).toContainText("Escolha");
-    await page.getByRole("radio", { name: "Discordo totalmente", exact: true }).check();
-    await page.getByRole("button", { name: "Continuar", exact: true }).click();
+    await expect(page.getByRole("button", { name: "Continuar", exact: true })).toHaveCount(0);
+    await expect(page.getByText(/Ao tocar em uma resposta, você avança automaticamente/)).toBeVisible();
+    await page.getByRole("radio", { name: "Discordo totalmente", exact: true }).click();
     await expect(page.getByText("Pergunta 2 de 29", { exact: true })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.screenshot({ path: `/tmp/fiba-question-${width}.png`, fullPage: true });
   });
 }
 
-test("mobile complete flow with synthetic server contract, revision, retry and PDF", async ({ page }) => {
+test("going back preserves the response and reselecting it advances exactly once", async ({ page }) => {
+  await page.goto("/turma-do-bem/fib-a");
+  await page.getByRole("button", { name: "Começar minha reflexão" }).click();
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", { name: "Ir para as perguntas" }).click();
+  await page.getByRole("radio", { name: "Discordo totalmente", exact: true }).click();
+  await expect(page.getByText("Pergunta 2 de 29", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Voltar", exact: true }).click();
+  await expect(page.getByRole("radio", { checked: true })).toHaveValue("0");
+  await page.getByRole("radio", { name: "Discordo totalmente", exact: true }).click();
+  await expect(page.getByText("Pergunta 2 de 29", { exact: true })).toBeVisible();
+  await expect(page.getByRole("radio", { checked: true })).toHaveCount(0);
+  await expect(page.getByRole("heading", { level: 1 })).toBeFocused();
+});
+
+test("keyboard arrows explore choices, while Enter and space confirm and advance", async ({ page }) => {
+  await page.goto("/turma-do-bem/fib-a");
+  await page.getByRole("button", { name: "Começar minha reflexão" }).click();
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", { name: "Ir para as perguntas" }).click();
+  await page.getByRole("radio").first().focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(page.getByRole("radio", { checked: true })).toHaveValue("1");
+  // Wait longer than the transition to prove an arrow does not start it.
+  await page.waitForTimeout(350);
+  await expect(page.getByText("Pergunta 1 de 29", { exact: true })).toBeVisible();
+  await page.keyboard.press("Enter");
+  await expect(page.getByText("Pergunta 2 de 29", { exact: true })).toBeVisible();
+  await page.getByRole("radio").nth(2).focus();
+  await page.keyboard.press("Space");
+  await expect(page.getByText("Pergunta 3 de 29", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toBeFocused();
+});
+
+test("a rapid double click records only one answer and does not skip a question", async ({ page }) => {
+  await page.goto("/turma-do-bem/fib-a");
+  await page.getByRole("button", { name: "Começar minha reflexão" }).click();
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", { name: "Ir para as perguntas" }).click();
+  await page.getByRole("radio", { name: "Concordo totalmente", exact: true }).dblclick({ delay: 30 });
+  await expect(page.getByText("Pergunta 2 de 29", { exact: true })).toBeVisible();
+  await page.waitForTimeout(350);
+  await expect(page.getByText("Pergunta 2 de 29", { exact: true })).toBeVisible();
+  await expect(page.getByText("1 respondida", { exact: true })).toBeVisible();
+  await expect(page.getByRole("radio", { checked: true })).toHaveCount(0);
+});
+
+test("mobile complete flow computes the result and PDF locally after explicit review", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  let calls = 0;
+  let scoringRequests = 0;
   await page.route("**/functions/v1/fiba-student-score", async route => {
-    calls++;
-    const req = route.request();
-    expect(req.headers()["authorization"]).toBeUndefined();
-    const body = req.postDataJSON();
-    expect(body.answers).toHaveLength(29); expect(body.instrumentId).toBe("FIB-A");
-    if (calls === 1) { await route.fulfill({ status: 503, body: "unavailable" }); return; }
-    await route.fulfill({ json: { ...scoreFiba(body.answers, "server"), completedAt: "2026-11-16T12:00:00Z" } });
+    scoringRequests++;
+    await route.abort("failed");
   });
   await page.goto("/turma-do-bem/fib-a");
   await page.getByRole("button", { name: "Começar minha reflexão" }).click();
@@ -40,19 +80,24 @@ test("mobile complete flow with synthetic server contract, revision, retry and P
   await page.getByRole("button", { name: "Ir para as perguntas" }).click();
   for (let i = 1; i <= 29; i++) {
     await expect(page.getByText(`Pergunta ${i} de 29`, { exact: true })).toBeVisible();
-    await page.getByRole("radio", { name: /Não concordo e nem discordo/ }).check();
-    await page.getByRole("button", { name: i === 29 ? "Revisar respostas" : "Continuar", exact: true }).click();
+    await page.getByRole("radio", { name: /Não concordo e nem discordo/ }).click();
   }
   await expect(page.getByRole("heading", { name: "Um último olhar." })).toBeVisible();
   await page.getByRole("button", { name: "Editar resposta da pergunta 14", exact: true }).click();
   await expect(page.getByRole("radio", { checked: true })).toHaveValue("2");
-  await page.getByRole("button", { name: "Salvar resposta" }).click();
-  await page.getByRole("button", { name: "Confirmar e ver meu resultado" }).click();
-  await expect(page.getByRole("alert")).toContainText("Suas respostas continuam");
+  // Clicking the already selected option also confirms and returns to review.
+  await page.getByRole("radio", { name: /Não concordo e nem discordo/ }).click();
+  await expect(page.getByRole("heading", { name: "Um último olhar." })).toBeVisible();
+  // Choosing the 29th answer and editing do not submit or display a result.
+  await expect(page.getByRole("button", { name: "Baixar meu PDF" })).toHaveCount(0);
+  expect(scoringRequests).toBe(0);
   await page.getByRole("button", { name: "Confirmar e ver meu resultado" }).click();
   await expect(page.locator(".tdb-score-ring strong")).toHaveText("50,0");
+  expect(scoringRequests).toBe(0);
   await expect(page.locator(".tdb-domain-grid article")).toHaveCount(9);
   await expect(page.locator(".tdb-demo-banner")).toHaveCount(0);
+  await page.getByText("Como este resultado foi calculado", { exact: true }).click();
+  await expect(page.locator(".tdb-method-details")).toContainText("Cálculo neste dispositivo");
   const download = page.waitForEvent("download");
   await page.getByRole("button", { name: "Baixar meu PDF" }).click();
   const pdf = await download; expect(pdf.suggestedFilename()).toBe("relatorio-fib-a-turma-do-bem.pdf");

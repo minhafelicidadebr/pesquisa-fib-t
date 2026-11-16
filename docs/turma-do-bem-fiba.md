@@ -1,62 +1,67 @@
 # FIB-A · Turma do Bem
 
-## Entrega
+## Entrega atual
 
-Módulo independente na rota `/turma-do-bem/fib-a`, com 29 perguntas para estudantes, revisão de respostas, resultado individual, demonstração sintética, PDF A4 de três páginas e QR Code SVG/PNG. Tema visual provisório próprio, sem ativos oficiais inventados ou identidade ISG.
+Módulo independente em `/turma-do-bem/fib-a`, com os 29 itens do formulário de alunos, avanço automático por resposta, revisão final, cálculo individual no dispositivo, narrativa descritiva, PDF A4 de três páginas e QR Code SVG/PNG. Tema visual próprio e provisório, sem ativos oficiais inventados ou identidade ISG.
+
+## Diagnóstico e correção da conclusão
+
+Na verificação da publicação em 16/11/2026, a página respondeu HTTP 200, mas o backend indicado pelo bundle público (`tsmwtniqrxpsmstcipky.supabase.co`) retornou HTTP 404 em GET e OPTIONS para `/functions/v1/fiba-student-score`, com `Requested function was not found`. A função de cálculo requerida pela primeira implementação não estava disponível. O frontend antigo traduzia a falha em uma mensagem genérica, impedindo resultado e PDF.
+
+A correção retira essa dependência da jornada individual. `src/lib/fibaResult.ts` usa diretamente o **mesmo módulo puro** `supabase/functions/_shared/fiba.ts`, também reexportado por `src/domain/fiba/index.ts`. Não duplica fórmula, não altera perguntas, pesos ou arredondamento e não envia as respostas à rede. A função Supabase continua disponível no repositório para uso opcional; sua implantação não é necessária para este fluxo.
+
+A origem real do resultado é identificada no manifesto como `client_local`. `server` continua sendo exclusivo de resultados do servidor e `client_preview` identifica apenas a demonstração sintética. `isReportableFiba` aceita relatórios completos e válidos de origem local ou servidor; `isCanonicalFiba` permanece restrito ao servidor. O PDF e a interface informam a origem correta. Nenhum resultado de participante é apresentado como confirmado por um servidor.
 
 ## Decisão ToT e fontes
 
 | Alternativa | Decisão e evidência |
 | --- | --- |
-| Alterar a matriz/rotas ISG existentes | Rejeitada. A FIB-T ocupacional tem 32 itens; seu fluxo possui autenticação, IA e persistência próprias. |
-| Somar médias dos três fatores como sugerido no anexo | Substituída pela instrução posterior do solicitante: preservar o método computacional do app. |
-| Novo instrumento FIB-A e novo endpoint com o cálculo do app | Implementada. Matriz separada, regra de cálculo preservada e compartilhamento do mesmo módulo puro entre web e servidor. |
+| Alterar a matriz/rotas ISG existentes | Rejeitada. A FIB-T ocupacional possui 32 itens e fluxo próprio. |
+| Usar a soma das médias dos fatores sugerida no anexo | Substituída pela instrução expressa de preservar o método computacional do app. |
+| Exigir o endpoint indisponível para um relatório individual sem armazenamento | Substituída após o erro HTTP 404 confirmado. Não há dado compartilhado que exija essa ida à rede. |
+| Cálculo local com o mesmo módulo puro, versão e matriz FIB-A | Implementado. Elimina a dependência de deploy e preserva a metodologia computacional, com identificação honesta da origem. |
 
-Fonte dos textos: `FIB - Alunos - Formulario Inspirado no FIB-T - 2026 .md`, SHA-256 `4978e3992af3d8a4ea605f71637dc719150f0d68b66436376e1087f8b05cc637`. Os 29 textos foram conferidos integralmente com o anexo. O link privado NotebookLM e o PDF confidencial ISG não fazem parte da entrega.
+Fonte dos textos: `FIB - Alunos - Formulario Inspirado no FIB-T - 2026 .md`, SHA-256 `4978e3992af3d8a4ea605f71637dc719150f0d68b66436376e1087f8b05cc637`. Os 29 textos foram conferidos integralmente. O link privado NotebookLM e o PDF confidencial ISG não integram a entrega.
 
-FIB-A versão técnica `0.1.0`, motor `1.0.0`. A versão identifica a adaptação de software, sem afirmar validade psicométrica ou comparabilidade com a FIB-T ocupacional.
+FIB-A versão técnica `0.1.0`, cálculo `1.0.0`. Essas versões identificam o software e não certificam validação psicométrica ou comparabilidade com a FIB-T ocupacional.
 
-## Cálculo
+## Método preservado
 
-- Respostas inteiras 0–4, sem pré-seleção ou itens invertidos; exatamente 29 IDs distintos e válidos.
-- Nove domínios: médias de seus itens, com duas casas decimais.
-- Três fatores: médias dos próprios itens; quantidades 9, 15 e 5, com duas casas.
-- Global: média dos nove domínios já arredondados, normalizados por 4, multiplicada por 100 e arredondada para uma casa. Não é média dos 29 itens nem dos três fatores, soma de médias ou percentual de felicidade.
-- Mesmo arredondamento e ordem de operações da FIB-T do app. Instrumento, textos e matriz têm identificação e hashes próprios no manifesto.
+- Respostas inteiras 0–4; exatamente 29 IDs distintos e válidos; sem pré-seleção, imputação ou itens invertidos.
+- Nove domínios: médias dos próprios itens, com duas casas decimais.
+- Três fatores: médias dos próprios itens, com quantidades 9, 15 e 5; duas casas.
+- Global: média dos nove domínios já arredondados, normalizados por 4, multiplicada por 100 e arredondada para uma casa.
+- Mesmo arredondamento e ordem de operações da FIB-T do app; matriz, conteúdo e versão próprios no manifesto.
+- Não se trata de média dos 29 itens, média/soma dos três fatores, percentil ou percentual de felicidade.
 
-A matriz e as regras ficam em `supabase/functions/_shared/fiba.ts`. O cliente reexporta esse arquivo em `src/domain/fiba/index.ts`. Não há dois motores independentes a manter. O resultado real precisa ter manifesto server-side válido; a demonstração usa `client_preview` e identifica os dados sintéticos na tela, no nome do PDF e em todas as páginas.
+UI e PDF consomem o mesmo objeto de resultado. O gerador de PDF não calcula escores. A demonstração mantém dados sintéticos separados e marcação na tela, no nome do arquivo e nas três páginas.
 
-## Dados e segurança
+## Narrativa e PDF
 
-O frontend mantém respostas e resultado em memória da sessão. Não coleta identificadores, não usa armazenamento persistente e não envia sessão de usuário no pedido de cálculo. PDF e QR são gerados no dispositivo, sem serviços terceiros de geração. As fontes Liberation distribuídas sob SIL OFL são locais e incorporadas no PDF; licença incluída junto dos arquivos.
+`src/features/turma-do-bem/narrative.ts` produz textos determinísticos a partir dos valores já calculados: resumo do global, comparação descritiva dos escores da própria pessoa, empates e perguntas abertas para reflexão. Não cria faixas, diagnóstico, conclusões causais, escore PERMA ou aconselhamento médico. Nos empates, todos os domínios empatados são descritos; a pergunta de reflexão por domínio usa a ordem fixa da fonte para escolher o primeiro dos menores escores.
 
-A nova função `fiba-student-score` não usa banco, service role, autenticação ISG/IFT, IA, chamadas externas ou logs de payload. Valida origem de navegador, método, JSON, instrumento, versão, campos permitidos e tamanho máximo de 8 KiB. Respostas têm `Cache-Control: no-store`.
+PDF com três páginas A4, texto selecionável, fontes Liberation locais incorporadas sob licença SIL OFL e gráficos vetoriais. A capa e a reflexão usam a mesma narrativa da tela. Dados, fonte, versão e origem do cálculo ficam identificados; a identidade ISG não é reutilizada. Download/compartilhamento é iniciado pelo participante. A geração das fontes usa apenas assets estáticos da própria aplicação; não há serviço externo de PDF ou IA.
 
-O endpoint é público por finalidade: calcula respostas de um formulário acessível sem login e não concede acesso a dados armazenados. `verify_jwt = false` aplica-se somente a essa função nova. CORS não é autenticação. A contenção de rajadas é por instância, sem armazenar IP ou identificadores; não constitui um limite distribuído e deve ser monitorada no dimensionamento do evento. A infraestrutura pode manter registros operacionais de acesso; a interface não promete anonimato absoluto.
+## Navegação por resposta
 
-## Publicação no Lovable
+Um toque/clique registra a alternativa e avança após 200 ms de feedback visual. A transição bloqueia novos cliques para evitar saltos. É possível voltar e clicar novamente na alternativa já marcada. Na edição, selecionar retorna à revisão; a pergunta 29 também leva à revisão. A conclusão exige confirmação explícita do participante.
 
-O desenvolvimento partiu da `main` remota `337c801`, na branch `feat/turma-do-bem-fiba`. A autorização do solicitante inclui atualizar o GitHub; ele fará a publicação em sua própria conta Lovable. O projeto histórico `d9387b69-66a4-423a-814e-9744580de58e` retornou 404 no conector desta sessão, e o projeto Supabase do app não está entre os projetos acessíveis pelo conector Supabase desta sessão. Por isso, publicar o frontend e implantar a função não são operações verificadas aqui.
+No teclado, as setas exploram as opções; Enter ou espaço confirma e avança. A interface explica o comportamento e move o foco ao título da próxima pergunta. O temporizador é cancelado ao desmontar a página.
 
-Depois de sincronizar a `main`:
+## Dados e publicação
 
-1. Implantar **somente a função nova `fiba-student-score`**, incluindo seus imports `_shared/fiba.ts` e `_shared/fiba-handler.ts`, com `verify_jwt = false` conforme `supabase/config.toml`. A função não requer nova senha ou secret para funcionar no domínio principal.
-2. Os padrões de CORS incluem `https://pesquisadefelicidade.com.br` e `https://www.pesquisadefelicidade.com.br`. Para outro domínio/preview, configurar `FIBA_ALLOWED_ORIGINS` com a lista completa de origens autorizadas separadas por vírgula; a variável substitui os padrões. Não usar wildcard.
-3. Publicar a versão atual do frontend. Uma publicação somente do frontend não comprova que a função foi implantada.
-4. Abrir `/turma-do-bem/fib-a`, conferir a demonstração e fazer uma submissão sintética completa antes do evento. Conferir PDF, valores e recuperação de erro. Não usar respostas de participantes nessa revisão.
-5. No domínio publicado, usar “Compartilhar acesso” para baixar QR definitivo. O QR usa a origem atual; arquivos gerados em localhost/preview são apenas de revisão.
+Respostas e resultados ficam apenas na memória da sessão e no PDF que o participante decidir baixar. Não há cadastro, persistência, envio das respostas, IA ou compartilhamento com tabelas/credenciais ISG/IFT. A infraestrutura ainda pode registrar o acesso à página; não se promete anonimato operacional absoluto.
 
-Texto breve para o chat Lovable, se a implantação da função não ocorrer pela sincronização:
+Para publicar esta correção, **sincronizar a `main` e publicar o frontend no Lovable**. Esta versão não requer implantar função de cálculo, criar secret ou alterar banco. A conta Lovable conectada à sessão não possui acesso ao projeto histórico; o solicitante fará a publicação na própria conta.
 
-> Sincronize a main do GitHub minhafelicidadebr/pesquisa-fib-t. O módulo Turma do Bem já está implementado em /turma-do-bem/fib-a. Implante apenas a nova Edge Function fiba-student-score com seus imports _shared/fiba.ts e _shared/fiba-handler.ts e verify_jwt=false, conforme o repositório. Não regenere o código, não altere ISG/IFT, tabelas ou secrets. Confira uma submissão sintética com todos os 29 valores iguais a 2: global 50,0 e fatores/domínios 2,00. Depois publique a versão atual.
+Depois da publicação, abrir a rota, concluir com 29 respostas sintéticas iguais a 2 e conferir global 50,0, domínios/fatores 2,00 e download do PDF. Conferir também teclado, edição e avanço automático. Somente no domínio publicado, usar “Compartilhar acesso” para gerar QR definitivo.
 
-Antes da divulgação pública, confirmar os ativos oficiais e as informações institucionais do aviso de participação/privacidade, o público/faixa etária e a referência à instituição de ensino. O design atual não se apresenta como identidade visual oficial da Turma do Bem. Não há painel ou armazenamento agregado do evento nesta entrega.
+Antes da divulgação, confirmar ativos e informações institucionais do aviso de participação/privacidade, público/faixa etária e referência à instituição de ensino. Não há painel nem armazenamento agregado do evento no escopo.
 
-## Verificações locais
+## Verificações
 
-- TypeScript e ESLint dos arquivos novos passaram.
-- 73 testes de domínio e regressão: FIB-A, motor/paridade FIB-T e piloto ISG passaram. O conjunto FIB-A tem 21 testes e foi repetido após os ajustes finais de validação.
-- Sete testes Playwright/Chromium passaram: larguras 320/360/390/768/1366 px, ausência de resposta pré-selecionada, valor zero válido, erro de pergunta incompleta, fluxo com 29 respostas, edição, recuperação de falha, resultado, PDF, encerramento, demonstração e QR. A integração do navegador usa resposta de servidor simulada; o handler foi exercitado diretamente com Request/Response em testes locais.
-- Os dois testes de download foram repetidos após incorporar as fontes ao PDF e passaram.
-- PDF conferido por extração de texto e renderização: três páginas A4, fontes incorporadas, acentos corretos, valores coerentes com a tela e sem ativos ISG. Artefatos de teste têm dados sintéticos e ficam fora do Git.
-- Safari/iOS, dispositivos físicos, leitura do QR por câmera e função em produção ainda precisam de verificação no ambiente de publicação. Não foram acessadas respostas reais.
+**85 testes de domínio, narrativa e regressão passaram**, além de TypeScript, ESLint dos arquivos alterados e build de produção. Os testes automatizados cobrem a matriz e o cálculo FIB-A, a igualdade local/servidor usando o mesmo módulo, rejeição de respostas inválidas e de prévias como relatórios reais, ausência de chamadas à rede no cálculo local, regressões FIB-T/ISG, narrativa e navegação.
+
+**Os dez cenários Chromium passaram**: cinco larguras (320/360/390/768/1366 px), Voltar/reseleção, setas/Enter/espaço, clique duplo, fluxo completo local com edição/confirmação/PDF e demonstração/QR. O resultado local não usa resposta de servidor simulada. Artefatos de revisão são sintéticos e ficam fora do Git.
+
+PDF revisado por extração de texto, incorporação das fontes e renderização de cenários sintéticos, inclusive zeros, máximos, empates e textos extensos. Compatibilidade com Safari/iOS, câmera física e a versão atualizada em produção dependem da publicação e de verificação nos respectivos ambientes. Não foram consultadas respostas reais de participantes.
