@@ -239,13 +239,14 @@ O anexo traz referência genérica à estrutura FIB, sem bibliografia suficiente
 
 Use a organização informativa do PDF individual atual como referência, desenvolvendo uma composição própria FIB-A/Turma do Bem. Não copie as conclusões, narrativas de IA, escalas, marca ou referências da ISG. Não recalcule resultados no PDF.
 
-Planeje três páginas A4, ajustando a paginação se necessário para preservar legibilidade:
+Planeje quatro páginas A4 conforme a atualização institucional autorizada em `superprompt-fiba-pdf-identidade-ift.md`, preservando a legibilidade:
 
 | Página | Conteúdo |
 | --- | --- |
 | 1 — Visão individual | Identificação FIB-A/Turma do Bem, data real da conclusão, global de 0 a 100, explicação breve do caráter descritivo e indicador de demonstração quando aplicável. |
 | 2 — Fatores e domínios | Três fatores de 0 a 4 com contagens 9/15/5, nove domínios de 0 a 4 com rótulos completos e escala clara; gráficos vetoriais simples acompanhados de valores em texto. |
 | 3 — Como ler | Fórmula resumida, identificação da adaptação e versão, fonte, limitações e perguntas gerais para reflexão sem recomendações clínicas ou conclusões causais. |
+| 4 — Continue essa jornada | Identidade Instituto Felicidade para Todos, missão, convite ao estudante, site, contato, endereço, Instagram e logo/link contextual Turma do Bem fornecidos pelo solicitante. |
 
 Não inclua respostas item a item ou dados pessoais no PDF por padrão. Nenhuma página deve atribuir o resultado ao projeto odontológico como medida de sua eficácia. Não acrescente contatos ou identidade institucional que não estejam confirmados.
 
@@ -321,3 +322,8 @@ Acrescente caso de fronteira de arredondamento e paridade web/servidor quando ho
 ### Formato da resposta de entrega
 
 Informe de forma objetiva: decisão ToT e evidências; escopo implementado; arquivos alterados; diferenças metodológicas documentadas; verificações executadas e resultados; prévia/artefatos sintéticos disponíveis; itens a confirmar para a publicação. Avance em todo trabalho independente já autorizado antes de solicitar dados ou aprovação final.
+
+
+## Atualização institucional do relatório
+
+Aplicar as instruções específicas de `superprompt-fiba-pdf-identidade-ift.md`: usar os três logos oficiais fornecidos, com arquivos locais e proporções preservadas, identidade IFT principal e quarta página dedicada ao convite final. Missão, endereço, links e Instagram estão centralizados em `src/features/turma-do-bem/pdfBrand.ts`. Esta autorização atualiza a orientação anterior de identidade provisória sem logos para o PDF, sem alterar a metodologia ou conferir chancela científica ao instrumento.

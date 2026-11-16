@@ -2,7 +2,7 @@
 
 ## Entrega atual
 
-Módulo independente em `/turma-do-bem/fib-a`, com os 29 itens do formulário de alunos, avanço automático por resposta, revisão final, cálculo individual no dispositivo, narrativa descritiva, PDF A4 de três páginas e QR Code SVG/PNG. Tema visual próprio e provisório, sem ativos oficiais inventados ou identidade ISG.
+Módulo independente em `/turma-do-bem/fib-a`, com os 29 itens do formulário de alunos, avanço automático por resposta, revisão final, cálculo individual no dispositivo, narrativa descritiva, PDF A4 de quatro páginas com identidade IFT e QR Code SVG/PNG. A interface da pesquisa mantém seu tema próprio; o relatório usa os logos oficiais fornecidos, sem identidade ISG.
 
 ## Diagnóstico e correção da conclusão
 
@@ -34,13 +34,13 @@ FIB-A versão técnica `0.1.0`, cálculo `1.0.0`. Essas versões identificam o s
 - Mesmo arredondamento e ordem de operações da FIB-T do app; matriz, conteúdo e versão próprios no manifesto.
 - Não se trata de média dos 29 itens, média/soma dos três fatores, percentil ou percentual de felicidade.
 
-UI e PDF consomem o mesmo objeto de resultado. O gerador de PDF não calcula escores. A demonstração mantém dados sintéticos separados e marcação na tela, no nome do arquivo e nas três páginas.
+UI e PDF consomem o mesmo objeto de resultado. O gerador de PDF não calcula escores. A demonstração mantém dados sintéticos separados e marcação na tela, no nome do arquivo e nas quatro páginas.
 
 ## Narrativa e PDF
 
 `src/features/turma-do-bem/narrative.ts` produz textos determinísticos a partir dos valores já calculados: resumo do global, comparação descritiva dos escores da própria pessoa, empates e perguntas abertas para reflexão. Não cria faixas, diagnóstico, conclusões causais, escore PERMA ou aconselhamento médico. Nos empates, todos os domínios empatados são descritos; a pergunta de reflexão por domínio usa a ordem fixa da fonte para escolher o primeiro dos menores escores.
 
-PDF com três páginas A4, texto selecionável, fontes Liberation locais incorporadas sob licença SIL OFL e gráficos vetoriais. A capa e a reflexão usam a mesma narrativa da tela. Dados, fonte, versão e origem do cálculo ficam identificados; a identidade ISG não é reutilizada. Download/compartilhamento é iniciado pelo participante. A geração das fontes usa apenas assets estáticos da própria aplicação; não há serviço externo de PDF ou IA.
+PDF com quatro páginas A4, texto selecionável, fontes Liberation locais incorporadas sob licença SIL OFL e gráficos vetoriais. A capa e a reflexão usam a mesma narrativa da tela. Dados, fonte, versão e origem do cálculo ficam identificados; a identidade ISG não é reutilizada. Download/compartilhamento é iniciado pelo participante. A geração das fontes usa apenas assets estáticos da própria aplicação; não há serviço externo de PDF ou IA.
 
 ## Navegação por resposta
 
@@ -56,7 +56,7 @@ Para publicar esta correção, **sincronizar a `main` e publicar o frontend no L
 
 Depois da publicação, abrir a rota, concluir com 29 respostas sintéticas iguais a 2 e conferir global 50,0, domínios/fatores 2,00 e download do PDF. Conferir também teclado, edição e avanço automático. Somente no domínio publicado, usar “Compartilhar acesso” para gerar QR definitivo.
 
-Antes da divulgação, confirmar ativos e informações institucionais do aviso de participação/privacidade, público/faixa etária e referência à instituição de ensino. Não há painel nem armazenamento agregado do evento no escopo.
+Antes da divulgação, confirmar as informações do aviso de participação/privacidade, público/faixa etária e referência à instituição de ensino. Os logos e conteúdos institucionais do relatório foram fornecidos pelo solicitante nesta atualização. Não há painel nem armazenamento agregado do evento no escopo.
 
 ## Verificações
 
@@ -65,3 +65,17 @@ Antes da divulgação, confirmar ativos e informações institucionais do aviso 
 **Os dez cenários Chromium passaram**: cinco larguras (320/360/390/768/1366 px), Voltar/reseleção, setas/Enter/espaço, clique duplo, fluxo completo local com edição/confirmação/PDF e demonstração/QR. O resultado local não usa resposta de servidor simulada. Artefatos de revisão são sintéticos e ficam fora do Git.
 
 PDF revisado por extração de texto, incorporação das fontes e renderização de cenários sintéticos, inclusive zeros, máximos, empates e textos extensos. Compatibilidade com Safari/iOS, câmera física e a versão atualizada em produção dependem da publicação e de verificação nos respectivos ambientes. Não foram consultadas respostas reais de participantes.
+
+## Identidade institucional do PDF — atualização
+
+O PDF recebe a identidade do Instituto Felicidade para Todos com os logos oficiais fornecidos, a marca contextual Turma do Bem e quatro páginas: resultado/narrativa, fatores/domínios, reflexão/método e encerramento institucional. A quarta página preserva a legibilidade do conteúdo da pesquisa e reúne missão, convite ao aluno, contato, endereço, Instagram e link do projeto Dentista do Bem.
+
+A decisão ToT e as orientações executadas estão em `docs/prompts/superprompt-fiba-pdf-identidade-ift.md`. O conteúdo institucional e os destinos são centralizados em `src/features/turma-do-bem/pdfBrand.ts`; a procedência, dimensões e hashes dos PNGs constam em `src/features/turma-do-bem/assets/README.md`. Os logos originais são distribuídos localmente, preservando transparência e proporções.
+
+A assinatura visual não acrescenta afirmação de parceria formal, chancela científica ou validação do instrumento. A missão/endereço/Instagram e o convite final vêm do texto autorizado pelo solicitante. Links clicáveis do PDF abrem somente os destinos fornecidos, sem respostas ou escores na URL. Cálculo, escala, perguntas, avanço automático e processamento local permanecem conforme as seções anteriores.
+
+### Verificação desta identidade
+
+Sete cenários sintéticos de PDF foram gerados e conferidos independentemente: zeros, respostas neutras, máximos, governança mínima, empate com narrativa longa, fronteira de arredondamento e demonstração. Todos mantiveram quatro páginas A4, escores/contagens, textos completos, fontes incorporadas, proporções dos logos e margens. As quatro URLs foram verificadas nas anotações de link do PDF; a demonstração está marcada em todas as páginas.
+
+Os dois testes Chromium de download (fluxo completo do estudante e demonstração) foram reexecutados e passaram, incluindo a ausência de requests aos sites externos dos logos durante a geração do relatório. TypeScript, ESLint dos arquivos alterados e build passaram. Não foi necessário alterar método, banco, secrets ou endpoints. PDFs sintéticos de revisão ficam no diretório local `private/`, ignorado pelo Git.
