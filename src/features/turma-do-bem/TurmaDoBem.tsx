@@ -5,6 +5,7 @@ import { FIBA_DOMAINS, FIBA_ITEMS, FIBA_LIKERT, FIBA_VERSION, scoreFiba, type Fi
 import { submitFibaAnswers } from "@/lib/fibaResult";
 import { FIBA_FORMAT as fmt, FIBA_METHOD_NOTE, FIBA_ROUTE } from "./content";
 import { buildFibaNarrative, fibaCalculationOriginLabel } from "./narrative";
+import { FibaInstitutionalHeader, FibaInstitutionalFooter } from "./InstitutionalBrand";
 import "./turma-do-bem.css";
 
 type Step = "welcome" | "participation" | "question" | "review" | "result";
@@ -12,16 +13,16 @@ const sampleAnswers = FIBA_ITEMS.map((item, index) => ({ id: item.id, answer: [3
 
 function CareIllustration() {
   return <svg className="tdb-art" viewBox="0 0 440 340" fill="none" aria-hidden="true">
-    <circle cx="227" cy="165" r="123" fill="#DFEACF" />
-    <circle cx="309" cy="72" r="22" fill="#EBC3A9" />
-    <path d="M133 182C98 153 73 159 78 185l39 79c8 16 29 23 48 20l39-6" fill="#EBC3A9" stroke="#214C3B" strokeWidth="2" />
-    <path d="M311 185c34-29 61-24 56 3l-40 77c-9 16-29 24-49 19l-39-8" fill="#EBC3A9" stroke="#214C3B" strokeWidth="2" />
-    <path d="M173 134c-27-37-77-10-56 27 13 25 57 45 57 45s46-23 55-48c13-38-36-57-56-24Z" fill="#327252" transform="translate(49 -10)" />
-    <path d="M225 221v-65m0 39c-32 0-43-20-43-20 26-5 43 20 43 20Zm0-19c30-2 41-23 41-23-27-2-41 23-41 23Z" stroke="#F4F6EB" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="m136 213 49 24c12 6 33 5 39 21m86-45-49 24c-12 6-33 5-39 21" stroke="#214C3B" strokeWidth="2" strokeLinecap="round" />
-    <path d="M97 108c-14-11-12-25-12-25 18 1 29 12 26 30m231 10c13-10 15-25 15-25-18 1-28 11-25 28" stroke="#327252" strokeWidth="2" strokeLinecap="round" />
-    <path d="m132 76 5-12m-22 18-12-4m219 156 8 10m5-24 13 2" stroke="#327252" strokeWidth="2" strokeLinecap="round" />
-    <circle cx="147" cy="310" r="3" fill="#327252" /><circle cx="295" cy="315" r="3" fill="#327252" />
+    <circle cx="227" cy="165" r="123" fill="var(--tdb-art-background)" />
+    <circle cx="309" cy="72" r="22" fill="var(--tdb-art-accent)" />
+    <path d="M133 182C98 153 73 159 78 185l39 79c8 16 29 23 48 20l39-6" fill="var(--tdb-art-skin)" stroke="var(--tdb-art-stroke)" strokeWidth="2" />
+    <path d="M311 185c34-29 61-24 56 3l-40 77c-9 16-29 24-49 19l-39-8" fill="var(--tdb-art-skin)" stroke="var(--tdb-art-stroke)" strokeWidth="2" />
+    <path d="M173 134c-27-37-77-10-56 27 13 25 57 45 57 45s46-23 55-48c13-38-36-57-56-24Z" fill="var(--tdb-art-heart)" transform="translate(49 -10)" />
+    <path d="M225 221v-65m0 39c-32 0-43-20-43-20 26-5 43 20 43 20Zm0-19c30-2 41-23 41-23-27-2-41 23-41 23Z" stroke="var(--tdb-art-light)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="m136 213 49 24c12 6 33 5 39 21m86-45-49 24c-12 6-33 5-39 21" stroke="var(--tdb-art-stroke)" strokeWidth="2" strokeLinecap="round" />
+    <path d="M97 108c-14-11-12-25-12-25 18 1 29 12 26 30m231 10c13-10 15-25 15-25-18 1-28 11-25 28" stroke="var(--tdb-art-heart)" strokeWidth="2" strokeLinecap="round" />
+    <path d="m132 76 5-12m-22 18-12-4m219 156 8 10m5-24 13 2" stroke="var(--tdb-art-heart)" strokeWidth="2" strokeLinecap="round" />
+    <circle cx="147" cy="310" r="3" fill="var(--tdb-art-heart)" /><circle cx="295" cy="315" r="3" fill="var(--tdb-art-heart)" />
   </svg>;
 }
 
@@ -55,7 +56,7 @@ export default function TurmaDoBem() {
 
   useEffect(() => {
     const title = document.title;
-    document.title = "FIB-A · Turma do Bem | Um olhar para você";
+    document.title = "FIB-A · Instituto Felicidade para Todos | Turma do Bem";
     return () => { document.title = title; };
   }, []);
   useEffect(() => {
@@ -73,7 +74,7 @@ export default function TurmaDoBem() {
     if (!qrOpen || qr.png) return;
     let cancelled = false;
     import("qrcode").then(async ({ default: QRCode }) => {
-      const options = { margin: 4, errorCorrectionLevel: "M" as const, color: { dark: "#163E30", light: "#FFFFFF" } };
+      const options = { margin: 4, errorCorrectionLevel: "M" as const, color: { dark: "#222222", light: "#FFFFFF" } };
       const [png, svg] = await Promise.all([QRCode.toDataURL(url, { ...options, width: 1200 }), QRCode.toString(url, { ...options, type: "svg" })]);
       if (!cancelled) setQr({ png, svg });
     }).catch(() => { if (!cancelled) setQrError("Não foi possível gerar o QR Code. Você pode copiar o link abaixo."); });
@@ -150,14 +151,11 @@ export default function TurmaDoBem() {
   }
   const endButton = <button className="tdb-text-button" disabled={busy || pdfBusy || advancing} onClick={() => active ? setExitOpen(true) : reset()}>{step === "result" ? "Encerrar" : "Sair"}<X size={16} /></button>;
 
-  return <div className="tdb-root">
+  return <div className="tdb-root" data-stage={step}>
     <a className="tdb-skip" href="#tdb-content">Ir para o conteúdo</a>
-    <header className="tdb-header">
-      <div className="tdb-wordmark"><span className="tdb-brand-dot" aria-hidden="true" />Turma do Bem<span className="tdb-wordmark-divider" /> <span className="tdb-product">FIB-A</span></div>
-      {step === "welcome" ? <button className="tdb-text-button" onClick={() => setQrOpen(true)}><QrCode size={18} />Compartilhar acesso</button> : endButton}
-    </header>
+    <FibaInstitutionalHeader action={step === "welcome" ? <button className="tdb-text-button" onClick={() => setQrOpen(true)} aria-label="Compartilhar acesso"><QrCode size={18} />Compartilhar acesso</button> : endButton} />
 
-    <main id="tdb-content" className={`tdb-main tdb-${step}`}>
+    <main id="tdb-content" tabIndex={-1} className={`tdb-main tdb-${step}`}>
       {step === "welcome" && <>
         <section className="tdb-hero">
           <div className="tdb-hero-copy">
@@ -176,7 +174,7 @@ export default function TurmaDoBem() {
           </div>
         </section>
         <section className="tdb-how" aria-labelledby="tdb-how-title">
-          <div className="tdb-how-intro"><p className="tdb-eyebrow">SIMPLES, DO COMEÇO AO FIM</p><h2 id="tdb-how-title">Uma pausa.<br />Três passos.</h2></div>
+          <div className="tdb-how-intro"><p className="tdb-eyebrow">SIMPLES, DO COMEÇO AO FIM</p><h2 id="tdb-how-title">Uma pausa.<br /> Três passos.</h2></div>
           {[
             ["01", "Responda com calma", "29 perguntas sobre sua percepção da vida e dos estudos. Uma resposta por pergunta."],
             ["02", "Conheça seu resultado", "Uma leitura descritiva de três fatores e nove domínios do seu bem-estar."],
@@ -243,7 +241,7 @@ export default function TurmaDoBem() {
         <div className="tdb-result-end"><p>Seu resultado fica disponível apenas nesta sessão.<br />Baixe o PDF antes de encerrar.</p>{demo ? <button className="tdb-button" onClick={() => { reset(); setStep("participation"); }}>Responder o questionário<ArrowRight size={18} /></button> : <button className="tdb-button tdb-button-secondary" disabled={pdfBusy} onClick={reset}>Encerrar e limpar minha sessão<Check size={18} /></button>}</div>
       </section>}
     </main>
-    <footer className="tdb-footer"><span>Turma do Bem <span aria-hidden="true">/</span> FIB-A</span><p>Um espaço para perceber. Um convite para refletir.</p><span>29 perguntas · 9 domínios</span></footer>
+    <FibaInstitutionalFooter />
 
     <Dialog.Root open={exitOpen} onOpenChange={setExitOpen}><Dialog.Portal><Dialog.Overlay className="tdb-dialog-overlay" /><Dialog.Content className="tdb-dialog"><Dialog.Title>Encerrar esta reflexão?</Dialog.Title><Dialog.Description>Suas respostas não foram salvas. Ao sair, o progresso desta sessão será apagado.</Dialog.Description><div className="tdb-dialog-actions"><Dialog.Close className="tdb-button tdb-button-secondary">Continuar respondendo</Dialog.Close><button className="tdb-button" onClick={reset}>Sair e limpar</button></div></Dialog.Content></Dialog.Portal></Dialog.Root>
     <Dialog.Root open={qrOpen} onOpenChange={setQrOpen}><Dialog.Portal><Dialog.Overlay className="tdb-dialog-overlay" /><Dialog.Content className="tdb-dialog tdb-qr-dialog"><Dialog.Close className="tdb-dialog-close" aria-label="Fechar"><X size={22} /></Dialog.Close><Dialog.Title>Um convite à reflexão.</Dialog.Title><Dialog.Description>Leia o QR Code com a câmera do celular ou compartilhe o link de acesso ao questionário.</Dialog.Description>{qr.png ? <img className="tdb-qr-image" src={qr.png} alt="QR Code de acesso ao formulário FIB-A da Turma do Bem" /> : <p role="status">{qrError || "Preparando QR Code…"}</p>}<a className="tdb-qr-url" href={url}>{url}</a><div className="tdb-dialog-actions"><button className="tdb-button" onClick={async () => { try { await navigator.clipboard.writeText(url); setMessage("Link copiado."); } catch { setMessage("Selecione e copie o endereço acima."); } }}><Copy size={16} />Copiar link</button>{qr.png && <button className="tdb-button tdb-button-secondary" onClick={() => saveBlob(new Blob([qr.svg], { type: "image/svg+xml" }), "acesso-fib-a-turma-do-bem.svg")}>Baixar QR SVG</button>}{qr.png && <a className="tdb-text-button" href={qr.png} download="acesso-fib-a-turma-do-bem.png">Baixar PNG</a>}</div><p className="tdb-small" role="status">{message || "O QR Code usa o endereço deste ambiente. Para divulgação, use a versão publicada."}</p></Dialog.Content></Dialog.Portal></Dialog.Root>

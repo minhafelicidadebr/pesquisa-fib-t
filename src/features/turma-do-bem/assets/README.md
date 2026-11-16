@@ -1,6 +1,6 @@
 # Ativos institucionais do PDF FIB-A
 
-Imagens oficiais fornecidas pelo solicitante e baixadas diretamente em 16/11/2026, sem recorte, recoloração ou alteração de conteúdo. Uso autorizado nesta sessão para identidade do relatório individual FIB-A do evento Turma do Bem. A presença das marcas não acrescenta declaração de parceria formal, chancela metodológica ou validação científica.
+Imagens oficiais fornecidas pelo solicitante e baixadas diretamente em 16/11/2026, sem recorte, recoloração ou alteração de conteúdo. Uso autorizado nesta sessão para identidade do relatório individual e da experiência web FIB-A do evento Turma do Bem. A presença das marcas não acrescenta declaração de parceria formal, chancela metodológica ou validação científica.
 
 | Arquivo local | Fonte oficial | Dimensões | SHA-256 |
 | --- | --- | --- | --- |
