@@ -326,4 +326,9 @@ Informe de forma objetiva: decisão ToT e evidências; escopo implementado; arqu
 
 ## Atualização institucional do relatório
 
-Aplicar as instruções específicas de `superprompt-fiba-pdf-identidade-ift.md`: usar os três logos oficiais fornecidos, com arquivos locais e proporções preservadas, identidade IFT principal e quarta página dedicada ao convite final. Missão, endereço, links e Instagram estão centralizados em `src/features/turma-do-bem/pdfBrand.ts`. Esta autorização atualiza a orientação anterior de identidade provisória sem logos para o PDF, sem alterar a metodologia ou conferir chancela científica ao instrumento.
+Aplicar as instruções específicas de `superprompt-fiba-pdf-identidade-ift.md`: usar os três logos oficiais fornecidos, com arquivos locais e proporções preservadas, identidade IFT principal e quarta página dedicada ao convite final. Missão, endereço, links e Instagram estão centralizados em `src/features/turma-do-bem/brand.ts`. Esta autorização atualiza a orientação anterior de identidade provisória sem logos para o PDF, sem alterar a metodologia ou conferir chancela científica ao instrumento.
+
+
+## Atualização institucional da página principal
+
+Executar também `superprompt-fiba-web-identidade-ift.md`: aplicar identidade IFT ao módulo web, cabeçalho com os logos oficiais IFT e Turma do Bem, rodapé institucional completo e paleta coerente com o PDF. Fonte compartilhada de conteúdo/assets em `brand.ts`, com compatibilidade do gerador por `pdfBrand.ts`. Abrir links externos em nova aba sem descartar o progresso. Esta atualização preserva questionário, metodologia, processamento local e PDF.

@@ -2,7 +2,7 @@
 
 ## Entrega atual
 
-Módulo independente em `/turma-do-bem/fib-a`, com os 29 itens do formulário de alunos, avanço automático por resposta, revisão final, cálculo individual no dispositivo, narrativa descritiva, PDF A4 de quatro páginas com identidade IFT e QR Code SVG/PNG. A interface da pesquisa mantém seu tema próprio; o relatório usa os logos oficiais fornecidos, sem identidade ISG.
+Módulo independente em `/turma-do-bem/fib-a`, com os 29 itens do formulário de alunos, avanço automático por resposta, revisão final, cálculo individual no dispositivo, narrativa descritiva, PDF A4 de quatro páginas com identidade IFT e QR Code SVG/PNG. A interface e o relatório usam a identidade institucional IFT e os logos oficiais fornecidos, com a marca contextual Turma do Bem, sem identidade ISG.
 
 ## Diagnóstico e correção da conclusão
 
@@ -70,7 +70,7 @@ PDF revisado por extração de texto, incorporação das fontes e renderização
 
 O PDF recebe a identidade do Instituto Felicidade para Todos com os logos oficiais fornecidos, a marca contextual Turma do Bem e quatro páginas: resultado/narrativa, fatores/domínios, reflexão/método e encerramento institucional. A quarta página preserva a legibilidade do conteúdo da pesquisa e reúne missão, convite ao aluno, contato, endereço, Instagram e link do projeto Dentista do Bem.
 
-A decisão ToT e as orientações executadas estão em `docs/prompts/superprompt-fiba-pdf-identidade-ift.md`. O conteúdo institucional e os destinos são centralizados em `src/features/turma-do-bem/pdfBrand.ts`; a procedência, dimensões e hashes dos PNGs constam em `src/features/turma-do-bem/assets/README.md`. Os logos originais são distribuídos localmente, preservando transparência e proporções.
+A decisão ToT e as orientações executadas estão em `docs/prompts/superprompt-fiba-pdf-identidade-ift.md`. O conteúdo institucional e os destinos são centralizados em `src/features/turma-do-bem/brand.ts` (com alias compatível em `pdfBrand.ts` para o gerador do relatório); a procedência, dimensões e hashes dos PNGs constam em `src/features/turma-do-bem/assets/README.md`. Os logos originais são distribuídos localmente, preservando transparência e proporções.
 
 A assinatura visual não acrescenta afirmação de parceria formal, chancela científica ou validação do instrumento. A missão/endereço/Instagram e o convite final vêm do texto autorizado pelo solicitante. Links clicáveis do PDF abrem somente os destinos fornecidos, sem respostas ou escores na URL. Cálculo, escala, perguntas, avanço automático e processamento local permanecem conforme as seções anteriores.
 
@@ -79,3 +79,20 @@ A assinatura visual não acrescenta afirmação de parceria formal, chancela cie
 Sete cenários sintéticos de PDF foram gerados e conferidos independentemente: zeros, respostas neutras, máximos, governança mínima, empate com narrativa longa, fronteira de arredondamento e demonstração. Todos mantiveram quatro páginas A4, escores/contagens, textos completos, fontes incorporadas, proporções dos logos e margens. As quatro URLs foram verificadas nas anotações de link do PDF; a demonstração está marcada em todas as páginas.
 
 Os dois testes Chromium de download (fluxo completo do estudante e demonstração) foram reexecutados e passaram, incluindo a ausência de requests aos sites externos dos logos durante a geração do relatório. TypeScript, ESLint dos arquivos alterados e build passaram. Não foi necessário alterar método, banco, secrets ou endpoints. PDFs sintéticos de revisão ficam no diretório local `private/`, ignorado pelo Git.
+
+
+## Identidade institucional da experiência web
+
+O superprompt `docs/prompts/superprompt-fiba-web-identidade-ift.md` orienta a recomposição da página principal e a continuidade visual nas etapas do formulário. A alternativa ToT escolhida mantém o foco na pesquisa, com cabeçalho claro, hero editorial, paleta IFT e rodapé institucional completo, sem transformar a jornada em navegação promocional extensa.
+
+O cabeçalho apresenta logo IFT completo, logo contextual Turma do Bem, identificação FIB-A e controle de compartilhar acesso/sair. O rodapé reúne logo horizontal IFT sobre fundo escuro, missão completa, CTA de contato, endereço, Instagram, site e logo/link do projeto Dentista do Bem. A ilustração decorativa do hero acompanha a paleta, sem modificar os arquivos oficiais dos logos.
+
+Os componentes visuais estão em `src/features/turma-do-bem/InstitutionalBrand.tsx`. Conteúdo e assets são compartilhados entre web e PDF por `brand.ts`; o módulo `pdfBrand.ts` permanece como alias de compatibilidade. Não há duplicação da missão, endereço ou destinos nos dois meios.
+
+Todos os links institucionais abrem em nova aba com `noopener noreferrer` e indicação acessível, preservando as respostas da aba da pesquisa. Não recebem respostas/escores na URL. Estilos e tokens são limitados ao módulo FIB-A e seus diálogos; não alteram home geral, ISG, dashboards, autenticação ou banco.
+
+### Verificação desta página
+
+Os onze cenários Chromium passaram após a identidade web: cinco larguras (320/360/390/768/1366 px), logos locais com proporções corretas, quatro destinos institucionais, alvos de toque mínimos de 44 px, links em nova aba preservando respostas, teclado, clique duplo, revisão, cálculo local e PDF de quatro páginas, demonstração e QR.
+
+Foram revisadas capturas desktop e mobile. Contrastes dos pares principais foram medidos: CTA ouro/grafite 9,50:1, texto secundário 6,33:1, teal/creme 5,94:1, corpo do rodapé 10,95:1, links claros do rodapé 15,64:1, texto selecionado das opções 14,36:1 e foco sobre o cartão 6,04:1. Isso documenta os pares conferidos, sem constituir certificação de acessibilidade integral. TypeScript, ESLint dos arquivos alterados e build passaram; as capturas de revisão ficam em `private/`, fora do Git.

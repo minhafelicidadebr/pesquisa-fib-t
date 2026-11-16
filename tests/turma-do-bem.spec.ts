@@ -16,11 +16,62 @@ async function expectInstitutionalPdf(path: string) {
 }
 
 
+const institutionalUrls = [
+  "https://felicidadeparatodos.com.br/",
+  "https://felicidadeparatodos.com.br/#contato",
+  "https://instagram.com/felicidadeparatodosbr",
+  "https://turmadobem.org.br/dentista-do-bem/",
+];
+
+async function expectInstitutionalPage(page: import("@playwright/test").Page) {
+  const header = page.locator(".tdb-header");
+  const footer = page.locator(".tdb-institutional-footer");
+  for (const name of ["Instituto Felicidade para Todos", "Turma do Bem"]) {
+    const logo = header.getByRole("img", { name, exact: true });
+    await expect(logo).toBeVisible();
+    await expect(logo).toHaveJSProperty("complete", true);
+    const geometry = await logo.evaluate((image: HTMLImageElement) => {
+      const bounds = image.getBoundingClientRect();
+      return { naturalWidth: image.naturalWidth, naturalHeight: image.naturalHeight,
+        width: bounds.width, height: bounds.height, local: new URL(image.src).origin === window.location.origin };
+    });
+    expect(geometry.naturalWidth).toBeGreaterThan(0);
+    expect(geometry.naturalHeight).toBeGreaterThan(0);
+    expect(geometry.local).toBe(true);
+    expect(Math.abs((geometry.width / geometry.height) / (geometry.naturalWidth / geometry.naturalHeight) - 1)).toBeLessThan(.02);
+  }
+  await expect(footer).toContainText("Organização de impacto social com a missão de ativar e animar ecossistemas sustentáveis de felicidade humana, socioambiental e organizacional.");
+  await expect(footer).toContainText("Impact HUB Brasília");
+  await expect(footer).toContainText("SGAN 601");
+  await expect(footer).toContainText("Ed. Íon");
+  await expect(footer).toContainText("@felicidadeparatodosbr");
+  for (const url of institutionalUrls) {
+    const links = footer.locator(`a[href="${url}"]`);
+    expect(await links.count()).toBeGreaterThan(0);
+    for (const link of await links.all()) {
+      await expect(link).toHaveAttribute("target", "_blank");
+      await expect(link).toHaveAttribute("rel", /noopener/);
+      await expect(link).toHaveAttribute("rel", /noreferrer/);
+      const box = await link.boundingBox();
+      expect(box?.height).toBeGreaterThanOrEqual(44);
+      expect(box?.width).toBeGreaterThanOrEqual(44);
+    }
+  }
+  for (const target of await header.locator("a, button").all()) {
+    const box = await target.boundingBox();
+    expect(box?.height).toBeGreaterThanOrEqual(44);
+    expect(box?.width).toBeGreaterThanOrEqual(44);
+    expect(box?.x).toBeGreaterThanOrEqual(0);
+    expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(await page.evaluate(() => innerWidth));
+  }
+}
+
 for (const width of [320, 360, 390, 768, 1366]) {
   test(`landing and question have no horizontal overflow at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 850 });
     await page.goto("/turma-do-bem/fib-a");
     await expect(page.getByRole("heading", { name: /Cuidar do outro/ })).toBeVisible();
+    await expectInstitutionalPage(page);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.getByRole("button", { name: "Começar minha reflexão" }).click();
     await page.getByRole("checkbox").check();
@@ -35,6 +86,27 @@ for (const width of [320, 360, 390, 768, 1366]) {
     await page.screenshot({ path: `/tmp/fiba-question-${width}.png`, fullPage: true });
   });
 }
+
+test("institutional links open a separate tab and preserve the student's current answers", async ({ page, context }) => {
+  await context.route(/^https:\/\/felicidadeparatodos\.com\.br\//, route => route.fulfill({
+    status: 200, contentType: "text/html", body: "<!doctype html><title>Contato institucional</title><p>Destino de teste</p>",
+  }));
+  await page.goto("/turma-do-bem/fib-a");
+  await page.getByRole("button", { name: "Começar minha reflexão" }).click();
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", { name: "Ir para as perguntas" }).click();
+  await page.getByRole("radio", { name: "Discordo totalmente", exact: true }).click();
+  await expect(page.getByText("Pergunta 2 de 29", { exact: true })).toBeVisible();
+  const popupPromise = page.waitForEvent("popup");
+  await page.locator('.tdb-institutional-footer a[href="https://felicidadeparatodos.com.br/#contato"]').click();
+  const popup = await popupPromise;
+  await expect(popup).toHaveURL("https://felicidadeparatodos.com.br/#contato");
+  await popup.close();
+  await expect(page.getByText("Pergunta 2 de 29", { exact: true })).toBeVisible();
+  await expect(page.getByText("1 respondida", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Voltar", exact: true }).click();
+  await expect(page.getByRole("radio", { checked: true })).toHaveValue("0");
+});
 
 test("going back preserves the response and reselecting it advances exactly once", async ({ page }) => {
   await page.goto("/turma-do-bem/fib-a");
