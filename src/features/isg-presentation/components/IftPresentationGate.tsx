@@ -39,7 +39,7 @@ export function IftPresentationGate({
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Área exclusiva do Instituto Felicidade para Todos. Informe a credencial
-          do IFT para acessar a apresentação dos resultados agregados do pré-teste
+          do IFT para acessar a apresentação dos resultados agregados da pesquisa
           da ISG.
         </p>
 
