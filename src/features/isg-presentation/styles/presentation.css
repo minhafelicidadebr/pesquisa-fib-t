@@ -2365,3 +2365,7 @@
 @media (prefers-reduced-motion: reduce) {
   .p-countup, .p-context-numbers > div { animation: none; }
 }
+.p-context-numbers .p-countup { font-size: inherit; color: transparent; line-height: inherit; background: inherit; -webkit-background-clip: text; background-clip: text; }
+.p-context-numbers .p-kpi-glow { background: none; color: var(--presentation-deep); }
+.p-context-numbers .p-kpi-glow .p-countup { background-image: linear-gradient(135deg, var(--presentation-deep) 20%, var(--presentation-teal) 90%); }
+.p-context-numbers .p-kpi-cyan .p-countup { background-image: linear-gradient(135deg, var(--presentation-teal), var(--presentation-cyan)); }
