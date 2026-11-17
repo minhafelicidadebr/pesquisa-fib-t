@@ -203,7 +203,7 @@ export async function handleIsgResultsRequest(req: Request) {
         threshold: K_THRESHOLD,
         suppressed: true,
         nLabel: rows.length === 0 ? "0" : `< ${K_THRESHOLD}`,
-        status: "Pré-teste",
+        status: "Pesquisa oficial",
       });
     }
 
@@ -211,7 +211,7 @@ export async function handleIsgResultsRequest(req: Request) {
       ok: true,
       threshold: K_THRESHOLD,
       suppressed: false,
-      status: "Pré-teste",
+      status: "Pesquisa oficial",
       ...aggregate(rows),
     });
   }

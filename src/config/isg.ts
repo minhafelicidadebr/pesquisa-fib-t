@@ -15,7 +15,7 @@
 export const ISG_PILOT_ENABLED =
   String(import.meta.env.VITE_ISG_PILOT_ENABLED ?? "true").toLowerCase() !== "false";
 
-/** Enquanto true, a interface se identifica como ambiente de pré-teste. */
+/** Enquanto true, o ambiente piloto ISG fica habilitado. */
 export const ISG_PILOT_MODE = true;
 
 export const ISG_LOGO_SVG =

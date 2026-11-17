@@ -2314,3 +2314,54 @@
   letter-spacing: -0.03em;
   margin-top: 24px;
 }
+
+/* ─── Premium visual layer: editorial type, brand atmosphere, kinetic KPIs ─── */
+.isg-presentation {
+  --font-heading: "Fraunces", Georgia, serif;
+  font-family: "Manrope", "Helvetica Neue", Arial, sans-serif;
+  background:
+    radial-gradient(60rem 30rem at 100% 0%, rgb(0 185 199 / 0.07), transparent 60%),
+    radial-gradient(50rem 28rem at 0% 100%, rgb(255 204 0 / 0.08), transparent 60%),
+    radial-gradient(40rem 24rem at 60% 110%, rgb(192 13 88 / 0.05), transparent 60%),
+    var(--presentation-bg);
+}
+.isg-presentation h1, .isg-presentation h2 {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+.p-countup, .p-context-numbers strong, .isg-presentation .p-mini-score {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.p-countup { display: inline-block; animation: p-blur-in 0.9s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes p-blur-in { from { filter: blur(6px); opacity: 0; transform: translateY(12px); } to { filter: blur(0); opacity: 1; transform: none; } }
+.p-context-numbers > div {
+  position: relative;
+  padding: 22px 24px;
+  border: 1px solid var(--presentation-line);
+  border-radius: 18px;
+  background: rgb(255 255 255 / 0.72);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.9) inset, 0 24px 48px -28px rgb(23 60 70 / 0.28);
+  overflow: hidden;
+  animation: p-rise 0.7s cubic-bezier(.2,.8,.2,1) both;
+}
+.p-context-numbers > div:nth-child(2) { animation-delay: 90ms; }
+.p-context-numbers > div:nth-child(3) { animation-delay: 180ms; }
+.p-context-numbers > div::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 4px;
+  background: linear-gradient(90deg, var(--presentation-teal), var(--presentation-cyan));
+}
+.p-context-numbers > div:nth-child(2)::before { background: linear-gradient(90deg, var(--presentation-cyan), var(--presentation-yellow)); }
+.p-context-numbers > div:nth-child(3)::before { background: linear-gradient(90deg, var(--presentation-yellow), var(--presentation-magenta)); }
+.p-context-numbers { border-bottom: none; }
+.p-kpi-glow {
+  background: linear-gradient(135deg, var(--presentation-deep) 20%, var(--presentation-teal) 90%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.p-kpi-cyan { background-image: linear-gradient(135deg, var(--presentation-teal), var(--presentation-cyan)); }
+.p-context-numbers .p-status-value { font-family: "Fraunces", Georgia, serif; }
+@keyframes p-rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .p-countup, .p-context-numbers > div { animation: none; }
+}

@@ -9,6 +9,7 @@ import {
   tiedExtremes,
 } from "../data/presentation-schema";
 import { AccessibleBarChart } from "./AccessibleBarChart";
+import { CountUp } from "./CountUp";
 
 import { ITEM_LABELS, ITEM_SETS } from "../content/items";
 
@@ -135,7 +136,7 @@ export function SlideData({
             <span className="p-type-label">Resultado observado</span>
             <h3>Um retrato, muitas dimensões</h3>
             <p className="p-mini-score">
-              {formatNumber(snapshot.globalScore, 1)}
+              <CountUp value={snapshot.globalScore} decimals={1} />
               <small> / 100</small>
             </p>
             <p>
@@ -174,16 +175,16 @@ export function SlideData({
         <div className="p-context">
           <div className="p-context-numbers">
             <div>
-              <strong>{snapshot.n ?? "—"}</strong>
+              <strong className="p-kpi-glow"><CountUp value={snapshot.n} /></strong>
               <span>participações consideradas</span>
             </div>
             <div>
-              <strong>{snapshot.questions.length || "—"}</strong>
+              <strong className="p-kpi-glow p-kpi-cyan"><CountUp value={snapshot.questions.length || null} /></strong>
               <span>questões recebidas</span>
             </div>
             <div>
               <strong className="p-status-value">{snapshot.status}</strong>
-              <span>status da fonte</span>
+              <span>natureza da coleta</span>
             </div>
           </div>
           <dl className="p-metadata">
@@ -251,7 +252,7 @@ export function SlideData({
           >
             <span className="p-type-label">Resultado observado</span>
             <p>
-              {formatNumber(snapshot.globalScore, 1)}
+              <CountUp value={snapshot.globalScore} decimals={1} />
               <small>/100</small>
             </p>
             <div className="p-global-track" aria-hidden="true">

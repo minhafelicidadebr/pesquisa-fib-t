@@ -71,7 +71,7 @@ export function IsgAccessGate({ onAuthorized }: Props) {
               className="h-11"
             />
             <p id="isg-code-hint" className="text-xs text-muted-foreground">
-              O código é fornecido pela ISG aos participantes do pré-teste.
+              O código é fornecido pela ISG aos participantes da pesquisa.
             </p>
           </div>
 

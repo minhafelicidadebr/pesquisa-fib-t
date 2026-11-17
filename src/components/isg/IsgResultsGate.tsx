@@ -39,7 +39,7 @@ export function IsgResultsGate({ onAuthorized }: { onAuthorized: () => void }) {
         <p className="mt-2 text-sm text-muted-foreground">
           Área administrativa restrita à equipe do Instituto Felicidade para Todos.
           Informe a credencial administrativa para visualizar a leitura agregada do
-          pré-teste da ISG.
+          pesquisa da ISG.
         </p>
 
         <form onSubmit={submit} className="mt-6 space-y-3">

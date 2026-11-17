@@ -61,7 +61,7 @@ export async function generateIsgAggregatePdf(agg: IsgAggregate): Promise<void> 
   doc.text("Painel Executivo FIB-T", L.M, 248);
   doc.setFontSize(14);
   doc.setTextColor(...GRAY);
-  doc.text("Visão agregada do pré-teste organizacional ISG", L.M, 274);
+  doc.text("Visão agregada da pesquisa organizacional ISG", L.M, 274);
 
   if (!agg.suppressed && typeof agg.globalScore === "number") {
     drawGauge(

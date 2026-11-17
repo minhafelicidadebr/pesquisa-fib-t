@@ -160,7 +160,7 @@ export function IsgAggregateDashboard({ onLogout }: { onLogout: () => void }) {
             Painel Executivo FIB-T
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Leitura agregada do pré-teste organizacional ISG para a equipe do IFT
+            Leitura agregada da pesquisa organizacional ISG para a equipe do IFT
           </p>
         </div>
       </header>
