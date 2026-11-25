@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,6 +13,7 @@ export function IftPresentationGate({
   onAuthorized: () => void;
 }) {
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -23,6 +25,7 @@ export function IftPresentationGate({
     const ok = await loginPresentation(password);
     setLoading(false);
     setPassword("");
+    setShowPassword(false);
     if (ok) onAuthorized();
     else setError(GENERIC_ERROR);
   };
@@ -47,16 +50,33 @@ export function IftPresentationGate({
           <Label htmlFor="ift-presentation-password" className="text-sm">
             Credencial administrativa do IFT
           </Label>
-          <Input
-            id="ift-presentation-password"
-            type="password"
-            autoComplete="off"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            className="h-11"
-            aria-invalid={!!error}
-            aria-describedby={error ? "ift-presentation-error" : undefined}
-          />
+          <div className="relative">
+            <Input
+              id="ift-presentation-password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="off"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              className="h-11 pr-12"
+              aria-invalid={!!error}
+              aria-describedby={error ? "ift-presentation-error" : undefined}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((visible) => !visible)}
+              className="absolute inset-y-0 right-1 flex w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+              aria-label={showPassword ? "Ocultar credencial" : "Mostrar credencial"}
+              aria-pressed={showPassword}
+              aria-controls="ift-presentation-password"
+              title={showPassword ? "Ocultar credencial" : "Mostrar credencial"}
+            >
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" aria-hidden="true" />
+              ) : (
+                <Eye className="h-4 w-4" aria-hidden="true" />
+              )}
+            </button>
+          </div>
           {error && (
             <p
               id="ift-presentation-error"
